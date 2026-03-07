@@ -8,10 +8,12 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "inputs": ["**/*.ts", "**/*.tsx", "eslint.config.*", ".eslintrc*"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "inputs": ["**/*.ts", "**/*.tsx", "tsconfig*.json"]
     },
     "dev": {
       "cache": false,
