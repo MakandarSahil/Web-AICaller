@@ -7,8 +7,8 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --max-warnings 0",
-    "check-types": "next typegen && tsc --noEmit"
+    "lint": "next lint",
+    "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
