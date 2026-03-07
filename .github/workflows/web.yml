@@ -8,6 +8,7 @@ on:
     paths:
       - 'apps/web/**'
       - 'packages/**'
+  workflow_dispatch:
 
 env:
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
