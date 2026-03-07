@@ -1,0 +1,15 @@
+# .gihub/CODEOWNERS
+# Default owners for everything in the repo.
+* @MakandarSahil
+
+#Web app -
+apps/web/ @MakandarSahil @web-maintainer
+
+#Dashboard app -
+apps/dashboard/ @MakandarSahil @dashboard-maintainer
+
+#Shared packages -
+packages/ @MakandarSahil @shared-packages-maintainer
+
+#CI/CD -
+.github/ @MakandarSahil @cicd-maintainer
