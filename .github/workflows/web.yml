@@ -1,0 +1,44 @@
+name: Web CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.WEB_VERCEL_PROJECT_ID }}
+
+jobs:
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    environment:
+      name: web-production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Deploy to Vercel (production)
+        id: deploy
+        working-directory: apps/web
+        run: |
+          pnpm dlx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          pnpm dlx vercel build --prod --token=$VERCEL_TOKEN
+          URL=$(pnpm dlx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN)
+          echo "url=$URL" >> $GITHUB_OUTPUT
