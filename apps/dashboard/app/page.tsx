@@ -22,7 +22,7 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-      <p className={styles.note}>Development in progress.</p>
+      <p className={styles.note}>Development in progress!!!</p>
     </div>
   );
 }

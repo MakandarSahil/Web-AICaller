@@ -140,7 +140,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
         <span className={styles.wordmark}>AIcaller</span>
-        <span className={styles.footerNote}>© {new Date().getFullYear()} · Voice AI Infrastructure</span>
+        <span className={styles.footerNote}>© {new Date().getFullYear()} · Sahil Makandar</span>
       </footer>
     </div>
   );
