@@ -1,142 +1,218 @@
-import { Phone, Mic, Volume2, ArrowRight } from 'lucide-react'
+'use client'
 
-const DEMO_PHONE = process.env.NEXT_PUBLIC_DEMO_PHONE_NUMBER ?? '+91 XXXXX XXXXX'
+import { useState } from 'react'
+import { ChevronDown, ChevronLeft } from 'lucide-react'
 
-const DEMO_STEPS = [
-  { icon: Phone, text: 'Call the number below from your phone' },
-  { icon: Mic, text: 'Ask anything — hours, pricing, how it works' },
-  { icon: Volume2, text: 'Hear the AI respond in real-time' },
+const CALL_TYPES = [
+  'Receptionist',
+  'Appointment Setter',
+  'Lead Qualification',
+  'Customer Service',
+  'Debt Collection',
+  'Survey',
 ]
 
-const SAMPLE_QUESTIONS = [
-  'What does CallMind do?',
-  'How long does setup take?',
-  'What languages do you support?',
-  'How much does it cost?',
-  'Can I bring my own phone number?',
-  'Is there a free trial?',
-]
+// Pure solid dotted text effect without stroke outline
+const DottedNumber = ({ num }: { num: string | number }) => (
+  <div 
+    className="mb-2 font-serif text-[80px] font-black leading-none tracking-tighter sm:text-[100px]"
+    style={{
+      color: 'transparent',
+      backgroundImage: 'radial-gradient(circle, #0a1128 3.5px, transparent 4px)',
+      backgroundSize: '12px 12px',
+      backgroundPosition: 'left top',
+      WebkitBackgroundClip: 'text',
+      backgroundClip: 'text'
+    }}
+  >
+    {num}
+  </div>
+)
 
 export function Demo() {
+  const [selectedType, setSelectedType] = useState('Appointment Setter')
+  const [step, setStep] = useState(1)
+
   return (
-    <section id="demo" className="section section-gray py-24 lg:py-32">
-      <div className="container-tight">
-        <div className="card-light overflow-hidden rounded-3xl">
-          {/* Top accent bar */}
-          <div className="h-1 w-full bg-gradient-to-r from-brand via-brand-light to-brand" />
+    // Make section full width and seamless
+    <section id="demo" className="relative w-full bg-[#0a1128] py-20 lg:py-28">
+      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
+        
+        {/* Header area */}
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col justify-between gap-10 md:flex-row md:items-end">
+          <h2 className="font-serif text-6xl font-normal leading-[1.1] tracking-tight text-white sm:text-7xl lg:text-8xl">
+            Try Our<br />Live Demo
+          </h2>
+          <div className="max-w-md pb-4 text-base font-light leading-relaxed text-slate-300 md:text-lg">
+            Receive a live call from our agent and discover how our AI caller transforms
+            customer conversations.
+          </div>
+        </div>
 
-          <div className="grid gap-12 p-8 sm:p-12 lg:grid-cols-2 lg:gap-16">
-            {/* Left — copy */}
-            <div className="flex flex-col justify-center">
-              <span className="badge-pill w-fit">
-                Live demo
-              </span>
+        {/* Flex layout for Cards */}
+        <div className="relative z-10 mx-auto mt-16 flex min-h-[580px] w-full max-w-7xl flex-col gap-6 lg:flex-row">
+          
+          {/* Card 1: Selection Map */}
+          <div 
+            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-[700ms] ease-[cubic-bezier(0.25,1,0.5,1)] hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
+            style={{ flex: step === 1 ? '1.4' : '1' }}
+          >
+            <div className="relative z-20">
+              <DottedNumber num="1" />
+            </div>
 
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#1e1e1e] sm:text-4xl">
-                Hear it for yourself.
-                <br />
-                <span className="text-gradient-blue">Call our demo agent.</span>
-              </h2>
-
-              <p className="mt-4 text-base leading-relaxed text-gray-500">
-                Our demo agent knows everything about CallMind. Ask it anything — pricing,
-                features, how it works. It&apos;s the same technology you&apos;ll deploy for your business.
-              </p>
-
-              {/* Steps */}
-              <div className="mt-8 space-y-4">
-                {DEMO_STEPS.map(({ icon: Icon, text }, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <span className="text-sm text-gray-600">{text}</span>
+            {/* Step Animations Wrapper */}
+            <div className="relative z-10 flex flex-1 flex-col">
+              
+              {/* Step 1 Content */}
+              <div className={`absolute inset-0 flex flex-col transition-all duration-500 ${step === 1 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                {/* Blank space to push content down mirroring the reference */}
+                <div className="mt-auto flex w-full flex-col font-light">
+                  <h3 className="mb-8 max-w-[320px] text-[28px] leading-[1.2] tracking-tight text-[#0a1128] sm:text-[34px]">
+                    Select the type of call you want to receive
+                  </h3>
+                  
+                  <div className="flex flex-wrap gap-2.5 sm:gap-3 lg:max-w-[85%]">
+                    {CALL_TYPES.map((type) => (
+                      <button
+                        type="button"
+                        key={type}
+                        onClick={() => setSelectedType(type)}
+                        className={`whitespace-nowrap rounded-full border px-4 py-2.5 text-[13px] font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:text-[14px] ${
+                          selectedType === type
+                            ? 'border-[#0a1128] bg-[#0a1128] text-white shadow-md'
+                            : 'border-slate-200 bg-white text-slate-600 shadow-sm hover:border-slate-300 hover:text-slate-900'
+                        }`}
+                      >
+                        {selectedType === type && <span className="mr-2 inline-block h-[5px] w-[5px] rounded-full bg-white opacity-90 shadow-[0_0_8px_rgba(255,255,255,0.8)]" />}
+                        {type}
+                      </button>
+                    ))}
                   </div>
-                ))}
+                </div>
+
+                {/* Specifically anchored Next button */}
+                <div className="absolute bottom-0 right-0">
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="rounded-lg bg-[#0a1128] px-8 py-3 text-[14px] font-semibold text-white transition-all hover:bg-[#142042] active:scale-95"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
 
-              {/* Sample questions */}
-              <div className="mt-8">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Try asking
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {SAMPLE_QUESTIONS.map((q) => (
-                    <span
-                      key={q}
-                      className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600"
-                    >
-                      {q}
-                    </span>
-                  ))}
+              {/* Step 2 Content */}
+              <div className={`absolute inset-0 flex flex-col transition-all duration-500 delay-100 ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                <div className="mt-auto">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Selected agent</p>
+                  <h3 className="text-[26px] font-bold leading-[1.15] tracking-tight text-[#0a1128]">
+                    {selectedType}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="mt-4 text-[12px] font-medium text-slate-400 underline-offset-2 hover:text-brand hover:underline"
+                  >
+                    Change
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Right — phone number card */}
-            <div className="flex flex-col items-center justify-center">
-              <div className="w-full max-w-sm rounded-2xl border border-gray-100 bg-[#f8f9fb] p-8 text-center">
-                {/* Animated phone icon */}
-                <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-                  {/* Ripple rings */}
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="absolute inset-0 rounded-full border border-brand/20 animate-ping"
-                      style={{
-                        animationDelay: `${i * 0.4}s`,
-                        animationDuration: '2s',
-                        transform: `scale(${1 + i * 0.25})`,
-                      }}
-                    />
-                  ))}
-                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 ring-2 ring-brand/20">
-                    <Phone className="h-8 w-8 text-brand" />
-                  </div>
+            {/* Glowing animated orb - Contained on the right to avoid blocking text completely */}
+            <div className="pointer-events-none absolute right-[-10%] top-1/2 h-[350px] w-[350px] -translate-y-1/2 lg:h-[450px] lg:w-[450px]">
+              <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-tr from-brand/60 via-[#a855f7]/60 to-[#06b6d4]/60 blur-[60px] transition-opacity duration-1000 group-hover:opacity-80 md:blur-[80px]" />
+              <div className="absolute inset-10 animate-float rounded-full bg-gradient-to-br from-[#0ea5e9]/50 to-[#c084fc]/50 blur-[60px]" />
+            </div>
+          </div>
+
+          {/* Card 2: Form Display */}
+          <div 
+            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-[700ms] ease-[cubic-bezier(0.25,1,0.5,1)] hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
+            style={{ flex: step === 1 ? '1' : '2' }}
+          >
+            <div className="relative z-20">
+              <DottedNumber num="2" />
+            </div>
+            
+            <div className="relative z-10 mt-6 flex-1">
+              {/* Step 1 Content */}
+              <div className={`absolute inset-0 flex flex-col transition-all duration-500 ${step === 1 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
+                <div className="mt-auto">
+                  <h3 className="text-[28px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[34px]">
+                    Enter your<br />information
+                  </h3>
                 </div>
-
-                {/* Live indicator */}
-                <div className="mb-4 flex items-center justify-center gap-2">
-                  <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                  <span className="text-xs font-medium text-green-600">
-                    Agent online · 24/7
-                  </span>
-                </div>
-
-                <p className="mb-2 text-sm text-gray-500">Call this number now</p>
-
-                {/* Phone number */}
-                <a
-                  href={`tel:${DEMO_PHONE.replace(/\s/g, '')}`}
-                  className="group mt-2 block"
-                >
-                  <div className="rounded-xl border border-brand/20 bg-brand-50 px-6 py-4 transition-all hover:border-brand/40 hover:shadow-blue-glow">
-                    <span className="font-mono text-2xl font-bold tracking-wider text-[#1e1e1e]">
-                      {DEMO_PHONE}
-                    </span>
-                    <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-brand">
-                      <span>Tap to call</span>
-                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                    </div>
-                  </div>
-                </a>
-
-                <p className="mt-4 text-xs text-gray-400">
-                  Standard call rates apply. No account needed.
-                </p>
               </div>
 
-              {/* Powered by */}
-              <div className="mt-6 flex items-center gap-3 text-xs text-gray-400">
-                <span>Powered by</span>
-                <div className="flex items-center gap-2">
-                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Azure STT</span>
-                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Groq LLM</span>
-                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Azure TTS</span>
+              {/* Step 2 Content */}
+              <div className={`absolute inset-0 flex flex-col transition-all duration-500 delay-100 ${step === 2 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-4 opacity-0 pointer-events-none'}`}>
+                <div className="flex flex-1 flex-col justify-center gap-10 md:flex-row lg:items-center lg:gap-16">
+                  <div className="flex-[0.9]">
+                    <h3 className="text-[28px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[34px]">
+                      Enter your<br />information
+                    </h3>
+                  </div>
+                  
+                  <div className="flex-[1.1]">
+                    <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Industry</label>
+                        <div className="flex cursor-not-allowed items-center justify-between border-b border-slate-200 py-2.5 text-[15px] font-medium text-slate-900" aria-disabled="true">
+                          <span>{selectedType}</span>
+                          <ChevronDown className="h-4 w-4 text-slate-400" />
+                        </div>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Name</label>
+                        <input 
+                          type="text" 
+                          placeholder="Your Name" 
+                          className="w-full rounded-none border-0 border-b border-slate-200 bg-transparent px-0 py-2.5 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:ring-0" 
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Phone Number</label>
+                        <input 
+                          type="tel" 
+                          placeholder="+15551234567" 
+                          className="w-full rounded-none border-0 border-b border-slate-200 bg-transparent px-0 py-2.5 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:ring-0" 
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Email</label>
+                        <input 
+                          type="email" 
+                          placeholder="john@company.com" 
+                          className="w-full rounded-none border-0 border-b border-slate-200 bg-transparent px-0 py-2.5 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:ring-0" 
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                {/* Specifically anchored Bottom Control bar */}
+                <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="group flex items-center gap-1 text-[13px] font-bold text-[#0a1128] transition-colors hover:text-brand"
+                  >
+                    <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" strokeWidth={3} />
+                    Back to Agent
+                  </button>
+                  <button
+                    className="rounded-lg bg-[#0a1128] px-8 py-3 text-[14px] font-semibold text-white transition-all hover:bg-[#142042] active:scale-95"
+                  >
+                    Get a call
+                  </button>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </section>
