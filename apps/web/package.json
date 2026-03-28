@@ -13,6 +13,7 @@
   "dependencies": {
     "@aicaller/config": "workspace:*",
     "@aicaller/ui": "workspace:*",
+    "@number-flow/react": "^0.6.0",
     "framer-motion": "^11.13.1",
     "geist": "^1.7.0",
     "lucide-react": "^0.468.0",
