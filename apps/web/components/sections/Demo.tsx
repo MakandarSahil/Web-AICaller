@@ -19,125 +19,120 @@ const SAMPLE_QUESTIONS = [
 
 export function Demo() {
   return (
-    <section id="demo" className="section py-24 lg:py-32">
+    <section id="demo" className="section section-gray py-24 lg:py-32">
       <div className="container-tight">
-        {/* Outer glow wrapper */}
-        <div className="relative">
-          <div className="pointer-events-none absolute -inset-8 rounded-3xl bg-brand-500/5 blur-3xl" />
+        <div className="card-light overflow-hidden rounded-3xl">
+          {/* Top accent bar */}
+          <div className="h-1 w-full bg-gradient-to-r from-brand via-brand-light to-brand" />
 
-          <div className="relative glass overflow-hidden rounded-3xl border border-brand-500/20 shadow-glass-lg">
-            {/* Top gradient bar */}
-            <div className="h-1 w-full bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700" />
+          <div className="grid gap-12 p-8 sm:p-12 lg:grid-cols-2 lg:gap-16">
+            {/* Left — copy */}
+            <div className="flex flex-col justify-center">
+              <span className="badge-pill w-fit">
+                Live demo
+              </span>
 
-            <div className="grid gap-12 p-8 sm:p-12 lg:grid-cols-2 lg:gap-16">
-              {/* Left — copy */}
-              <div className="flex flex-col justify-center">
-                <span className="inline-block w-fit rounded-full border border-brand-500/20 bg-brand-500/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-brand-400">
-                  Live demo
-                </span>
+              <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#1e1e1e] sm:text-4xl">
+                Hear it for yourself.
+                <br />
+                <span className="text-gradient-blue">Call our demo agent.</span>
+              </h2>
 
-                <h2 className="mt-4 text-3xl font-bold tracking-tight text-content sm:text-4xl">
-                  Hear it for yourself.
-                  <br />
-                  <span className="text-gradient">Call our demo agent.</span>
-                </h2>
+              <p className="mt-4 text-base leading-relaxed text-gray-500">
+                Our demo agent knows everything about CallMind. Ask it anything — pricing,
+                features, how it works. It&apos;s the same technology you&apos;ll deploy for your business.
+              </p>
 
-                <p className="mt-4 text-base leading-relaxed text-content-secondary">
-                  Our demo agent knows everything about CallMind. Ask it anything — pricing,
-                  features, how it works. It's the same technology you'll deploy for your business.
-                </p>
-
-                {/* Steps */}
-                <div className="mt-8 space-y-4">
-                  {DEMO_STEPS.map(({ icon: Icon, text }, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500/15 ring-1 ring-brand-500/25">
-                        <Icon className="h-4 w-4 text-brand-400" />
-                      </div>
-                      <span className="text-sm text-content-secondary">{text}</span>
+              {/* Steps */}
+              <div className="mt-8 space-y-4">
+                {DEMO_STEPS.map(({ icon: Icon, text }, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand">
+                      <Icon className="h-4 w-4" />
                     </div>
-                  ))}
-                </div>
-
-                {/* Sample questions */}
-                <div className="mt-8">
-                  <p className="mb-3 text-xs font-medium uppercase tracking-wider text-content-tertiary">
-                    Try asking
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {SAMPLE_QUESTIONS.map((q) => (
-                      <span
-                        key={q}
-                        className="rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 text-xs text-content-secondary"
-                      >
-                        {q}
-                      </span>
-                    ))}
+                    <span className="text-sm text-gray-600">{text}</span>
                   </div>
-                </div>
+                ))}
               </div>
 
-              {/* Right — phone number card */}
-              <div className="flex flex-col items-center justify-center">
-                <div className="glass w-full max-w-sm rounded-2xl border border-white/[0.08] p-8 text-center shadow-glass">
-                  {/* Animated phone icon */}
-                  <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-                    {/* Ripple rings */}
-                    {[1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="absolute inset-0 rounded-full border border-brand-500/20 animate-ping"
-                        style={{
-                          animationDelay: `${i * 0.4}s`,
-                          animationDuration: '2s',
-                          transform: `scale(${1 + i * 0.25})`,
-                        }}
-                      />
-                    ))}
-                    <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-brand-500/20 ring-2 ring-brand-500/40 shadow-glow">
-                      <Phone className="h-8 w-8 text-brand-400" />
-                    </div>
-                  </div>
-
-                  {/* Live indicator */}
-                  <div className="mb-4 flex items-center justify-center gap-2">
-                    <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-400" />
-                    <span className="text-xs font-medium text-brand-400">
-                      Agent online · 24/7
+              {/* Sample questions */}
+              <div className="mt-8">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                  Try asking
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {SAMPLE_QUESTIONS.map((q) => (
+                    <span
+                      key={q}
+                      className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600"
+                    >
+                      {q}
                     </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Right — phone number card */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="w-full max-w-sm rounded-2xl border border-gray-100 bg-[#f8f9fb] p-8 text-center">
+                {/* Animated phone icon */}
+                <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
+                  {/* Ripple rings */}
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="absolute inset-0 rounded-full border border-brand/20 animate-ping"
+                      style={{
+                        animationDelay: `${i * 0.4}s`,
+                        animationDuration: '2s',
+                        transform: `scale(${1 + i * 0.25})`,
+                      }}
+                    />
+                  ))}
+                  <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 ring-2 ring-brand/20">
+                    <Phone className="h-8 w-8 text-brand" />
                   </div>
-
-                  <p className="mb-2 text-sm text-content-secondary">Call this number now</p>
-
-                  {/* Phone number */}
-                  <a
-                    href={`tel:${DEMO_PHONE.replace(/\s/g, '')}`}
-                    className="group mt-2 block"
-                  >
-                    <div className="rounded-xl border border-brand-500/20 bg-brand-500/10 px-6 py-4 transition-all hover:border-brand-500/40 hover:bg-brand-500/15 hover:shadow-glow-sm">
-                      <span className="font-mono text-2xl font-bold tracking-wider text-content">
-                        {DEMO_PHONE}
-                      </span>
-                      <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-brand-400">
-                        <span>Tap to call</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                      </div>
-                    </div>
-                  </a>
-
-                  <p className="mt-4 text-xs text-content-tertiary">
-                    Standard call rates apply. No account needed.
-                  </p>
                 </div>
 
-                {/* Powered by */}
-                <div className="mt-6 flex items-center gap-3 text-xs text-content-tertiary">
-                  <span>Powered by</span>
-                  <div className="flex items-center gap-2">
-                    <span className="rounded border border-white/10 bg-white/5 px-2 py-0.5">Azure STT</span>
-                    <span className="rounded border border-white/10 bg-white/5 px-2 py-0.5">Groq LLM</span>
-                    <span className="rounded border border-white/10 bg-white/5 px-2 py-0.5">Azure TTS</span>
+                {/* Live indicator */}
+                <div className="mb-4 flex items-center justify-center gap-2">
+                  <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
+                  <span className="text-xs font-medium text-green-600">
+                    Agent online · 24/7
+                  </span>
+                </div>
+
+                <p className="mb-2 text-sm text-gray-500">Call this number now</p>
+
+                {/* Phone number */}
+                <a
+                  href={`tel:${DEMO_PHONE.replace(/\s/g, '')}`}
+                  className="group mt-2 block"
+                >
+                  <div className="rounded-xl border border-brand/20 bg-brand-50 px-6 py-4 transition-all hover:border-brand/40 hover:shadow-blue-glow">
+                    <span className="font-mono text-2xl font-bold tracking-wider text-[#1e1e1e]">
+                      {DEMO_PHONE}
+                    </span>
+                    <div className="mt-2 flex items-center justify-center gap-1.5 text-xs text-brand">
+                      <span>Tap to call</span>
+                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    </div>
                   </div>
+                </a>
+
+                <p className="mt-4 text-xs text-gray-400">
+                  Standard call rates apply. No account needed.
+                </p>
+              </div>
+
+              {/* Powered by */}
+              <div className="mt-6 flex items-center gap-3 text-xs text-gray-400">
+                <span>Powered by</span>
+                <div className="flex items-center gap-2">
+                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Azure STT</span>
+                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Groq LLM</span>
+                  <span className="rounded border border-gray-200 bg-gray-50 px-2 py-0.5 text-gray-500">Azure TTS</span>
                 </div>
               </div>
             </div>
