@@ -7,7 +7,7 @@ const PUBLIC_ROUTES = ['/login', '/signup', '/auth/callback', '/onboarding']
 // Auth routes — redirect away if already logged in
 const AUTH_ROUTES = ['/login', '/signup']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow bypassing auth if NEXT_PUBLIC_DISABLE_AUTH is set

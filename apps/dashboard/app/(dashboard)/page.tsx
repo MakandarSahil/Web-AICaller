@@ -56,12 +56,20 @@ export default async function DashboardOverviewPage() {
       {/* Header */}
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 flex items-center gap-3">
             Profile
+            <Badge variant="outline" className="font-normal text-sm bg-gray-50 border-gray-200 text-gray-600 hidden sm:inline-flex mt-1">
+              {user.email}
+            </Badge>
           </h1>
-          <p className="mt-1.5 text-base text-gray-500">
-            {workspace.business_name || 'Workspace'} — Here's what is happening with your agents today.
+          <p className="mt-2 text-base text-gray-500">
+            <span className="font-medium text-gray-800">{user.user_metadata?.full_name || 'User'}</span> at <span className="font-medium text-gray-800">{workspace.business_name || 'Workspace'}</span>
           </p>
+          <div className="sm:hidden mt-2">
+            <Badge variant="outline" className="font-normal text-xs bg-gray-50 border-gray-200 text-gray-600">
+              {user.email}
+            </Badge>
+          </div>
         </div>
         <div className="flex gap-3">
           <SignOutButton />
