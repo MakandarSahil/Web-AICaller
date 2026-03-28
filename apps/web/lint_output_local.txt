@@ -1,6 +1,0 @@
-
-> web@0.0.1 lint D:\sidechicks\Web-AIcaller\apps\web
-> next lint
-
-Invalid project directory provided, no such directory: D:\sidechicks\Web-AIcaller\apps\web\lint
- ELIFECYCLE  Command failed with exit code 1.

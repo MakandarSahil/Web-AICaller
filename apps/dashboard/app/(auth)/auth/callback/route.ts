@@ -4,7 +4,9 @@ import { NextResponse } from 'next/server'
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') ?? '/onboarding'
+  const rawNext = requestUrl.searchParams.get('next') ?? '/onboarding'
+  // Only allow safe relative paths to prevent open-redirect attacks
+  const next = /^\/[^/\\]/.test(rawNext) ? rawNext : '/onboarding'
 
   if (code) {
     const supabase = await createServerSupabaseClient()

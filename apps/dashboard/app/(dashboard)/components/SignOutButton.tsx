@@ -14,9 +14,14 @@ export function SignOutButton() {
 
   const handleLogout = async () => {
     setLoading(true)
-    await supabase.auth.signOut()
-    router.refresh()
-    router.push('/login')
+    try {
+      await supabase.auth.signOut()
+      router.refresh()
+      router.push('/login')
+    } catch (err) {
+      console.error('Sign out failed:', err)
+      setLoading(false)
+    }
   }
 
   return (
