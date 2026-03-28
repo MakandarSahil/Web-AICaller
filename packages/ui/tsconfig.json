@@ -1,8 +1,7 @@
 {
-  "extends": "@repo/typescript-config/react-library.json",
+  "extends": "@aicaller/config/tsconfig/react-library",
   "compilerOptions": {
-    "outDir": "dist",
-    "strictNullChecks": true
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

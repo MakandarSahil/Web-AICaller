@@ -1,0 +1,25 @@
+{
+  "name": "@aicaller/supabase",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./server": "./src/server.ts",
+    "./middleware": "./src/middleware.ts",
+    "./types": "./src/types/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.46.2"
+  },
+  "devDependencies": {
+    "@aicaller/config": "workspace:*",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.3"
+  }
+}
