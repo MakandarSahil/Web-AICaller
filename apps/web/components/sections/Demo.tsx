@@ -75,6 +75,7 @@ export function Demo() {
                   <div className="flex flex-wrap gap-2.5 sm:gap-3 lg:max-w-[85%]">
                     {CALL_TYPES.map((type) => (
                       <button
+                        type="button"
                         key={type}
                         onClick={() => setSelectedType(type)}
                         className={`whitespace-nowrap rounded-full border px-4 py-2.5 text-[13px] font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:text-[14px] ${
@@ -93,6 +94,7 @@ export function Demo() {
                 {/* Specifically anchored Next button */}
                 <div className="absolute bottom-0 right-0">
                   <button
+                    type="button"
                     onClick={() => setStep(2)}
                     className="rounded-lg bg-[#0a1128] px-8 py-3 text-[14px] font-semibold text-white transition-all hover:bg-[#142042] active:scale-95"
                   >
@@ -104,9 +106,17 @@ export function Demo() {
               {/* Step 2 Content */}
               <div className={`absolute inset-0 flex flex-col transition-all duration-500 delay-100 ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 <div className="mt-auto">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Selected agent</p>
                   <h3 className="text-[26px] font-bold leading-[1.15] tracking-tight text-[#0a1128]">
-                    Select the type of<br />call you want to<br />receive
+                    {selectedType}
                   </h3>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="mt-4 text-[12px] font-medium text-slate-400 underline-offset-2 hover:text-brand hover:underline"
+                  >
+                    Change
+                  </button>
                 </div>
               </div>
             </div>
@@ -150,7 +160,7 @@ export function Demo() {
                     <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Industry</label>
-                        <div className="flex cursor-not-allowed items-center justify-between border-b border-slate-200 py-2.5 text-[15px] font-medium text-slate-900">
+                        <div className="flex cursor-not-allowed items-center justify-between border-b border-slate-200 py-2.5 text-[15px] font-medium text-slate-900" aria-disabled="true">
                           <span>{selectedType}</span>
                           <ChevronDown className="h-4 w-4 text-slate-400" />
                         </div>
@@ -186,6 +196,7 @@ export function Demo() {
                 {/* Specifically anchored Bottom Control bar */}
                 <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between pt-4">
                   <button
+                    type="button"
                     onClick={() => setStep(1)}
                     className="group flex items-center gap-1 text-[13px] font-bold text-[#0a1128] transition-colors hover:text-brand"
                   >
