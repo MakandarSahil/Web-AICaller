@@ -2,13 +2,14 @@
   "name": "@aicaller/config",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "exports": {
     "./tailwind": "./tailwind.config.ts",
     "./tsconfig/base": "./tsconfig/base.json",
     "./tsconfig/nextjs": "./tsconfig/nextjs.json",
     "./tsconfig/react-library": "./tsconfig/react-library.json",
-    "./eslint/base": "./eslint/base.js",
-    "./eslint/next": "./eslint/next.js"
+    "./eslint/base": "./eslint/base.cjs",
+    "./eslint/next": "./eslint/next.cjs"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

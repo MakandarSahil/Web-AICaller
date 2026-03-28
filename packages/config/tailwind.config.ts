@@ -12,6 +12,7 @@ const config: Omit<Config, 'content'> = {
           50: '#eef1fd',
           100: '#dce3fb',
           200: '#b9c7f7',
+          400: '#4b6beb',
           500: '#3655E8',
           600: '#2a45c9',
           700: '#1f35aa',
@@ -51,6 +52,13 @@ const config: Omit<Config, 'content'> = {
           'linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%)',
       },
 
+      transitionTimingFunction: {
+        'spring': 'cubic-bezier(0.25, 1, 0.5, 1)',
+      },
+      transitionDuration: {
+        '900': '900ms',
+        '1100': '1100ms',
+      },
       keyframes: {
         'fade-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },

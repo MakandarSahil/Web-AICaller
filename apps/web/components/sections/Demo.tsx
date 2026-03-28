@@ -58,7 +58,7 @@ export function Demo() {
 
           {/* Card 1: Selection Map */}
           <div
-            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-[1100ms] ease-[cubic-bezier(0.25,1,0.5,1)] hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
+            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-1100 ease-spring hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
             style={{ flex: step === 1 ? '1.4' : '1' }}
           >
             <div className="relative z-20">
@@ -69,7 +69,7 @@ export function Demo() {
             <div className="relative z-10 flex flex-1 flex-col">
 
               {/* Step 1 Content */}
-              <div className={`absolute inset-0 flex flex-col transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] ${step === 1 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+              <div className={`absolute inset-0 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 {/* Blank space to push content down mirroring the reference */}
                 <div className="mt-auto flex w-full flex-col font-light">
                   <h3 className="mb-8 max-w-[320px] text-[28px] leading-[1.2] tracking-tight text-[#0a1128] sm:text-[34px]">
@@ -106,7 +106,7 @@ export function Demo() {
               </div>
 
               {/* Step 2 Content */}
-              <div className={`absolute inset-0 flex flex-col transition-all duration-[900ms] delay-200 ease-[cubic-bezier(0.25,1,0.5,1)] ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+              <div className={`absolute inset-0 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 <div className="mt-auto">
                   <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Selected agent</p>
                   <h3 className="text-[26px] font-bold leading-[1.15] tracking-tight text-[#0a1128]">
@@ -132,7 +132,7 @@ export function Demo() {
 
           {/* Card 2: Form Display */}
           <div
-            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-[1100ms] ease-[cubic-bezier(0.25,1,0.5,1)] hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
+            className="group relative flex flex-col overflow-hidden rounded-3xl bg-white p-8 transition-all duration-1100 ease-spring hover:shadow-[0_8px_40px_rgba(255,255,255,0.08)] md:p-12 lg:p-14"
             style={{ flex: step === 1 ? '1' : '2' }}
           >
             <div className="relative z-20">
@@ -141,7 +141,7 @@ export function Demo() {
 
             <div className="relative z-10 mt-6 flex-1">
               {/* Step 1 Content */}
-              <div className={`absolute inset-0 flex flex-col transition-all duration-[900ms] ease-[cubic-bezier(0.25,1,0.5,1)] ${step === 1 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
+              <div className={`absolute inset-0 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
                 <div className="mt-auto">
                   <h3 className="text-[28px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[34px]">
                     Enter your<br />information
@@ -150,7 +150,7 @@ export function Demo() {
               </div>
 
               {/* Step 2 Content */}
-              <div className={`absolute inset-0 flex flex-col transition-all duration-[900ms] delay-200 ease-[cubic-bezier(0.25,1,0.5,1)] ${step === 2 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-4 opacity-0 pointer-events-none'}`}>
+              <div className={`absolute inset-0 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-4 opacity-0 pointer-events-none'}`}>
                 <div className="flex flex-1 flex-col justify-center gap-10 md:flex-row lg:items-center lg:gap-16">
                   <div className="flex-[0.9]">
                     <h3 className="text-[28px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[34px]">

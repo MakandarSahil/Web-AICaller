@@ -2,13 +2,25 @@ import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const code = searchParams.get('code')
+  const requestUrl = new URL(request.url)
+  const code = requestUrl.searchParams.get('code')
+  const rawNext = requestUrl.searchParams.get('next') ?? '/onboarding'
+  // Only allow safe relative paths to prevent open-redirect attacks
+  const next = /^\/[^/\\]/.test(rawNext) ? rawNext : '/onboarding'
 
   if (code) {
     const supabase = await createServerSupabaseClient()
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (!error) {
+      return NextResponse.redirect(new URL(next, requestUrl.origin))
+    } else {
+      console.error('Email verification error:', error.message)
+      // If error, redirect to login with error parameter to show properly in UI
+      return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, requestUrl.origin))
+    }
   }
 
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  // Fallback if no code is present
+  return NextResponse.redirect(new URL('/login', requestUrl.origin))
 }

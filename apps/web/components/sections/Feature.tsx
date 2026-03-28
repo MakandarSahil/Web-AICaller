@@ -131,7 +131,7 @@ export function Features() {
                 <div style={{ perspective: '1200px' }}>
                 <div
                   /* Adjusted smaller sizes */
-                  className={`group relative h-[380px] w-[280px] sm:h-[420px] sm:w-[310px] md:h-[440px] md:w-[325px] lg:h-[460px] lg:w-[340px] transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] ${
+                  className={`group relative h-[380px] w-[280px] sm:h-[420px] sm:w-[310px] md:h-[440px] md:w-[325px] lg:h-[460px] lg:w-[340px] transition-transform duration-700 ease-spring ${
                     isOpen ? 'cursor-default' : 'cursor-pointer hover:-translate-y-2'
                   }`}
                   style={{
