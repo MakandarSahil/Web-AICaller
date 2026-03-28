@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Phone, ArrowRight } from 'lucide-react'
-import Footer4Col from '@/components/ui/footer-column'
+import { Footer as UIFooter } from '@/components/ui/footer'
+import { Github } from 'lucide-react'
 
 const DASHBOARD_URL =
   process.env.NEXT_PUBLIC_DASHBOARD_URL ?? 'https://dashboard.callmind.ai'
@@ -37,7 +38,38 @@ export function Footer() {
         </div>
       </section>
 
-      <Footer4Col />
+      <UIFooter
+        logo={
+          <div className="flex items-center gap-1 group">
+            <span className="text-xl font-bold tracking-tight text-[#1e1e1e]">
+              call<span className="font-extrabold">Mind</span>
+            </span>
+            <span className="text-[10px] font-bold text-brand bg-brand-50 px-1.5 py-0.5 rounded-md ml-0.5 uppercase tracking-wider">
+              AI
+            </span>
+          </div>
+        }
+        socialLinks={[
+          {
+            icon: <Github className="h-5 w-5" />,
+            href: "https://github.com/callmind",
+            label: "GitHub",
+          },
+        ]}
+        mainLinks={[
+          { href: "/about", label: "About Us" },
+          { href: "#features", label: "Features" },
+          { href: "#pricing", label: "Pricing" },
+        ]}
+        legalLinks={[
+          { href: "/privacy", label: "Privacy Policy" },
+          { href: "/terms", label: "Terms of Service" },
+        ]}
+        copyright={{
+          text: "© 2025 CallMind AI",
+          license: "All rights reserved.",
+        }}
+      />
     </>
   )
 }

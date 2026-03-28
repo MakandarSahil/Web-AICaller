@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@aicaller/ui";
 import NumberFlow from "@number-flow/react";
 import { CheckCheck } from "lucide-react";
 import { useState } from "react";
@@ -40,7 +40,7 @@ const plans = [
     buttonText: "Start Pro trial",
     buttonHref: `${DASHBOARD_URL}/signup?plan=pro`,
     buttonVariant: "default",
-    popular: true,
+    popular: false,
     features: [
       "Unlimited agents",
       "Unlimited knowledge bases",
@@ -157,22 +157,15 @@ export function Pricing() {
             key={plan.name}
           >
             <Card
-              className={`relative h-full flex flex-col border-neutral-200 transition-all ${
-                plan.popular ? "ring-2 ring-[#206ce8] bg-[#f0f5ff] shadow-xl shadow-blue-900/10" : "bg-white"
-              }`}
+              className="relative h-full flex flex-col border-neutral-200 transition-all bg-white"
             >
               <CardHeader className="text-left pb-4">
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-2 h-8">
                   <h3 className="text-xl font-semibold text-gray-900">
                     {plan.name}
                   </h3>
-                  {plan.popular && (
-                    <span className="bg-[#206ce8] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
-                      Most popular
-                    </span>
-                  )}
                 </div>
-                <div className="flex items-baseline mb-2">
+                <div className="flex items-baseline mb-2 min-h-[48px]">
                   {plan.priceLabel ? (
                     <span className="text-4xl font-bold text-gray-900 tracking-tight">
                       {plan.priceLabel}
@@ -190,7 +183,7 @@ export function Pricing() {
                     / {isYearly && plan.yearlyPeriod ? plan.yearlyPeriod : plan.period}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500 min-h-[40px]">{plan.description}</p>
+                <p className="text-sm text-gray-500 h-[60px]">{plan.description}</p>
               </CardHeader>
 
               <CardContent className="pt-0 flex-1 flex flex-col">
