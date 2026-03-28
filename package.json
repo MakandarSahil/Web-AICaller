@@ -1,22 +1,27 @@
 {
-  "name": "Web-AIcaller",
+  "name": "aicaller-frontend",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:dashboard": "turbo run dev --filter=dashboard",
     "lint": "turbo run lint",
-    "lint:web": "turbo run lint --filter=web",
-    "lint:dashboard": "turbo run lint --filter=dashboard",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "gen:types": "supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > packages/supabase/src/types/database.types.ts",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
-    "turbo": "^2.8.14",
-    "typescript": "5.9.2"
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.6",
+    "supabase": "^2.84.4",
+    "turbo": "^2.3.3",
+    "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@9.12.3",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9.0",
+    "pnpm": ">=9"
   }
 }

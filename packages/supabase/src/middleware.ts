@@ -1,0 +1,42 @@
+import { createServerClient } from '@supabase/ssr'
+import { type NextRequest, NextResponse } from 'next/server'
+import type { Database } from './types/database.types'
+
+/**
+ * Call this inside apps/dashboard/middleware.ts to refresh
+ * the Supabase auth session on every request.
+ *
+ * This is required to keep the session alive — Supabase uses
+ * short-lived JWTs that need refreshing via the middleware.
+ */
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request })
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          )
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // Refresh session — do NOT remove this line
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return { supabaseResponse, user }
+}
