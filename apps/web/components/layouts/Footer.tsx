@@ -52,7 +52,7 @@ export function Footer() {
         socialLinks={[
           {
             icon: <Github className="h-5 w-5" />,
-            href: "https://github.com/callmind",
+            href: "https://github.com/MakandarSahil/Web-AICaller",
             label: "GitHub",
           },
         ]}
