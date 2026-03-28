@@ -1,14 +1,13 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import {
   Handshake,
   Share2,
   Globe,
   Layers,
   GitBranch,
-  Plus,
-  X,
   ChevronLeft,
   ChevronRight,
   LucideIcon
@@ -17,7 +16,6 @@ import {
 interface FeatureCardData {
   id: number
   title: string
-  closedTitle: React.ReactNode
   description: string
   icon: LucideIcon
   bgImage: string
@@ -28,11 +26,6 @@ const CALLERS_FEATURES: FeatureCardData[] = [
     id: 1,
     icon: Handshake,
     bgImage: '/multiligual-agent.png',
-    closedTitle: (
-      <>
-        Human time <br /> where it matters
-      </>
-    ),
     title: 'Human time where it matters',
     description:
       'Callers keeps your teams on the moments where judgment and presence actually change the outcome, not on routine questions and follow‑ups.',
@@ -41,11 +34,6 @@ const CALLERS_FEATURES: FeatureCardData[] = [
     id: 2,
     icon: Share2,
     bgImage: '/omni-channel.png',
-    closedTitle: (
-      <>
-        Coverage across <br /> the whole lifecycle
-      </>
-    ),
     title: 'Coverage across the whole lifecycle',
     description:
       'From first outreach to win‑back, Callers handles simple questions, checks, nudges, and outreach across every stage of the customer journey.',
@@ -54,11 +42,6 @@ const CALLERS_FEATURES: FeatureCardData[] = [
     id: 3,
     icon: Globe,
     bgImage: '/white-glove-care.png',
-    closedTitle: (
-      <>
-        AI that feels human, <br /> not robotic
-      </>
-    ),
     title: 'AI that feels human, not robotic',
     description:
       'Calls and messages are handled the way a good human would, so customers get quick, natural responses without feeling the AI underneath.',
@@ -67,11 +50,6 @@ const CALLERS_FEATURES: FeatureCardData[] = [
     id: 4,
     icon: Layers,
     bgImage: '/native-integrations.png',
-    closedTitle: (
-      <>
-        Built into your <br /> existing stack
-      </>
-    ),
     title: 'Built into your existing stack',
     description:
       'Callers plugs into the systems you already run, answering, qualifying, re‑engaging, and routing through your current tools in seconds.',
@@ -80,11 +58,6 @@ const CALLERS_FEATURES: FeatureCardData[] = [
     id: 5,
     icon: GitBranch,
     bgImage: '/1white-glove-care.png',
-    closedTitle: (
-      <>
-        Clear routing between <br /> AI and people
-      </>
-    ),
     title: 'Clear routing between AI and people',
     description:
       'Simple work goes to Callers, high‑stakes moments go to your team—so customer work is always routed to the right place.',
@@ -174,10 +147,13 @@ export function Features() {
                       style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
                     >
                       {/* Full Background Image - natively contains text and plus button */}
-                      <img 
+                      <Image 
                         src={feature.bgImage} 
                         alt={feature.title} 
-                        className="absolute inset-0 h-full w-full object-cover" 
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 280px, (max-width: 768px) 310px, (max-width: 1024px) 325px, 340px"
+                        priority={index === 0}
                       />
                     </div>
 
