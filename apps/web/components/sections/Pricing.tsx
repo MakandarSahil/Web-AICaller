@@ -1,11 +1,9 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { TimelineContent } from "@/components/ui/timeline-animation";
 import NumberFlow from "@number-flow/react";
 import { CheckCheck } from "lucide-react";
-import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 const DASHBOARD_URL =
@@ -86,43 +84,29 @@ const PricingSwitch = ({ onSwitch }: { onSwitch: (value: string) => void }) => {
 
   return (
     <div className="flex justify-center">
-      <div className="relative z-50 mx-auto flex w-fit rounded-full bg-neutral-50 border border-gray-200 p-1">
+      <div className="relative z-10 mx-auto flex w-fit rounded-full bg-neutral-50 border border-gray-200 p-1">
         <button
           onClick={() => handleSwitch("0")}
           className={`relative z-10 w-fit sm:h-12 h-10 rounded-full sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors ${
             selected === "0"
-              ? "text-white"
+              ? "text-white border-4 shadow-sm shadow-[#206ce8] border-[#206ce8] bg-gradient-to-t from-[#206ce8] via-blue-500 to-[#4d8bf0]"
               : "text-muted-foreground hover:text-black"
           }`}
         >
-          {selected === "0" && (
-            <motion.span
-              layoutId={"switch"}
-              className="absolute top-0 left-0 sm:h-12 h-10 w-full rounded-full border-4 shadow-sm shadow-[#206ce8] border-[#206ce8] bg-gradient-to-t from-[#206ce8] via-blue-500 to-[#4d8bf0]"
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            />
-          )}
           <span className="relative">Monthly</span>
         </button>
 
         <button
           onClick={() => handleSwitch("1")}
-          className={`relative z-10 w-fit sm:h-12 h-8 flex-shrink-0 rounded-full sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors ${
+          className={`relative z-10 w-fit sm:h-12 h-10 flex-shrink-0 rounded-full sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors ${
             selected === "1"
-              ? "text-white"
+              ? "text-white border-4 shadow-sm shadow-[#206ce8] border-[#206ce8] bg-gradient-to-t from-[#206ce8] via-blue-500 to-[#4d8bf0]"
               : "text-muted-foreground hover:text-black"
           }`}
         >
-          {selected === "1" && (
-            <motion.span
-              layoutId={"switch"}
-              className="absolute top-0 left-0 sm:h-12 h-10 w-full rounded-full border-4 shadow-sm shadow-[#206ce8] border-[#206ce8] bg-gradient-to-t from-[#206ce8] via-blue-500 to-[#4d8bf0]"
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
-            />
-          )}
           <span className="relative flex items-center gap-2">
             Yearly
-            <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-black">
+            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${selected === "1" ? "bg-white/20 text-white" : "bg-blue-50 text-black"}`}>
               Save 20%
             </span>
           </span>
@@ -134,30 +118,12 @@ const PricingSwitch = ({ onSwitch }: { onSwitch: (value: string) => void }) => {
 
 export function Pricing() {
   const [isYearly, setIsYearly] = useState(false);
-  const pricingRef = useRef<HTMLDivElement>(null);
-
-  const revealVariants = {
-    visible: (i: number) => ({
-      y: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      transition: {
-        delay: i * 0.4,
-        duration: 0.5,
-      },
-    }),
-    hidden: {
-      filter: "blur(10px)",
-      y: -20,
-      opacity: 0,
-    },
-  };
 
   const togglePricingPeriod = (value: string) =>
     setIsYearly(Number.parseInt(value) === 1);
 
   return (
-    <section id="pricing" className="px-4 py-24 lg:py-32 min-h-screen mx-auto relative bg-neutral-100" ref={pricingRef}>
+    <section id="pricing" className="px-4 py-24 lg:py-32 min-h-screen mx-auto relative bg-neutral-100">
       <div
         className="absolute top-0 left-[10%] right-[10%] w-[80%] h-full z-0 pointer-events-none"
         style={{
@@ -168,44 +134,27 @@ export function Pricing() {
       />
 
       <div className="text-center mb-6 max-w-3xl mx-auto">
-        <TimelineContent
-          as="h2"
-          animationNum={0}
-          timelineRef={pricingRef}
-          customVariants={revealVariants}
+        <h2
           className="md:text-6xl sm:text-4xl text-3xl font-bold tracking-tight text-[#1e1e1e] mb-4"
         >
           Simple, honest pricing
-        </TimelineContent>
+        </h2>
 
-        <TimelineContent
-          as="p"
-          animationNum={2}
-          timelineRef={pricingRef}
-          customVariants={revealVariants}
+        <p
           className="sm:text-base text-sm text-gray-500 sm:w-[70%] w-[80%] mx-auto"
         >
           Start free, scale when you need to. No hidden fees. No per-minute billing surprises.
-        </TimelineContent>
+        </p>
       </div>
 
-      <TimelineContent
-        as="div"
-        animationNum={3}
-        timelineRef={pricingRef}
-        customVariants={revealVariants}
-      >
+      <div>
         <PricingSwitch onSwitch={togglePricingPeriod} />
-      </TimelineContent>
+      </div>
 
       <div className="grid md:grid-cols-3 max-w-7xl gap-6 py-12 mx-auto relative z-10">
         {plans.map((plan, index) => (
-          <TimelineContent
+          <div
             key={plan.name}
-            as="div"
-            animationNum={4 + index}
-            timelineRef={pricingRef}
-            customVariants={revealVariants}
           >
             <Card
               className={`relative h-full flex flex-col border-neutral-200 transition-all ${
@@ -247,11 +196,7 @@ export function Pricing() {
               <CardContent className="pt-0 flex-1 flex flex-col">
                 <Link
                   href={plan.buttonHref}
-                  className={`block w-full text-center p-3 text-sm font-semibold rounded-lg transition-all mb-6 ${
-                    plan.popular
-                      ? "bg-[#206ce8] hover:bg-[#1a55b8] text-white shadow-md shadow-blue-500/25 border border-blue-500"
-                      : "bg-white hover:bg-neutral-50 border-2 border-neutral-200 text-neutral-900"
-                  }`}
+                  className={`block w-full text-center py-2 px-4 text-sm font-medium rounded-full transition-all mb-6 text-white border-4 shadow-sm shadow-[#206ce8] border-[#206ce8] bg-gradient-to-t from-[#206ce8] via-blue-500 to-[#4d8bf0] hover:brightness-110`}
                 >
                   {plan.buttonText}
                 </Link>
@@ -270,7 +215,7 @@ export function Pricing() {
                 </ul>
               </CardContent>
             </Card>
-          </TimelineContent>
+          </div>
         ))}
       </div>
     </section>
