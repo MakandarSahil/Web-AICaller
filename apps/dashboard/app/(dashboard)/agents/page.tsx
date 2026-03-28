@@ -10,7 +10,7 @@ export default function AgentsPage() {
           <h1 className="text-3xl font-bold text-white">Agents</h1>
           <p className="text-slate-400">Manage your AI agents</p>
         </div>
-        <Link href="/dashboard/agents/new">
+        <Link href="/agents/new">
           <Button>Create Agent</Button>
         </Link>
       </div>

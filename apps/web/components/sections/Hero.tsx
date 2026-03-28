@@ -96,6 +96,8 @@ export function Hero() {
             >
               <Link
                 href={`${DASHBOARD_URL}/signup`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-blue px-7 py-3.5 text-base gap-2"
               >
                 Start for free

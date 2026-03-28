@@ -129,6 +129,9 @@ export function Pricing() {
               {/* CTA */}
               <Link
                 href={plan.ctaHref}
+                {...(plan.ctaHref.startsWith('http')
+                  ? { target: '_blank' as const, rel: 'noopener noreferrer' as const }
+                  : {})}
                 className={`group inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all ${
                   plan.highlight
                     ? 'bg-brand text-white hover:bg-brand-dark shadow-blue-glow hover:shadow-lg'

@@ -4,26 +4,30 @@
 
 @layer base {
   :root {
-    --background:         9 24 11;
-    --foreground:         240 253 244;
-    --card:               13 26 14;
-    --card-foreground:    240 253 244;
-    --popover:            13 26 14;
-    --popover-foreground: 240 253 244;
-    --primary:            16 185 129;
-    --primary-foreground: 8 15 9;
-    --secondary:          17 32 19;
-    --secondary-foreground: 240 253 244;
-    --muted:              17 32 19;
-    --muted-foreground:   156 163 175;
-    --accent:             16 185 129;
-    --accent-foreground:  8 15 9;
-    --destructive:        239 68 68;
-    --destructive-foreground: 240 253 244;
-    --border:             255 255 255;
-    --input:              17 32 19;
-    --ring:               16 185 129;
+    --background:         0 0% 100%;
+    --foreground:         0 0% 12%;
+    --card:               0 0% 100%;
+    --card-foreground:    0 0% 12%;
+    --popover:            0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+    --primary:            231 78% 56%;
+    --primary-foreground: 0 0% 100%;
+    --secondary:          220 14% 96%;
+    --secondary-foreground: 0 0% 12%;
+    --muted:              220 14% 96%;
+    --muted-foreground:   220 9% 46%;
+    --accent:             220 14% 96%;
+    --accent-foreground:  0 0% 12%;
+    --destructive:        0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border:             220 13% 91%;
+    --input:              220 13% 91%;
+    --ring:               231 78% 56%;
     --radius:             0.75rem;
+
+    --brand-blue:         #3655E8;
+    --brand-blue-hover:   #2a45c9;
+    --brand-blue-light:   #eef1fd;
 
     --sidebar-width:      256px;
     --header-height:      56px;
@@ -41,53 +45,52 @@
   }
 
   body {
-    background-color: #080f09;
-    color: #f0fdf4;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
   ::-webkit-scrollbar { width: 5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: rgba(16, 185, 129, 0.2);
+    background: rgba(54, 85, 232, 0.3);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(16, 185, 129, 0.4);
+    background: rgba(54, 85, 232, 0.5);
   }
 }
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.05);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
   .glass-hover {
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(16, 185, 129, 0.2);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(54, 85, 232, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #f0fdf4 0%, #10b981 50%, #059669 100%);
+    background-image: linear-gradient(135deg, #3655E8 0%, #5b7cf7 100%);
   }
 
   /* Dashboard sidebar item */
   .sidebar-item {
     @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all;
-    @apply text-content-secondary hover:bg-white/5 hover:text-content;
+    @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
   }
 
   .sidebar-item.active {
-    @apply bg-brand-500/10 text-brand-400;
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    @apply bg-indigo-50 text-indigo-700;
   }
 
   /* Page header */
@@ -96,11 +99,31 @@
   }
 
   .page-title {
-    @apply text-2xl font-bold tracking-tight text-content;
+    @apply text-2xl font-bold tracking-tight text-gray-900;
   }
 
   /* Stat card */
   .stat-card {
-    @apply glass rounded-xl p-5;
+    @apply bg-white border border-gray-200 shadow-sm rounded-xl p-5;
   }
+}
+
+/* ────────────────────────────────────────────────────────────────────────── */
+/*  Auth page — testimonial auto-scroll animation                            */
+/* ────────────────────────────────────────────────────────────────────────── */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 25s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
 }
