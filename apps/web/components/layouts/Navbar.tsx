@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Menu, X, Mic } from 'lucide-react'
+import { Menu, X, Phone } from 'lucide-react'
 
 const NAV_LINKS = [
   { label: 'How it works', href: '#how-it-works' },
@@ -29,18 +29,18 @@ export function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'glass border-b border-white/[0.06] py-3'
+          ? 'bg-white/80 backdrop-blur-xl border-b border-gray-200/60 py-3'
           : 'bg-transparent py-5'
       }`}
     >
       <nav className="container-wide flex items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500/20 ring-1 ring-brand-500/30 transition-all group-hover:bg-brand-500/30 group-hover:ring-brand-500/50">
-            <Mic className="h-4 w-4 text-brand-400" />
-          </div>
-          <span className="text-lg font-semibold tracking-tight text-content">
-            Call<span className="text-brand-400">Mind</span>
+        <Link href="/" className="flex items-center gap-1 group">
+          <span className="text-xl font-bold tracking-tight text-[#1e1e1e]">
+            call<span className="font-extrabold">Mind</span>
+          </span>
+          <span className="text-[10px] font-bold text-brand bg-brand-50 px-1.5 py-0.5 rounded-md ml-0.5 uppercase tracking-wider">
+            AI
           </span>
         </Link>
 
@@ -50,7 +50,7 @@ export function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm text-content-secondary transition-colors hover:text-content"
+                className="text-sm font-medium text-gray-600 transition-colors hover:text-[#1e1e1e]"
               >
                 {link.label}
               </a>
@@ -62,21 +62,21 @@ export function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href={`${DASHBOARD_URL}/login`}
-            className="text-sm text-content-secondary transition-colors hover:text-content"
+            className="text-sm font-medium text-gray-600 transition-colors hover:text-[#1e1e1e]"
           >
             Sign in
           </Link>
           <Link
             href={`${DASHBOARD_URL}/signup`}
-            className="btn-glow rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white shadow-glow-sm transition-all hover:bg-brand-600 hover:shadow-glow"
+            className="btn-blue px-5 py-2.5 text-sm"
           >
-            Get started free
+            Book a Meeting
           </Link>
         </div>
 
         {/* Mobile menu toggle */}
         <button
-          className="flex items-center justify-center rounded-lg p-2 text-content-secondary transition-colors hover:text-content md:hidden"
+          className="flex items-center justify-center rounded-lg p-2 text-gray-600 transition-colors hover:text-[#1e1e1e] md:hidden"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -86,32 +86,32 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="glass border-t border-white/[0.06] px-4 py-4 md:hidden">
+        <div className="bg-white border-t border-gray-100 px-4 py-4 md:hidden shadow-lg">
           <ul className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="block rounded-lg px-3 py-2.5 text-sm text-content-secondary transition-colors hover:bg-white/5 hover:text-content"
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-[#1e1e1e]"
                 >
                   {link.label}
                 </a>
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex flex-col gap-2 border-t border-white/[0.06] pt-4">
+          <div className="mt-4 flex flex-col gap-2 border-t border-gray-100 pt-4">
             <Link
               href={`${DASHBOARD_URL}/login`}
-              className="block rounded-lg px-3 py-2.5 text-center text-sm text-content-secondary transition-colors hover:bg-white/5 hover:text-content"
+              className="block rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-[#1e1e1e]"
             >
               Sign in
             </Link>
             <Link
               href={`${DASHBOARD_URL}/signup`}
-              className="block rounded-lg bg-brand-500 px-3 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-brand-600"
+              className="block btn-blue px-3 py-2.5 text-center text-sm"
             >
-              Get started free
+              Book a Meeting
             </Link>
           </div>
         </div>

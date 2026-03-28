@@ -54,8 +54,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#080f09',
-  colorScheme: 'dark',
+  themeColor: '#ffffff',
+  colorScheme: 'light',
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,10 +70,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("dark", GeistSans.variable, GeistMono.variable, "font-sans", geist.variable)}
+      className={cn(GeistSans.variable, GeistMono.variable, "font-sans", geist.variable)}
       suppressHydrationWarning
     >
-      <body className="min-h-screen bg-[#080f09] font-sans text-[#f0fdf4] antialiased">
+      <body className="min-h-screen bg-white font-sans text-[#1e1e1e] antialiased">
         {children}
       </body>
     </html>
