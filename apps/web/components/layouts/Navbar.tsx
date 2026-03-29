@@ -62,15 +62,19 @@ export function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href={`${DASHBOARD_URL}/login`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm font-medium text-gray-600 transition-colors hover:text-[#1e1e1e]"
           >
             Sign in
           </Link>
           <Link
             href={`${DASHBOARD_URL}/signup`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-blue px-5 py-2.5 text-sm"
           >
-            Book a Meeting
+            Sign up
           </Link>
         </div>
 
@@ -103,15 +107,19 @@ export function Navbar() {
           <div className="mt-4 flex flex-col gap-2 border-t border-gray-100 pt-4">
             <Link
               href={`${DASHBOARD_URL}/login`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="block rounded-lg px-3 py-2.5 text-center text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-[#1e1e1e]"
             >
               Sign in
             </Link>
             <Link
               href={`${DASHBOARD_URL}/signup`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="block btn-blue px-3 py-2.5 text-center text-sm"
             >
-              Book a Meeting
+              Sign up
             </Link>
           </div>
         </div>

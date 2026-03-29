@@ -57,6 +57,8 @@ export function About() {
             <div className="mt-8 flex items-center gap-4">
               <Link
                 href={`${DASHBOARD_URL}/signup`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group btn-blue px-6 py-3 text-sm gap-2"
               >
                 Join us

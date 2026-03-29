@@ -43,31 +43,38 @@ export function Hero() {
               Next-Gen AI Voice Agents <br />
               For Businesses and Agencies
             </h1>
-          </div>
 
-          {/* Subtext */}
-          <p className="mt-6 text-lg text-gray-500 max-w-lg mx-auto animate-[fadeUp_0.8s_ease_forwards] [animation-delay:0.2s]">
-            Create artificial intelligence powered, human-like voice agents ready
-            to handle inbound and outbound calls 24/7
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="mt-10 flex justify-center gap-4 flex-wrap animate-[fadeUp_0.8s_ease_forwards] [animation-delay:0.3s]">
-            <Link
-              href="#pricing"
-              className="bg-transparent text-gray-900 border-2 border-gray-900 px-8 h-[48px] rounded-[14px] font-bold flex items-center justify-center gap-2 hover:bg-gray-900 hover:text-white transition-all duration-300 transform hover:-translate-y-0.5"
+            {/* Subheadline */}
+            <p
+              className="mt-6 animate-fade-in-up text-lg leading-relaxed text-gray-500 max-w-lg"
+              style={{ animationDelay: '0.1s' }}
             >
-              Start a Free Trial
-              <ArrowRight className="h-[18px] w-[18px]" strokeWidth={2.5} />
-            </Link>
+              CallMind sits at the front line, handling the simple questions,
+              checks, and outreach across the customer lifecycle in the same way
+              a good human would. It answers, qualifies, and routes through your
+              existing stack in seconds.
+            </p>
 
-            <Link
-              href="#demo"
-              className="bg-transparent text-gray-900 border-2 border-gray-900 px-8 h-[48px] rounded-[14px] font-bold flex items-center justify-center gap-2 hover:bg-gray-900 hover:text-white transition-all duration-300 transform hover:-translate-y-0.5"
+            {/* CTA buttons */}
+            <div
+              className="mt-10 flex animate-fade-in-up flex-wrap items-center gap-4"
+              style={{ animationDelay: '0.2s' }}
             >
-              <Mic className="h-[18px] w-[18px]" strokeWidth={2.5} />
-              Try a conversation
-            </Link>
+              <Link
+                href={`${DASHBOARD_URL}/signup`}
+                className="btn-blue px-7 py-3.5 text-base gap-2"
+              >
+                Start for free
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a
+                href="#demo"
+                className="btn-outline px-7 py-3.5 text-base gap-2"
+              >
+                <Phone className="h-4 w-4" />
+                Try a live call
+              </a>
+            </div>
           </div>
         </div>
 

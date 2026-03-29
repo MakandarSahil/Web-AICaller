@@ -16,8 +16,8 @@ export default function HomePage() {
         <Hero />
         <Comparison />
         <HowItWorks />
-        <Features />
         <Demo />
+        <Features />
         <Pricing />
         <About />
       </main>
