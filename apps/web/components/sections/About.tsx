@@ -1,27 +1,23 @@
-import Link from 'next/link'
 import { GraduationCap, Lightbulb, Target } from 'lucide-react'
-
-const DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_DASHBOARD_URL ?? 'https://dashboard.callmind.ai'
 
 const VALUES = [
   {
     icon: GraduationCap,
     title: 'Built in college, for the world',
     description:
-      'CallMind started as a final year Computer Engineering project. We built what we wished existed a platform that actually works.',
+      'CallMind started as a final year Computer Engineering project. We built what we wished existed — a platform that actually works.',
   },
   {
     icon: Lightbulb,
     title: 'Real technology, real results',
     description:
-      'Azure Speech, Groq LLMs, and Azure Neural TTS not toys. The same infrastructure that powers enterprise voice systems.',
+      'Azure Speech, Groq LLMs, and Azure Neural TTS — not toys. The same infrastructure that powers enterprise voice systems.',
   },
   {
     icon: Target,
     title: 'Voice AI for everyone',
     description:
-      'Not just large companies. Any business a clinic, a restaurant, a consultancy should be able to deploy an intelligent voice agent.',
+      'Not just large companies. Any business — a clinic, a restaurant, a consultancy — should be able to deploy an intelligent voice agent.',
   },
 ]
 
