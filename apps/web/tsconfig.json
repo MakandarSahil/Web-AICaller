@@ -2,6 +2,7 @@
   "extends": "@aicaller/config/tsconfig/nextjs",
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@/*": ["./*"]
     }

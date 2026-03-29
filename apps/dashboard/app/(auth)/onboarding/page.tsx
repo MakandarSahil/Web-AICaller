@@ -46,10 +46,10 @@ export default function OnboardingPage() {
       const { data } = await supabase.auth.getUser()
       if (!data.user?.id) throw new Error('Not authenticated')
 
-      const { error: updateError } = await supabase
-        .from('workspaces')
-        // @ts-expect-error — supabase-js v2 types narrow .update() to 'never' here
-        .update({
+        const { error: updateError } = await supabase
+          .from('workspaces')
+          // @ts-ignore — Next.js build sometimes flags ts-expect-error as unused
+          .update({
           business_name: businessName,
           industry,
           size: size as 'xs' | 'sm' | 'md' | 'lg' | 'xl',
