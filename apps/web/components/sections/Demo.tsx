@@ -62,6 +62,9 @@ export function Demo() {
           {/* ── Card 1 ── */}
           <div
             onClick={() => step === 2 && setStep(1)}
+            role={step === 2 && !isMobile ? 'button' : undefined}
+            tabIndex={step === 2 && !isMobile ? 0 : undefined}
+            onKeyDown={step === 2 && !isMobile ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setStep(1) } } : undefined}
             className={`group relative flex w-full flex-col overflow-hidden rounded-2xl bg-white
               [transition:flex_300ms_ease-in-out,box-shadow_300ms]
               hover:shadow-[0_10px_20px_rgba(0,0,0,0.06)]
@@ -174,6 +177,9 @@ export function Demo() {
           {/* ── Card 2 ── */}
           <div
             onClick={() => !isMobile && step === 1 && setStep(2)}
+            role={step === 1 && !isMobile ? 'button' : undefined}
+            tabIndex={step === 1 && !isMobile ? 0 : undefined}
+            onKeyDown={step === 1 && !isMobile ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setStep(2) } } : undefined}
             className={`group relative flex w-full flex-col overflow-hidden rounded-2xl bg-white
               [transition:flex_300ms_ease-in-out,box-shadow_300ms]
               hover:shadow-[0_10px_20px_rgba(0,0,0,0.06)]

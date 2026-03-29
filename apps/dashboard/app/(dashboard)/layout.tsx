@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { getProfile } from '@aicaller/supabase/queries/profile'
@@ -21,7 +22,7 @@ import { DashboardShell } from '@/components/layout/dashboard-shell'
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
   const supabase = await createServerSupabaseClient()
 

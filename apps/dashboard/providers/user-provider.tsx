@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import type { Tables } from '@aicaller/supabase'
 
 /**
@@ -30,7 +31,7 @@ export function UserProvider({
   children,
   value,
 }: {
-  children: React.ReactNode
+  children: ReactNode
   value: UserContextValue
 }) {
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import type { ReactNode } from 'react'
 import { QueryProvider } from '@/providers/query-provider'
 import './globals.css'
 import { Geist } from 'next/font/google'
@@ -21,9 +22,9 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body>
         <QueryProvider>
           {children}

@@ -1,5 +1,5 @@
 import type { SupabaseClientType } from './_types'
-import type { Database, TablesUpdate } from '../types'
+import type { TablesUpdate } from '../types'
 
 /**
  * Fetch the authenticated user's workspace.
@@ -49,11 +49,11 @@ export async function updateWorkspace(
  */
 export async function getWorkspaceStats(supabase: SupabaseClientType) {
   const [
-    { count: agentsCount },
-    { count: kbCount },
-    { count: callersCount },
-    { count: numbersCount },
-    { data: recentAgents }
+    { count: agentsCount, error: agentsErr },
+    { count: kbCount, error: kbErr },
+    { count: callersCount, error: callersErr },
+    { count: numbersCount, error: numbersErr },
+    { data: recentAgents, error: recentErr }
   ] = await Promise.all([
     supabase.from('agents').select('*', { count: 'exact', head: true }),
     supabase.from('knowledge_bases').select('*', { count: 'exact', head: true }),
@@ -62,11 +62,17 @@ export async function getWorkspaceStats(supabase: SupabaseClientType) {
     supabase.from('agents').select('*').order('created_at', { ascending: false }).limit(5)
   ])
 
+  if (agentsErr) throw agentsErr
+  if (kbErr) throw kbErr
+  if (callersErr) throw callersErr
+  if (numbersErr) throw numbersErr
+  if (recentErr) throw recentErr
+
   return {
-    agentsCount: agentsCount || 0,
-    kbCount: kbCount || 0,
-    callersCount: callersCount || 0,
-    numbersCount: numbersCount || 0,
-    recentAgents: recentAgents || []
+    agentsCount: agentsCount ?? 0,
+    kbCount: kbCount ?? 0,
+    callersCount: callersCount ?? 0,
+    numbersCount: numbersCount ?? 0,
+    recentAgents: recentAgents ?? []
   }
 }

@@ -10,7 +10,7 @@
 CallMind is an AI voice + chat agent platform. Users configure AI agents, upload knowledge bases,
 assign phone numbers, and let agents handle inbound calls and text sessions automatically.
 
-**Stack:** Next.js 14 (App Router) · Supabase (Postgres + Auth + Storage + Realtime) · TanStack Query · TypeScript · Tailwind CSS · Turborepo
+**Stack:** Next.js 16 (App Router) · Supabase (Postgres + Auth + Storage + Realtime) · TanStack Query · TypeScript · Tailwind CSS · Turborepo
 
 ---
 
@@ -18,7 +18,7 @@ assign phone numbers, and let agents handle inbound calls and text sessions auto
 
 ```
 apps/
-  dashboard/                ← Main user-facing dashboard (Next.js 14)
+  dashboard/                ← Main user-facing dashboard (Next.js 16)
     app/                    ← Next.js routes ONLY (pages, layouts, route handlers)
     hooks/                  ← TanStack Query hooks (one file per table)
     lib/                    ← Utilities: query-client.ts, query-keys.ts

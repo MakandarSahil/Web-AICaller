@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@aicaller/supabase/client'
 import { useUser } from '@/providers/user-provider'
@@ -39,8 +40,8 @@ export function OverviewClient({
   const { profile, workspace, email } = useUser()
   const router = useRouter()
 
-  // Determine user display info
-  const fullName = profile.full_name || 'User'
+  // Determine user display info — profile/workspace may be null during trigger lag
+  const fullName = profile?.full_name || 'User'
   const firstName = fullName.split(' ')[0]
 
   const handleLogout = async () => {
@@ -62,7 +63,7 @@ export function OverviewClient({
           </div>
           <p className="text-gray-600 mt-2">
             <span className="text-gray-900 font-medium">{firstName}</span> at{' '}
-            <span className="text-gray-900 font-medium">{workspace.name || 'Workspace'}</span>
+            <span className="text-gray-900 font-medium">{workspace?.name || 'Workspace'}</span>
           </p>
         </div>
         <Button variant="outline" className="text-gray-700 shadow-sm" onClick={handleLogout}>
@@ -137,7 +138,9 @@ export function OverviewClient({
             <CardTitle className="text-lg font-semibold text-gray-900">Recent Agents</CardTitle>
             <CardDescription className="text-gray-500">Your most recently created voice agents</CardDescription>
           </div>
-          <Button variant="link" className="text-blue-600 font-medium px-0"> View all </Button>
+          <Button variant="link" className="text-blue-600 font-medium px-0" asChild>
+            <Link href="/agents">View all</Link>
+          </Button>
         </CardHeader>
         <CardContent className="p-0">
           <Table>

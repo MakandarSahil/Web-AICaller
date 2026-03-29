@@ -1,5 +1,5 @@
 import type { SupabaseClientType } from './_types'
-import type { Database, TablesUpdate } from '../types'
+import type { TablesUpdate } from '../types'
 
 /**
  * Fetch the authenticated user's profile row.

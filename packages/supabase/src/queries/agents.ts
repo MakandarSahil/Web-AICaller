@@ -1,5 +1,5 @@
 import type { SupabaseClientType } from './_types'
-import type { Database, TablesInsert, TablesUpdate } from '../types'
+import type { TablesInsert, TablesUpdate } from '../types'
 
 /**
  * Fetch all agents in the authenticated user's workspace.
