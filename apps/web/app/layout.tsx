@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
-import { Geist } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const playfair = Playfair_Display({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-serif' });
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(GeistSans.variable, GeistMono.variable, "font-sans", geist.variable)}
+      className={cn(GeistSans.variable, GeistMono.variable, geist.variable, playfair.variable, "font-sans")}
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-white font-sans text-[#1e1e1e] antialiased">
