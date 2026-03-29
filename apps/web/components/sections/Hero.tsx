@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { Mic, Phone, Bot, Sparkles, Globe, ArrowRight } from "lucide-react";
 
-// <<<<<<< HEAD
-// const DASHBOARD_URL =
-//   process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "https://dashboard.callmind.ai";
-// =======
-// import { DASHBOARD_URL } from '@/lib/urls'
-// >>>>>>> f26a120466fadd7b0a596800c750b4fd14bb94f8
+import { DASHBOARD_URL } from '@/lib/urls';
 
 export function Hero() {
   return (
