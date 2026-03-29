@@ -308,9 +308,6 @@ importers:
       '@aicaller/config':
         specifier: workspace:*
         version: link:../config
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../eslint-config
       '@types/node':
         specifier: ^22.0.0
         version: 22.19.15
