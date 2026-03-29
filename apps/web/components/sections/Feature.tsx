@@ -1,134 +1,190 @@
+'use client'
+
+import { useState, useRef } from 'react'
+import Image from 'next/image'
 import {
-  Mic,
-  Brain,
-  Volume2,
-  Clock,
-  BookOpen,
-  Phone,
-  BarChart2,
-  Zap,
-  Shield,
+  Handshake,
+  Share2,
+  Globe,
+  Layers,
+  GitBranch,
+  ChevronLeft,
+  ChevronRight,
+  LucideIcon
 } from 'lucide-react'
 
-const FEATURES = [
+interface FeatureCardData {
+  id: number
+  title: string
+  description: string
+  icon: LucideIcon
+  bgImage: string
+}
+
+const CALLERS_FEATURES: FeatureCardData[] = [
   {
-    icon: Mic,
-    title: 'Real-time STT',
+    id: 1,
+    icon: Handshake,
+    bgImage: '/multiligual-agent.png',
+    title: 'Human time where it matters',
     description:
-      'Azure Cognitive Speech streams audio with sub-200ms latency. Your agent hears and responds while the caller is still speaking.',
-    highlight: true,
+      'Callers keeps your teams on the moments where judgment and presence actually change the outcome, not on routine questions and follow‑ups.',
   },
   {
-    icon: Brain,
-    title: 'LLM-powered responses',
+    id: 2,
+    icon: Share2,
+    bgImage: '/omni-channel.png',
+    title: 'Coverage across the whole lifecycle',
     description:
-      'Groq-powered Llama 3.3 70B gives human-quality answers grounded in your knowledge base — every time, on every call.',
-    highlight: false,
+      'From first outreach to win‑back, Callers handles simple questions, checks, nudges, and outreach across every stage of the customer journey.',
   },
   {
-    icon: Volume2,
-    title: 'Natural TTS',
+    id: 3,
+    icon: Globe,
+    bgImage: '/white-glove-care.png',
+    title: 'AI that feels human, not robotic',
     description:
-      'Azure Neural TTS converts responses to natural speech sentence-by-sentence, so callers hear answers as they are generated — not after.',
-    highlight: true,
+      'Calls and messages are handled the way a good human would, so customers get quick, natural responses without feeling the AI underneath.',
   },
   {
-    icon: BookOpen,
-    title: 'Knowledge base',
+    id: 4,
+    icon: Layers,
+    bgImage: '/native-integrations.png',
+    title: 'Built into your existing stack',
     description:
-      'Upload PDFs, Word docs, or plain text. Your agent reads everything and cites it accurately. No hallucinations from your own docs.',
-    highlight: false,
+      'Callers plugs into the systems you already run, answering, qualifying, re‑engaging, and routing through your current tools in seconds.',
   },
   {
-    icon: Clock,
-    title: '24/7 availability',
+    id: 5,
+    icon: GitBranch,
+    bgImage: '/1white-glove-care.png',
+    title: 'Clear routing between AI and people',
     description:
-      'No shifts, no sick days, no hold music. Your agent picks up every call instantly — at 3am on a Sunday the same as 9am Monday.',
-    highlight: false,
-  },
-  {
-    icon: Phone,
-    title: 'Any phone number',
-    description:
-      'Use a number from our platform pool or bring your own Twilio number. Assign different agents to different numbers.',
-    highlight: false,
-  },
-  {
-    icon: BarChart2,
-    title: 'Conversation logs',
-    description:
-      'Every call is recorded with a full transcript, auto-generated summary, and caller history. Review, edit, and learn.',
-    highlight: false,
-  },
-  {
-    icon: Zap,
-    title: 'Barge-in detection',
-    description:
-      'Callers can interrupt mid-response. The agent stops, listens, and responds to the new input — just like a human would.',
-    highlight: true,
-  },
-  {
-    icon: Shield,
-    title: 'Secure by design',
-    description:
-      'Row-level security on every table. Service role key never touches the frontend. Your data stays yours.',
-    highlight: false,
+      'Simple work goes to Callers, high‑stakes moments go to your team—so customer work is always routed to the right place.',
   },
 ]
 
 export function Features() {
+  const [activeCardId, setActiveCardId] = useState<number | null>(1) // Default to opening the 1st card
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400
+      scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <section id="features" className="section py-24 lg:py-32 bg-white">
-      <div className="container-wide">
-        {/* Header */}
-        <div className="mb-16 text-center">
-          <span className="badge-pill">
-            Features
-          </span>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#1e1e1e] sm:text-4xl lg:text-5xl">
-            Everything you need,
-            <br />
-            <span className="text-gradient-blue">nothing you don&apos;t</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
-            A complete voice AI platform — STT, LLM, TTS, knowledge base, analytics — all wired
-            together so you don't have to.
-          </p>
-        </div>
+    <section id="features" className="relative w-full overflow-hidden bg-[#fafafa] py-24 pb-32 lg:py-32 xl:py-40">
+      
+      {/* Header Area constrained to standard wide container */}
+      <div className="mx-auto mb-8 flex w-full max-w-[1300px] items-end justify-between px-4 sm:px-6 lg:px-8">
+        <h2 className="max-w-[700px] text-[36px] font-medium leading-[1.15] tracking-[-0.02em] text-[#1e1e1e] sm:text-[44px] md:text-[52px] lg:text-[56px] xl:text-[60px]">
+          Route every customer
+          <br className="hidden sm:block" />
+          moment to the right place
+        </h2>
 
-        {/* Feature grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, description, highlight }) => (
-            <div
-              key={title}
-              className={`group card-light relative overflow-hidden rounded-2xl p-6 transition-all ${
-                highlight
-                  ? 'border-brand/20 hover:border-brand/40'
-                  : ''
-              }`}
-            >
-              {/* Subtle glow on highlighted cards */}
-              {highlight && (
-                <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand/5 blur-2xl" />
-              )}
-
-              <div className="relative">
-                <div
-                  className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl ${
-                    highlight
-                      ? 'bg-brand-50 text-brand'
-                      : 'bg-gray-50 text-gray-600'
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-[#1e1e1e]">{title}</h3>
-                <p className="text-sm leading-relaxed text-gray-500">{description}</p>
-              </div>
-            </div>
-          ))}
+        {/* Navigation Controls */}
+        <div className="hidden shrink-0 items-center justify-end gap-3 md:flex">
+          <button
+            onClick={() => scroll('left')}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200/50 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800 focus:outline-none"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200/50 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-800 focus:outline-none"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
         </div>
       </div>
+
+      {/* Carousel Track: Unconstrained max-width, bleeds off the right edge, left padding dynamically aligns to container! */}
+      <div className="relative w-full">
+        <div
+          ref={scrollContainerRef}
+          className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-12 pt-4 pr-8 md:gap-6 lg:gap-8 [&::-webkit-scrollbar]:hidden"
+          style={{ 
+            msOverflowStyle: 'none', 
+            scrollbarWidth: 'none',
+            /* Ensures every snapped card flawlessly aligns with the Header */
+            scrollPaddingLeft: 'max(16px, calc(50vw - 650px + 32px))'
+          }}
+        >
+          {CALLERS_FEATURES.map((feature, index) => {
+            const isOpen = activeCardId === feature.id
+            const Icon = feature.icon
+
+            return (
+              <div
+                key={feature.id}
+                className="snap-start shrink-0"
+                style={{ 
+                  /* ONLY the first item has the spatial buffer. This allows cards to smoothly bleed out of the left screen edge during scroll! */
+                  paddingLeft: index === 0 ? 'max(16px, calc(50vw - 650px + 32px))' : '0px'
+                }}
+              >
+                <div style={{ perspective: '1200px' }}>
+                <div
+                  /* Adjusted smaller sizes */
+                  className={`group relative h-[380px] w-[280px] sm:h-[420px] sm:w-[310px] md:h-[440px] md:w-[325px] lg:h-[460px] lg:w-[340px] transition-transform duration-700 ease-spring ${
+                    isOpen ? 'cursor-default' : 'cursor-pointer hover:-translate-y-2'
+                  }`}
+                  style={{
+                    transformStyle: 'preserve-3d',
+                    transform: isOpen ? 'rotateY(180deg)' : 'rotateY(0deg)'
+                  }}
+                  onClick={() => setActiveCardId(isOpen ? null : feature.id)}
+                >
+                    
+                    {/* --- FRONT FACE (CLOSED STATE) --- */}
+                    <div 
+                      className="absolute inset-0 flex flex-col overflow-hidden rounded-[2rem] bg-transparent shadow-sm transition-shadow duration-700 group-hover:shadow-[0_20px_40px_rgba(67,82,255,0.3)]"
+                      style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+                    >
+                      {/* Full Background Image - natively contains text and plus button */}
+                      <Image 
+                        src={feature.bgImage} 
+                        alt={feature.title} 
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 280px, (max-width: 768px) 310px, (max-width: 1024px) 325px, 340px"
+                        priority={index === 0}
+                      />
+                    </div>
+
+                    {/* --- BACK FACE (OPEN/EXPANDED STATE) --- */}
+                    <div 
+                      className="absolute inset-0 flex flex-col overflow-hidden rounded-[24px] bg-white p-8 shadow-[0_4px_24px_rgb(0,0,0,0.06)] scale-[1.01]"
+                      style={{ 
+                        backfaceVisibility: 'hidden', 
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)' // Flipped inherently so it faces backward
+                      }}
+                    >
+                      <div className="relative z-10 flex h-full flex-col">
+                        <div className="mb-6 inline-flex items-center justify-center text-[#4352ff]">
+                          <Icon className="h-5 w-5" strokeWidth={2} />
+                        </div>
+                        <h3 className="mb-4 pr-2 text-[22px] font-semibold leading-[1.3] tracking-tight text-[#111]">
+                          {feature.title}
+                        </h3>
+                        <p className="text-[15px] font-medium leading-relaxed text-[#333]">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
     </section>
   )
 }

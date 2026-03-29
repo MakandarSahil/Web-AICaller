@@ -22,6 +22,8 @@ export function Footer() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Link
               href={`${DASHBOARD_URL}/signup`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-[#3655E8] transition-all hover:bg-gray-100 hover:shadow-lg"
             >
               Get started free
