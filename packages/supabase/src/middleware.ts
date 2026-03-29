@@ -3,14 +3,18 @@ import { type NextRequest, NextResponse } from 'next/server'
 import type { Database } from './types/database.types'
 
 /**
- * Call this inside apps/dashboard/proxy.ts to refresh
+ * Call this inside apps/dashboard/middleware.ts to refresh
  * the Supabase auth session on every request.
  *
  * This is required to keep the session alive — Supabase uses
  * short-lived JWTs that need refreshing via the middleware.
  */
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+  let supabaseResponse = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
 
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -24,7 +28,11 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          supabaseResponse = NextResponse.next({ request })
+          supabaseResponse = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )

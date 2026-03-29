@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@source "../";
+@config "../tailwind.config.ts";
 
 /* ─────────────────────────────────────────────────────────────────────────────
    CSS Variables — Clean white + blue accent theme (Callers.ai inspired)
@@ -97,7 +97,13 @@
 @layer components {
   /* Section container */
   .section {
-    @apply relative w-full px-4 sm:px-6 lg:px-8;
+    @apply relative w-full px-4;
+  }
+  @media (min-width: 640px) {
+    .section { @apply px-6; }
+  }
+  @media (min-width: 1024px) {
+    .section { @apply px-8; }
   }
 
   .container-tight {

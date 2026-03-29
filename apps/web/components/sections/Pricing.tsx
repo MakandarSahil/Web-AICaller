@@ -6,8 +6,7 @@ import { CheckCheck } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
-const DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "https://dashboard.callmind.ai";
+import { DASHBOARD_URL } from "@/lib/urls";
 
 const plans = [
   {
