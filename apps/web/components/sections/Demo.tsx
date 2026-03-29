@@ -14,7 +14,6 @@ const CALL_TYPES = [
   'Survey',
   'Customer Service',
   'Debt Collection',
-
 ]
 
 // Pure solid dotted text effect without stroke outline
@@ -23,8 +22,8 @@ const DottedNumber = ({ num }: { num: string | number }) => (
     className={`${playfair.className} mb-2 text-[70px] font-black leading-none tracking-tighter sm:text-[80px]`}
     style={{
       color: 'transparent',
-      backgroundImage: 'radial-gradient(circle, #0a1128 5px, transparent 5.5px)',
-      backgroundSize: '10px 10px',
+      backgroundImage: 'radial-gradient(circle, #0a1128 3.5px, transparent 4px)',
+      backgroundSize: '12px 12px',
       backgroundPosition: 'left top',
       WebkitBackgroundClip: 'text',
       backgroundClip: 'text'
@@ -69,7 +68,7 @@ export function Demo() {
             <div className="relative z-10 grid flex-1">
 
               {/* Step 1 Content */}
-              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-lg:hidden'}`}>
+              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 {/* Flowing content with responsive bottom margin to clear absolute button on desktop */}
                 <div className="mt-auto flex w-full flex-col font-light">
                   <h3 className="mb-6 max-w-[320px] text-[28px] leading-[1.2] tracking-tight text-[#0a1128] sm:text-[34px]">
@@ -106,7 +105,7 @@ export function Demo() {
               </div>
 
               {/* Step 2 Content */}
-              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-lg:hidden'}`}>
+              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
                 <div className="mt-auto">
                   <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Selected agent</p>
                   <h3 className="text-[26px] font-bold leading-[1.15] tracking-tight text-[#0a1128]">
@@ -140,7 +139,7 @@ export function Demo() {
 
             <div className="relative z-10 mt-6 grid flex-1 pb-4">
               {/* Step 1 Content */}
-              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-4 opacity-0 pointer-events-none max-lg:hidden'}`}>
+              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 ease-spring ${step === 1 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-4 opacity-0 pointer-events-none'}`}>
                 <div className="mt-auto">
                   <h3 className="text-[28px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[34px]">
                     Enter your<br />information
@@ -149,7 +148,7 @@ export function Demo() {
               </div>
 
               {/* Step 2 Content */}
-              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-4 opacity-0 pointer-events-none max-lg:hidden'}`}>
+              <div className={`col-start-1 row-start-1 flex flex-col transition-all duration-900 delay-200 ease-spring ${step === 2 ? 'z-10 translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-4 opacity-0 pointer-events-none'}`}>
                 <div className="flex w-full flex-col justify-center gap-8 pb-4 md:flex-row lg:items-center lg:gap-10">
                   <div className="w-full md:w-[45%]">
                     <h3 className="text-[26px] font-light leading-tight tracking-tight text-[#0a1128] sm:text-[30px] lg:text-[32px]">
@@ -195,7 +194,7 @@ export function Demo() {
                 </div>
 
                 {/* Native Flowing Bottom Control bar */}
-                <div className="mt-8 flex items-center justify-between pt-4 sm:mt-auto">
+                <div className="mt-8 flex items-center justify-between pt-4">
                   <Button
                     variant="ghost"
                     onClick={() => setStep(1)}
