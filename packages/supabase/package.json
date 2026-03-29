@@ -7,19 +7,21 @@
     "./client": "./src/client.ts",
     "./server": "./src/server.ts",
     "./middleware": "./src/middleware.ts",
-    "./types": "./src/types/index.ts"
+    "./types": "./src/types/index.ts",
+    "./queries/*": "./src/queries/*.ts",
+    "./queries": "./src/queries/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.46.2"
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.100.1"
   },
   "devDependencies": {
     "@aicaller/config": "workspace:*",
     "@types/node": "^22.0.0",
-    "typescript": "^5.6.3"
+    "typescript": "^5.7.2"
   }
 }

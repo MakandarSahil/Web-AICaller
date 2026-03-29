@@ -80,7 +80,7 @@ CallMind agent to experience the product before signing up.
 ### Branch Strategy
 ```
 feature/*  → PR to develop
-develop    → auto-deploys dashboard-dev (dashboard-aicaller-dev on Vercel)
+develop    → auto-deploys dashboard-dev + web-dev
 main       → approval gate → deploys web-prod + dashboard-prod
 ```
 
@@ -96,8 +96,9 @@ This is fine ONLY if `DASHBOARD_VERCEL_PROJECT_ID_DEV` and `DASHBOARD_VERCEL_PRO
 are **different** Vercel project IDs. If they are the same, every develop push overwrites
 production. **Verify these two secrets are different before pushing real UI.**
 
-**Web CI/CD** — trigger: push to `main` or `develop` on `apps/web/**` or `packages/**`
-- Always deploys to production (secret: `WEB_VERCEL_PROJECT_ID`)
+**Web CI/CD** — trigger: push to `develop` or `main` on `apps/web/**` or `packages/**`
+- `develop` → environment: `web-dev` (secret: `WEB_VERCEL_PROJECT_ID_DEV`)
+- `main` → environment: `web-production` (secret: `WEB_VERCEL_PROJECT_ID_PROD`)
 
 **Required GitHub Secrets:**
 ```
@@ -105,7 +106,12 @@ VERCEL_TOKEN
 VERCEL_ORG_ID
 DASHBOARD_VERCEL_PROJECT_ID_DEV
 DASHBOARD_VERCEL_PROJECT_ID_PROD
-WEB_VERCEL_PROJECT_ID
+WEB_VERCEL_PROJECT_ID_DEV
+WEB_VERCEL_PROJECT_ID_PROD
+DEV_DASHBOARD_URL
+PROD_DASHBOARD_URL
+DEV_WEB_URL
+PROD_WEB_URL
 ```
 
 ### 2. aicaller-backend (separate repo)
@@ -741,16 +747,20 @@ NEXT_PUBLIC_DEMO_PHONE_NUMBER=+91XXXXXXXXXX    # demo Twilio number for /demo pa
 NEXT_PUBLIC_SUPABASE_URL
 NEXT_PUBLIC_SUPABASE_ANON_KEY
 NEXT_PUBLIC_FASTAPI_URL=https://api.callmind.com
-NEXT_PUBLIC_APP_URL=https://dashboard.callmind.com
+NEXT_PUBLIC_APP_URL=https://dashboard-aicaller-prod.vercel.app
 NEXT_PUBLIC_DUMMY_QUERY=false
 NEXT_PUBLIC_DUMMY_API_KEYS=false
 ```
 
-### Vercel (web-prod environment)
+### Vercel (web environment)
 ```bash
-NEXT_PUBLIC_APP_URL=https://callmind.com
-NEXT_PUBLIC_DASHBOARD_URL=https://dashboard.callmind.com
-NEXT_PUBLIC_DEMO_PHONE_NUMBER=+91XXXXXXXXXX
+# Production
+NEXT_PUBLIC_APP_URL=https://web-aicaller-prod.vercel.app
+NEXT_PUBLIC_DASHBOARD_URL=https://dashboard-aicaller-prod.vercel.app
+
+# Development (develop branch)
+NEXT_PUBLIC_APP_URL=https://web-aicaller-dev.vercel.app
+NEXT_PUBLIC_DASHBOARD_URL=https://dashboard-aicaller-dev.vercel.app
 ```
 
 ### FastAPI (.env on VM / GitHub Secrets)
@@ -763,7 +773,7 @@ REDIS_URL=redis://redis:6379/0
 AZURE_SPEECH_KEY=xxx · AZURE_SPEECH_REGION=eastus
 GROQ_API_KEY=xxx · GROQ_MODEL=llama-3.3-70b-versatile
 TWILIO_ACCOUNT_SID=xxx · TWILIO_AUTH_TOKEN=xxx
-CORS_ORIGINS=https://dashboard.callmind.com
+CORS_ORIGINS=https://dashboard-aicaller-prod.vercel.app,https://dashboard-aicaller-dev.vercel.app
 ACME_EMAIL=xxx@xxx.com · API_DOMAIN=api.callmind.com
 ```
 

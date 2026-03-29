@@ -2,10 +2,10 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@aicaller/supabase/middleware'
 
 // Public routes — no auth required
-const PUBLIC_ROUTES = ['/login', '/signup', '/auth/callback', '/onboarding']
+const PUBLIC_ROUTES = ['/login', '/signup', '/auth/callback', '/otp']
 
 // Auth routes — redirect away if already logged in
-const AUTH_ROUTES = ['/login', '/signup']
+const AUTH_ROUTES = ['/login', '/signup', '/otp']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl

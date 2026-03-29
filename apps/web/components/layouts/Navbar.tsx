@@ -12,8 +12,7 @@ const NAV_LINKS = [
   { label: 'About', href: '#about' },
 ]
 
-const DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_DASHBOARD_URL ?? 'https://dashboard.callmind.ai'
+import { DASHBOARD_URL } from '@/lib/urls'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)

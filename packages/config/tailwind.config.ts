@@ -36,6 +36,7 @@ const config: Omit<Config, 'content'> = {
 
       fontFamily: {
         sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Playfair Display', 'serif'],
       },
 
       boxShadow: {
