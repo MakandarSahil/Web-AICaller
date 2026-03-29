@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@aicaller/supabase/client'
+import type { Database } from '@aicaller/supabase/types'
 import { useUser } from '@/providers/user-provider'
 import {
   Card,
