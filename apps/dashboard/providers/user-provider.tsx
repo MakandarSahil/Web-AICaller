@@ -24,6 +24,7 @@ import type { Tables } from '@aicaller/supabase'
 type UserContextValue = {
   profile: Tables<'profiles'>
   workspace: Tables<'workspaces'>
+  email: string
 }
 
 const UserContext = createContext<UserContextValue | null>(null)
@@ -39,12 +40,14 @@ export function UserProvider({
 }
 
 /**
- * Access profile and workspace from any client component.
+ * Access profile, workspace, and email from any client component.
  * Throws if used outside <UserProvider> — this is intentional.
  * Every page inside (dashboard) layout has the provider, so it should never throw in practice.
  */
 export function useUser() {
   const ctx = useContext(UserContext)
-  // Fallback to empty if not found, to prevent hard crash during layout transitions
-  return ctx || { profile: null as any, workspace: null as any }
+  if (!ctx) {
+    throw new Error('useUser must be called within a UserProvider')
+  }
+  return ctx
 }

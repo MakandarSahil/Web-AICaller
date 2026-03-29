@@ -30,7 +30,7 @@ export async function getAgents(supabase: SupabaseClientType) {
         )
       )
     `)
-    .order('created_at', { ascending: true })
+    .order('created_at', { ascending: false })
 
   if (error) throw error
   return data

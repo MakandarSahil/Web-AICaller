@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@aicaller/supabase/client'
 import { useUser } from '@/providers/user-provider'
@@ -19,10 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from '@aicaller/ui'
-import { Bot, Book, Users, Phone, LogOut, ArrowUpRight } from 'lucide-react'
+import { Bot, Book, Users, Phone, LogOut } from 'lucide-react'
+import type { Tables } from '@aicaller/supabase'
 
 interface OverviewClientProps {
-  initialAgents: any[]
+  initialAgents: Tables<'agents'>[]
   agentsCount: number
   kbCount: number
   callersCount: number
@@ -36,17 +36,15 @@ export function OverviewClient({
   callersCount,
   phoneNumbersCount,
 }: OverviewClientProps) {
-  const { profile, workspace } = useUser()
+  const { profile, workspace, email } = useUser()
   const router = useRouter()
-  const supabase = createClient()
 
   // Determine user display info
   const fullName = profile.full_name || 'User'
   const firstName = fullName.split(' ')[0]
-  // Note: if email isn't in profile, we fallback to a placeholder; Ideally fetched from auth session
-  const email = (profile as any).email || 'user@example.com'
 
   const handleLogout = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/login')
   }
@@ -84,11 +82,8 @@ export function OverviewClient({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-gray-900">{agentsCount || initialAgents?.length || 0}</div>
-            <p className="text-xs text-gray-500 mt-2 flex items-center font-medium">
-              <ArrowUpRight className="h-4 w-4 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-semibold mr-1">Active</span> across system
-            </p>
+            <div className="text-3xl font-bold tracking-tight text-gray-900">{agentsCount ?? 0}</div>
+            <p className="text-xs text-gray-500 mt-2 font-medium">In your workspace</p>
           </CardContent>
         </Card>
 
@@ -101,11 +96,8 @@ export function OverviewClient({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-gray-900">{kbCount || 0}</div>
-             <p className="text-xs text-gray-500 mt-2 flex items-center font-medium">
-              <ArrowUpRight className="h-4 w-4 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-semibold mr-1">Active</span> across system
-            </p>
+            <div className="text-3xl font-bold tracking-tight text-gray-900">{kbCount ?? 0}</div>
+            <p className="text-xs text-gray-500 mt-2 font-medium">In your workspace</p>
           </CardContent>
         </Card>
 
@@ -118,28 +110,22 @@ export function OverviewClient({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-gray-900">{callersCount || 0}</div>
-             <p className="text-xs text-gray-500 mt-2 flex items-center font-medium">
-              <ArrowUpRight className="h-4 w-4 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-semibold mr-1">Active</span> across system
-            </p>
+            <div className="text-3xl font-bold tracking-tight text-gray-900">{callersCount ?? 0}</div>
+            <p className="text-xs text-gray-500 mt-2 font-medium">In your workspace</p>
           </CardContent>
         </Card>
 
         {/* Phone Numbers */}
         <Card className="shadow-sm border-gray-100 rounded-xl relative overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-             <CardTitle className="text-sm font-medium text-gray-500">Phone Numbers</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-500">Phone Numbers</CardTitle>
             <div className="p-2 bg-orange-50 text-orange-500 rounded-lg">
               <Phone className="h-5 w-5" />
             </div>
           </CardHeader>
           <CardContent>
-             <div className="text-3xl font-bold tracking-tight text-gray-900">{phoneNumbersCount || 0}</div>
-             <p className="text-xs text-gray-500 mt-2 flex items-center font-medium">
-              <ArrowUpRight className="h-4 w-4 mr-1 text-emerald-500" />
-              <span className="text-emerald-500 font-semibold mr-1">Active</span> across system
-            </p>
+            <div className="text-3xl font-bold tracking-tight text-gray-900">{phoneNumbersCount ?? 0}</div>
+            <p className="text-xs text-gray-500 mt-2 font-medium">In your workspace</p>
           </CardContent>
         </Card>
       </div>
@@ -174,7 +160,7 @@ export function OverviewClient({
                         </div>
                         <div className="flex flex-col">
                           <span className="font-semibold text-gray-900">{agent.name}</span>
-                          <span className="text-sm text-gray-500 mt-0.5 max-w-[300px] truncate" title={agent.persona}>
+                          <span className="text-sm text-gray-500 mt-0.5 max-w-[300px] truncate" title={agent.persona ?? undefined}>
                             {agent.persona || 'No persona description available.'}
                           </span>
                         </div>
@@ -182,12 +168,12 @@ export function OverviewClient({
                     </TableCell>
                     <TableCell className="py-4">
                       <div className="flex items-center gap-2">
-                         <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-100 font-medium shadow-none">
-                            {agent.llm_model}
-                         </Badge>
-                         <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-100 font-medium shadow-none">
-                            {agent.tts_model}
-                         </Badge>
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-100 font-medium shadow-none">
+                          {agent.llm_model}
+                        </Badge>
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-100 font-medium shadow-none">
+                          {agent.tts_model}
+                        </Badge>
                       </div>
                     </TableCell>
                     <TableCell className="py-4">
@@ -196,7 +182,7 @@ export function OverviewClient({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right pr-6 py-4 text-sm text-gray-500 font-medium tracking-tight">
-                       {agent.created_at ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(agent.created_at)) : '-'}
+                      {agent.created_at ? new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(agent.created_at)) : '-'}
                     </TableCell>
                   </TableRow>
                 ))
@@ -214,3 +200,4 @@ export function OverviewClient({
     </div>
   )
 }
+

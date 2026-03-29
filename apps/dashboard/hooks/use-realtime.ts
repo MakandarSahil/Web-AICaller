@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@aicaller/supabase/client'
 // import { conversationKeys } from '@/lib/query-keys'
@@ -37,11 +37,14 @@ import type { Tables } from '@aicaller/supabase'
  * @param conversationId — the active conversation to subscribe to.
  */
 export function useMessageRealtime(conversationId: string) {
-  const supabase = createClient()
+  // useRef stabilises the client reference — createClient() would return a new
+  // object on every render, causing the effect to re-subscribe endlessly.
+  const supabaseRef = useRef(createClient())
   const qc = useQueryClient()
 
   useEffect(() => {
     if (!conversationId) return
+    const supabase = supabaseRef.current
 
     const channel = supabase
       .channel(`messages:${conversationId}`)
@@ -68,7 +71,7 @@ export function useMessageRealtime(conversationId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [conversationId, qc, supabase])
+  }, [conversationId, qc])
 }
 
 /**
@@ -78,11 +81,12 @@ export function useMessageRealtime(conversationId: string) {
  * Usage: call inside the conversation detail page component.
  */
 export function useConversationStatusRealtime(conversationId: string) {
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
   const qc = useQueryClient()
 
   useEffect(() => {
     if (!conversationId) return
+    const supabase = supabaseRef.current
 
     const channel = supabase
       .channel(`conversation-status:${conversationId}`)
@@ -118,5 +122,5 @@ export function useConversationStatusRealtime(conversationId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [conversationId, qc, supabase])
+  }, [conversationId, qc])
 }

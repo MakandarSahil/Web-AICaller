@@ -29,18 +29,19 @@ export default async function DashboardLayout({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Fetch profile + workspace in parallel
+  // Fetch profile + workspace in parallel.
+  // Any error (network, missing profile row) redirects to /login rather than crashing.
   const [profile, workspace] = await Promise.all([
     getProfile(supabase),
     getWorkspace(supabase),
-  ])
+  ]).catch((): never => redirect('/login'))
 
   // Workspace existence check
   if (!workspace) redirect('/onboarding')
 
   return (
-    <UserProvider value={{ profile, workspace }}>
-      <DashboardShell profile={profile} workspace={workspace}>
+    <UserProvider value={{ profile, workspace, email: user.email ?? '' }}>
+      <DashboardShell>
         {children}
       </DashboardShell>
     </UserProvider>
