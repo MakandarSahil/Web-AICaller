@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layouts/Navbar'
 import { Footer } from '@/components/layouts/Footer'
 import { Hero } from '@/components/sections/Hero'
+import { Comparison } from '@/components/sections/Comparison'
 import { HowItWorks } from '@/components/sections/HowItWorks'
 import { Features } from '@/components/sections/Feature'
 import { Demo } from '@/components/sections/Demo'
@@ -13,6 +14,7 @@ export default function HomePage() {
       <Navbar />
       <main>
         <Hero />
+        <Comparison />
         <HowItWorks />
         <Features />
         <Demo />
