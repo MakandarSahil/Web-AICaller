@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 import type { Database } from './types/database.types'
 
 /**
- * Call this inside apps/dashboard/proxy.ts to refresh
+ * Call this inside apps/dashboard/middleware.ts to refresh
  * the Supabase auth session on every request.
  *
  * This is required to keep the session alive — Supabase uses

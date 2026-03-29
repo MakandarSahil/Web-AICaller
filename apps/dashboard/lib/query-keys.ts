@@ -33,27 +33,27 @@ export const agentKeys = {
 
 // ── Add below as pages are built ──────────────────────────────────────────────
 
-// export const knowledgeBaseKeys = {
-//   all: ['knowledge-bases'] as const,
-//   detail: (id: string) => ['knowledge-bases', id] as const,
-//   documents: (kbId: string) => ['knowledge-bases', kbId, 'documents'] as const,
-// }
+export const knowledgeBaseKeys = {
+  all: ['knowledge-bases'] as const,
+  detail: (id: string) => ['knowledge-bases', id] as const,
+  documents: (kbId: string) => ['knowledge-bases', kbId, 'documents'] as const,
+}
 
-// export const conversationKeys = {
-//   all: ['conversations'] as const,
-//   detail: (id: string) => ['conversations', id] as const,
-//   messages: (conversationId: string) => ['conversations', conversationId, 'messages'] as const,
-// }
+export const conversationKeys = {
+  all: ['conversations'] as const,
+  detail: (id: string) => ['conversations', id] as const,
+  messages: (conversationId: string) => ['conversations', conversationId, 'messages'] as const,
+}
 
-// export const phoneNumberKeys = {
-//   all: ['phone-numbers'] as const,
-// }
+export const phoneNumberKeys = {
+  all: ['phone-numbers'] as const,
+}
 
-// export const apiKeyKeys = {
-//   all: ['api-keys'] as const,
-// }
+export const apiKeyKeys = {
+  all: ['api-keys'] as const,
+}
 
-// export const callerKeys = {
-//   all: ['callers'] as const,
-//   detail: (id: string) => ['callers', id] as const,
-// }
+export const callerKeys = {
+  all: ['callers'] as const,
+  detail: (id: string) => ['callers', id] as const,
+}

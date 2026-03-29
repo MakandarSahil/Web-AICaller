@@ -1,8 +1,7 @@
 import Link from 'next/link'
 import { Phone, ArrowRight } from 'lucide-react'
 
-const DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_DASHBOARD_URL ?? 'https://dashboard.callmind.ai'
+import { DASHBOARD_URL } from '@/lib/urls'
 
 export function Hero() {
   return (

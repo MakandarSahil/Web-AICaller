@@ -14,11 +14,12 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "eslint": "9",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "supabase": "^2.84.4",
     "turbo": "^2.8.21",
-    "typescript": "^6.0.2"
+    "typescript": "^5.5.4"
   },
   "packageManager": "pnpm@9.12.3",
   "engines": {

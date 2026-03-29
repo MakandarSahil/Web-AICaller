@@ -1,9 +1,10 @@
-import type { createBrowserClient } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '../types/database.types'
 
 /**
  * Shared SupabaseClient type for both server and browser environments.
- * Using ReturnType<typeof createBrowserClient<Database>> ensures compatibility
- * between @aicaller/supabase/client and @aicaller/supabase/server.
+ * Using SupabaseClient<Database> provides full type safety for .from('table')
+ * operations across browser and server clients.
  */
-export type SupabaseClientType = ReturnType<typeof createBrowserClient<Database>>
+export type SupabaseClientType = SupabaseClient<Database>
+

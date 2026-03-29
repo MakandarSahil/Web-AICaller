@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@aicaller/supabase/client'
-// import { conversationKeys } from '@/lib/query-keys'
+import { conversationKeys } from '@/lib/query-keys'
 import type { Tables } from '@aicaller/supabase'
 
 /**
@@ -59,8 +59,7 @@ export function useMessageRealtime(conversationId: string) {
         (payload) => {
           const newMessage = payload.new as Tables<'messages'>
           qc.setQueryData(
-            // conversationKeys.messages(conversationId),  // uncomment when key is defined
-            ['conversations', conversationId, 'messages'],
+            conversationKeys.messages(conversationId),
             (old: Tables<'messages'>[] | undefined) =>
               old ? [...old, newMessage] : [newMessage]
           )
@@ -102,8 +101,7 @@ export function useConversationStatusRealtime(conversationId: string) {
           const updated = payload.new as Tables<'conversations'>
           // Patch status + ended_at + summary without a full refetch
           qc.setQueryData(
-            // conversationKeys.detail(conversationId),  // uncomment when key is defined
-            ['conversations', conversationId],
+            conversationKeys.detail(conversationId),
             (old: Tables<'conversations'> | undefined) =>
               old
                 ? {
