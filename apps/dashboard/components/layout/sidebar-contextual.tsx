@@ -41,24 +41,23 @@ export function SidebarContextual({ title, children, collapsed, setCollapsed }: 
         </ScrollArea>
       </aside>
 
-      {/* Collapse Toggle Handle - At contextual sidebar right edge */}
-      {/* Small screens: position on the right, avoiding collision */}
+      {/* Mobile Toggle Button - Small screens */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={cn(
           "fixed top-3.5 z-50 h-8 w-8 flex items-center justify-center rounded-full border border-border/60 bg-card shadow-md transition-all hover:scale-110 hover:bg-sidebar-active-bg dark:hover:bg-sidebar-active-bg",
-          "flex sm:flex md:hidden lg:hidden",
+          "md:hidden lg:hidden",
           collapsed ? "rotate-180" : ""
         )}
         style={{
-          right: '1.5rem'
+          left: collapsed ? '1.5rem' : 'calc(var(--sidebar-sub-width) - 48px)'
         }}
         title={collapsed ? "Open sidebar" : "Close sidebar"}
       >
         <ChevronLeft size={16} className="text-foreground dark:text-white" />
       </button>
 
-      {/* Medium screens: position after main sidebar, avoiding collision with main toggle */}
+      {/* Medium screens toggle button - positioned like large screen */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={cn(
@@ -66,14 +65,14 @@ export function SidebarContextual({ title, children, collapsed, setCollapsed }: 
           collapsed ? "rotate-180" : ""
         )}
         style={{
-          left: collapsed ? 'calc(var(--sidebar-main-width) + 12px)' : 'calc(var(--sidebar-main-width) + var(--sidebar-sub-width) - 16px)'
+          left: collapsed ? '1.5rem' : 'calc(var(--sidebar-sub-width) - 48px)'
         }}
         title={collapsed ? "Open sidebar" : "Close sidebar"}
       >
         <ChevronLeft size={16} className="text-foreground dark:text-white" />
       </button>
 
-      {/* Desktop Toggle Button - Large screens with proper positioning */}
+      {/* Desktop toggle button - Large screens */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={cn(

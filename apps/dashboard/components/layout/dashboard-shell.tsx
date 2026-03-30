@@ -53,7 +53,7 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
         {/* Slot for Contextual Sidebar (Middle Step) */}
         {contextualSidebar && (
           <div 
-            className="hidden sm:flex shrink-0 h-full border-r border-border/60 transition-colors relative"
+            className="flex shrink-0 h-full border-r border-border/60 transition-colors relative"
             style={{ backgroundColor: 'hsla(var(--background) / 0.5)' }} 
           >
             {contextualSidebar}
