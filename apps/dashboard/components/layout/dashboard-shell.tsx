@@ -62,7 +62,7 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
 
         <div className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
           {/* Mobile Header */}
-          <header className="flex md:hidden h-[var(--header-height)] items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-md shrink-0 z-40">
+          <header className="flex md:hidden h-(--header-height) items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-md shrink-0 z-40">
             <Link href="/" className="flex items-center gap-2 group">
               <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg transition-transform group-hover:scale-105 shadow-sm">C</div>
               <span className="text-[18px] font-bold tracking-tight text-foreground">
@@ -76,10 +76,10 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                   <Menu size={20} />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 flex flex-col w-[300px] border-r-0 bg-sidebar shadow-2xl">
+              <SheetContent side="left" className="p-0 flex flex-col w-65 border-r-0 bg-sidebar shadow-2xl">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 {/* Mobile Drawer Header */}
-                <SheetHeader className="px-6 py-5 border-b border-border text-left shrink-0" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                <SheetHeader className="px-3 py-3.5 border-b border-border text-left shrink-0" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
                   <div className="flex items-center gap-2">
                      <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-base">C</div>
                      <span className="text-[17px] font-bold tracking-tight text-foreground">
@@ -91,15 +91,15 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                 <ScrollArea className="flex-1" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
                   <div className="flex flex-col h-full">
                     
-                    <div className="p-4 border-b border-border bg-sidebar-active-bg dark:bg-sidebar-active-bg">
-                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2 px-2 opacity-60">Current Workspace</div>
-                       <WorkspaceSwitcher />
+                      <div className="p-2 border-b border-border bg-sidebar-active-bg dark:bg-sidebar-active-bg">
+                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1 px-1 opacity-60">Current Workspace</div>
+                       <WorkspaceSwitcher inMobileDrawer />
                     </div>
 
-                    <nav className="px-4 py-8 flex flex-col gap-8">
+                      <nav className="px-2 py-3 flex flex-col gap-4">
                        {navigationGroups.map((group) => (
-                        <div key={group.label} className="flex flex-col gap-1.5">
-                          <div className="sidebar-group-label px-3 mb-1">{group.label}</div>
+                        <div key={group.label} className="flex flex-col gap-1">
+                          <div className="sidebar-group-label px-1 mb-0.5">{group.label}</div>
                           {group.items.map((item) => {
                             const Icon = item.icon
                             const active = isNavItemActive(item, pathname)
@@ -109,7 +109,7 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                                 href={item.href}
                                 onClick={() => setMobileOpen(false)}
                                 className={cn(
-                                  'flex items-center gap-4 rounded-xl px-4 py-3 text-[14px] font-medium transition-all duration-200',
+                                  'flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-[12px] font-medium transition-all duration-200',
                                   active ? 'bg-sidebar-active-bg dark:bg-sidebar-active-bg text-brand-500 shadow-sm border border-brand-500/10' : 'text-muted-foreground hover:bg-sidebar-active-bg dark:hover:bg-sidebar-active-bg hover:text-foreground'
                                 )}
                               >
@@ -126,7 +126,7 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                 </ScrollArea>
                 
                 {/* Mobile Drawer Footer */}
-                <div className="p-4 border-t border-border mt-auto" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                <div className="p-2.5 border-t border-border mt-auto" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
                   <UserNav />
                 </div>
               </SheetContent>

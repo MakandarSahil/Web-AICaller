@@ -28,7 +28,7 @@
     --brand-500: 231 78% 56%;
     --brand-600: 231 78% 46%;
 
-    --sidebar-main-width: 232px;           /* slightly narrower, like Retell */
+    --sidebar-main-width: 246px;           /* slightly narrower, like Retell */
     --sidebar-main-collapsed-width: 66px;
     --sidebar-sub-width: 220px;
     --header-height: 56px;                 /* more compact header, ~56px in Retell */

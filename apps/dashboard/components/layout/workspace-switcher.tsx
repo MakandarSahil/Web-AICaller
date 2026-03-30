@@ -17,6 +17,7 @@ import { cn } from '@aicaller/ui/lib/utils'
 
 interface WorkspaceSwitcherProps {
   collapsed?: boolean
+  inMobileDrawer?: boolean
 }
 
 /**
@@ -25,7 +26,7 @@ interface WorkspaceSwitcherProps {
  * Background: #0e121b (Sidebar)
  * Dropdown: #242630 (Card)
  */
-export function WorkspaceSwitcher({ collapsed = false }: WorkspaceSwitcherProps) {
+export function WorkspaceSwitcher({ collapsed = false, inMobileDrawer = false }: WorkspaceSwitcherProps) {
   const { workspace } = useUser()
 
   return (
@@ -54,7 +55,12 @@ export function WorkspaceSwitcher({ collapsed = false }: WorkspaceSwitcherProps)
           {!collapsed && <ChevronsUpDown className="h-4 w-4 text-muted-foreground ml-1 shrink-0 opacity-40" />}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 p-1.5 shadow-3xl border border-border bg-card rounded-2xl animate-in zoom-in-95 duration-200" align={collapsed ? "center" : "start"} side="right" sideOffset={12}>
+      <DropdownMenuContent
+        className="w-64 p-1.5 shadow-3xl border border-border bg-card rounded-2xl animate-in zoom-in-95 duration-200"
+        align={collapsed ? 'center' : 'start'}
+        side={inMobileDrawer ? 'bottom' : 'right'}
+        sideOffset={inMobileDrawer ? 8 : 12}
+      >
         <DropdownMenuLabel className="px-3.5 py-3 text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-40">
           Change Workspace
         </DropdownMenuLabel>
