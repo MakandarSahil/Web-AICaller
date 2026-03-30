@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Plus, Search, MoreHorizontal, Import, Bot } from 'lucide-react'
+import { Plus, Search, MoreHorizontal, Import, Bot, ChevronLeft } from 'lucide-react'
 
 import { 
   Button, 
@@ -72,7 +72,17 @@ export function AgentsList({ initialData }: AgentsListProps) {
       <div className="flex flex-1 flex-col min-w-0 bg-background h-full font-sans transition-colors duration-300">
         <header className="page-header shrink-0 px-6 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40">
           <div className="flex items-center gap-4 flex-1">
-            <h1 className="page-title leading-none text-[15px] font-bold tracking-tight text-foreground">Agents</h1>
+            <button
+              onClick={() => setSubCollapsed(!subCollapsed)}
+              className={cn(
+                "h-8 w-8 shrink-0 flex items-center justify-center rounded-full border border-border/60 bg-card shadow-sm transition-all hover:scale-105 hover:bg-sidebar-active-bg",
+                subCollapsed ? "rotate-180" : ""
+              )}
+              title={subCollapsed ? "Open sub sidebar" : "Close sub sidebar"}
+            >
+              <ChevronLeft size={16} className="text-foreground" />
+            </button>
+            <h1 className="page-title leading-none text-[15px] font-bold tracking-tight text-foreground pl-1">Agents</h1>
             <div className="relative max-w-[280px] w-full group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground transition-colors group-focus-within:text-brand-500 opacity-60" />
               <input 
