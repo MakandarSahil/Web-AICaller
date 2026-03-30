@@ -7,8 +7,6 @@ import {
   MessageSquare, 
   Activity, 
   Calendar,
-  MessageCircle,
-  Clock,
   ExternalLink,
   Info
 } from 'lucide-react'
@@ -18,15 +16,10 @@ import {
   CardHeader, 
   CardTitle,
   Button,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Badge,
   ScrollArea
 } from '@aicaller/ui'
 import { useUser } from '@/providers/user-provider'
-import { cn } from '@aicaller/ui/lib/utils'
 
 /**
  * Overview Client Component (Professional / Retell AI Density)

@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
 import { Plus, Search, MoreHorizontal, Import, Bot, ChevronLeft } from 'lucide-react'
 
 import { 
@@ -53,7 +52,6 @@ export function AgentsList({ initialData }: AgentsListProps) {
         <SidebarContextual 
           title="Agent Groups" 
           collapsed={subCollapsed} 
-          setCollapsed={setSubCollapsed}
         >
           <div className="flex flex-col gap-1.5 px-2">
             <Button variant="ghost" className="justify-start px-3 h-10 text-[12px] font-semibold text-brand-500 bg-brand-500/5 border border-brand-500/10 rounded-xl transition-all">

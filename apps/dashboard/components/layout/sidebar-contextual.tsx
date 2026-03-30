@@ -8,7 +8,6 @@ interface SidebarContextualProps {
   title: string
   children: React.ReactNode
   collapsed: boolean
-  setCollapsed: (collapsed: boolean) => void
 }
 
 /**
@@ -17,16 +16,16 @@ interface SidebarContextualProps {
  * Target Background: #12151D (Middle Step)
  * Target Border: border-border/40
  */
-export function SidebarContextual({ title, children, collapsed, setCollapsed }: SidebarContextualProps) {
+export function SidebarContextual({ title, children, collapsed }: SidebarContextualProps) {
   return (
     <aside
       className={cn(
         "relative flex h-screen flex-col border-r border-border/40 transition-all duration-300 ease-in-out z-20 shadow-sm",
-        collapsed ? "w-0 overflow-hidden" : "w-(--sidebar-sub-width)"
+        collapsed ? "w-0 overflow-hidden" : "w-[var(--sidebar-sub-width)]"
       )}
       style={{ backgroundColor: 'hsla(var(--background) / 0.5)' }}
     >
-      <div className={cn("flex h-(--header-height) items-center px-6 shrink-0", collapsed && "hidden")}>
+      <div className={cn("flex h-[var(--header-height)] items-center px-6 shrink-0", collapsed && "hidden")}>
         <h2 className="text-[14px] font-bold text-foreground truncate tracking-tight opacity-90">{title}</h2>
       </div>
 

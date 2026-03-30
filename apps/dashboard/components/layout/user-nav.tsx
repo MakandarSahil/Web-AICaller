@@ -123,19 +123,19 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent className="w-[180px] bg-card border border-border shadow-3xl p-1.5 rounded-2xl animate-in zoom-in-95 duration-200">
-                <DropdownMenuItem onClick={() => setTheme('light')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
+                <DropdownMenuItem onSelect={() => setTheme('light')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
                    <div className="flex items-center gap-3 text-foreground">
                     <Sun className="h-4 w-4" /> Light
                    </div>
                    {theme === 'light' && <Check className="h-4 w-4 text-brand-500" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
+                <DropdownMenuItem onSelect={() => setTheme('dark')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
                    <div className="flex items-center gap-3 text-foreground">
                     <Moon className="h-4 w-4" /> Dark
                    </div>
                    {theme === 'dark' && <Check className="h-4 w-4 text-brand-500" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
+                <DropdownMenuItem onSelect={() => setTheme('system')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
                    <div className="flex items-center gap-3 text-foreground">
                     <Monitor className="h-4 w-4" /> System
                    </div>

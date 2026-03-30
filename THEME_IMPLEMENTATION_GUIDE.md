@@ -21,9 +21,9 @@ All colors are defined as CSS variables using HSL format for easy theme switchin
 
 .dark {
   /* Dark mode */
-  --background: 227 21% 12%;
-  --foreground: 210 40% 98%;
-  --card: 231 14% 17%;
+  --background: 220 18% 12%;
+  --foreground: 210 20% 92%;
+  --card: 228 16% 9%;
   /* ... more variables */
 }
 ```
