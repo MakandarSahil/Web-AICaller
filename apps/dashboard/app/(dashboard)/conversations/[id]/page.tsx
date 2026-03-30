@@ -5,45 +5,45 @@ export default function ConversationDetailPage({ params }: { params: { id: strin
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Conversation</h1>
-        <p className="text-slate-400">Conversation ID: {params.id}</p>
+        <h1 className="text-3xl font-bold text-foreground">Conversation</h1>
+        <p className="text-muted-foreground">Conversation ID: {params.id}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div className="md:col-span-2">
-          <Card className="bg-slate-800">
+          <Card className="bg-card border border-border/40">
             <CardHeader>
-              <CardTitle className="text-white">Transcript</CardTitle>
+              <CardTitle className="text-foreground">Transcript</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="border-l-4 border-emerald-600 pl-4">
-                <p className="text-sm text-slate-400">User</p>
-                <p className="text-white">Hello, is there any availability?</p>
+              <div className="border-l-4 border-emerald-500 pl-4">
+                <p className="text-sm text-muted-foreground/70">User</p>
+                <p className="text-foreground">Hello, is there any availability?</p>
               </div>
-              <div className="border-l-4 border-blue-600 pl-4">
-                <p className="text-sm text-slate-400">Agent</p>
-                <p className="text-white">Yes, we have availability next week.</p>
+              <div className="border-l-4 border-primary pl-4">
+                <p className="text-sm text-muted-foreground/70">Agent</p>
+                <p className="text-foreground">Yes, we have availability next week.</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="bg-slate-800">
+        <Card className="bg-card border border-border/40">
           <CardHeader>
-            <CardTitle className="text-white">Details</CardTitle>
+            <CardTitle className="text-foreground">Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-sm">
             <div>
-              <p className="text-slate-400">Duration</p>
-              <p className="text-white">2 min 34 sec</p>
+              <p className="text-muted-foreground/70">Duration</p>
+              <p className="text-foreground">2 min 34 sec</p>
             </div>
             <div>
-              <p className="text-slate-400">Status</p>
-              <p className="text-white">Completed</p>
+              <p className="text-muted-foreground/70">Status</p>
+              <p className="text-foreground">Completed</p>
             </div>
             <div>
-              <p className="text-slate-400">Messages</p>
-              <p className="text-white">12</p>
+              <p className="text-muted-foreground/70">Messages</p>
+              <p className="text-foreground">12</p>
             </div>
           </CardContent>
         </Card>

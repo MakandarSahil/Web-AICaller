@@ -5,6 +5,28 @@ const config: Omit<Config, 'content'> = {
   theme: {
     extend: {
       colors: {
+        // Semantic colors using CSS variables from globals.css
+        background: 'hsl(var(--background) / <alpha-value>)',
+        foreground: 'hsl(var(--foreground) / <alpha-value>)',
+        card: 'hsl(var(--card) / <alpha-value>)',
+        'card-foreground': 'hsl(var(--card-foreground) / <alpha-value>)',
+        popover: 'hsl(var(--popover) / <alpha-value>)',
+        'popover-foreground': 'hsl(var(--popover-foreground) / <alpha-value>)',
+        primary: 'hsl(var(--primary) / <alpha-value>)',
+        'primary-foreground': 'hsl(var(--primary-foreground) / <alpha-value>)',
+        secondary: 'hsl(var(--secondary) / <alpha-value>)',
+        'secondary-foreground': 'hsl(var(--secondary-foreground) / <alpha-value>)',
+        muted: 'hsl(var(--muted) / <alpha-value>)',
+        'muted-foreground': 'hsl(var(--muted-foreground) / <alpha-value>)',
+        accent: 'hsl(var(--accent) / <alpha-value>)',
+        'accent-foreground': 'hsl(var(--accent-foreground) / <alpha-value>)',
+        destructive: 'hsl(var(--destructive) / <alpha-value>)',
+        'destructive-foreground': 'hsl(var(--destructive-foreground) / <alpha-value>)',
+        border: 'hsl(var(--border) / <alpha-value>)',
+        input: 'hsl(var(--input) / <alpha-value>)',
+        ring: 'hsl(var(--ring) / <alpha-value>)',
+
+        // Brand colors
         brand: {
           DEFAULT: '#3655E8',
           light: '#5b7cf7',
@@ -18,20 +40,11 @@ const config: Omit<Config, 'content'> = {
           700: '#1f35aa',
         },
 
-        background: {
-          DEFAULT: '#ffffff',
-          subtle: '#f8f9fb',
-          muted: '#f0f2f5',
-        },
-
-        content: {
-          DEFAULT: '#1e1e1e',
-          secondary: '#4b5563',
-          tertiary: '#9ca3af',
-          inverse: '#ffffff',
-        },
-
-        border: '#e8eaef',
+        // Sidebar colors
+        sidebar: 'hsl(var(--sidebar-bg) / <alpha-value>)',
+        'sidebar-foreground': 'hsl(var(--sidebar-foreground) / <alpha-value>)',
+        'sidebar-border': 'hsl(var(--sidebar-border) / <alpha-value>)',
+        'sidebar-active-bg': 'hsl(var(--sidebar-active-bg) / <alpha-value>)',
       },
 
       fontFamily: {
@@ -46,6 +59,8 @@ const config: Omit<Config, 'content'> = {
         'card': '0 1px 3px rgba(0,0,0,0.04)',
         'card-hover': '0 4px 16px rgba(0,0,0,0.08)',
         'blue-glow': '0 4px 14px rgba(54, 85, 232, 0.25)',
+        'glass': '0 8px 32px rgba(31, 34, 42, 0.12)',
+        'glass-lg': '0 20px 60px rgba(31, 34, 42, 0.15)',
       },
 
       backgroundImage: {

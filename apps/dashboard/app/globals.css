@@ -4,126 +4,288 @@
 
 @layer base {
   :root {
-    --background:         0 0% 100%;
-    --foreground:         0 0% 12%;
-    --card:               0 0% 100%;
-    --card-foreground:    0 0% 12%;
-    --popover:            0 0% 100%;
-    --popover-foreground: 0 0% 12%;
-    --primary:            231 78% 56%;
-    --primary-foreground: 0 0% 100%;
-    --secondary:          220 14% 96%;
-    --secondary-foreground: 0 0% 12%;
-    --muted:              220 14% 96%;
-    --muted-foreground:   220 9% 46%;
-    --accent:             220 14% 96%;
-    --accent-foreground:  0 0% 12%;
-    --destructive:        0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border:             220 13% 91%;
-    --input:              220 13% 91%;
-    --ring:               231 78% 56%;
-    --radius:             0.75rem;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.1%;
+    --primary: 231 78% 56%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 231 78% 56%;
+    --radius: 0.5rem; /* tighter radius like Retell */
 
-    --brand-blue:         #3655E8;
-    --brand-blue-hover:   #2a45c9;
-    --brand-blue-light:   #eef1fd;
+    --brand-500: 231 78% 56%;
+    --brand-600: 231 78% 46%;
 
-    --sidebar-width:      256px;
-    --header-height:      56px;
+    --sidebar-main-width: 232px;           /* slightly narrower, like Retell */
+    --sidebar-main-collapsed-width: 66px;
+    --sidebar-sub-width: 220px;
+    --header-height: 56px;                 /* more compact header, ~56px in Retell */
+
+    --sidebar-bg: 0 0% 100%;
+    --sidebar-foreground: 222.2 84% 4.1%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-active-bg: 210 40% 96.1%;
+
+    /* Table / row theming */
+    --table-row-hover: 210 40% 97%;
+    --table-border: 214.3 31.8% 91.4%;
+  }
+
+  .dark {
+    --background: 220 18% 12%;
+    --foreground: 210 20% 92%;
+    --card: 228 16% 9%;
+    --card-foreground: 210 20% 92%;
+    --popover: 228 16% 16%;
+    --popover-foreground: 210 20% 92%;
+    --primary: 217.2 85% 60%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 222 25% 20%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 222 25% 20%;
+    --muted-foreground: 215 16% 52%;
+    --accent: 222 25% 20%;
+    --accent-foreground: 210 20% 92%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 22% 20%;               /* subtle divider */
+    --input: 222 25% 20%;
+    --ring: 224.3 76.3% 48%;
+
+    /* Sidebar — Retell uses a distinctly darker sidebar: ~#0e1018 */
+    --sidebar-bg: 228 22% 7%;            /* #0e1018 deep dark */
+    --sidebar-foreground: 210 16% 80%;
+    --sidebar-border: 228 22% 13%;
+    --sidebar-active-bg: 228 22% 14%;
+
+    /* Table rows in dark mode */
+    --table-row-hover: 228 16% 19%;
+    --table-border: 222 22% 20%;
   }
 }
 
 @layer base {
   * {
+    border-color: hsl(var(--border));
+    outline-color: hsla(var(--ring) / 0.5);
     box-sizing: border-box;
   }
 
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 12px;
   }
 
   body {
     font-feature-settings: 'rlig' 1, 'calt' 1;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
-  ::-webkit-scrollbar { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(54, 85, 232, 0.3);
-    border-radius: 3px;
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(54, 85, 232, 0.5);
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsla(var(--muted) / 0.4);
+    border-radius: 9999px;
   }
 }
 
 @layer components {
+  /* ── Glass card ── */
   .glass {
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  }
-
-  .glass-hover {
-    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(54, 85, 232, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    background-color: hsl(var(--card));
+    border: 1px solid hsla(var(--border) / 0.8);
+    @apply shadow-sm transition-all;
+    backdrop-filter: blur(8px);
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #3655E8 0%, #5b7cf7 100%);
+    color: hsl(var(--brand-500));
+    @apply font-bold;
   }
 
-  /* Dashboard sidebar item */
+  /* ── Sidebar shell ── */
+  .sidebar-container {
+    background-color: hsl(var(--sidebar-bg));
+    border-right: 1px solid hsl(var(--sidebar-border));
+    @apply flex h-screen;
+    transition: background-color 0.2s ease;
+  }
+
+  /* ── Sidebar nav items — tighter padding like Retell ── */
   .sidebar-item {
-    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all;
-    @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-150;
+    color: hsl(var(--sidebar-foreground));
+    opacity: 0.7;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .sidebar-item:hover {
+    background-color: hsl(var(--sidebar-active-bg));
+    color: hsl(var(--foreground));
+    opacity: 1;
   }
 
   .sidebar-item.active {
-    @apply bg-indigo-50 text-indigo-700;
+    background-color: hsl(var(--sidebar-active-bg));
+    color: hsl(var(--brand-500));
+    opacity: 1;
+    font-weight: 600;
+    /* no border on active — matches Retell's minimal active state */
   }
 
-  /* Page header */
+  /* ── Sidebar group labels — very compact like Retell ── */
+  .sidebar-group-label {
+    @apply px-3 mb-0.5 mt-4 text-[10px] font-semibold tracking-widest uppercase;
+    color: hsl(var(--muted-foreground));
+    opacity: 0.5;
+    letter-spacing: 0.12em;
+  }
+
+  /* ── Collapsed sidebar items ── */
+  .sidebar-item-collapsed {
+    @apply flex items-center justify-center rounded-lg p-2 transition-all duration-150;
+    color: hsl(var(--sidebar-foreground));
+    opacity: 0.6;
+  }
+
+  .sidebar-item-collapsed:hover {
+    background-color: hsl(var(--sidebar-active-bg));
+    color: hsl(var(--foreground));
+    opacity: 1;
+  }
+
+  .sidebar-item-collapsed.active {
+    background-color: hsl(var(--sidebar-active-bg));
+    color: hsl(var(--brand-500));
+    opacity: 1;
+  }
+
+  /* ── Page header — compact like Retell's ~56px bar ── */
   .page-header {
-    @apply mb-8 flex items-center justify-between;
+    background-color: hsla(var(--background) / 0.95);
+    border-bottom: 1px solid hsl(var(--border));
+    height: var(--header-height);
+    @apply mb-0 flex items-center justify-between px-5 sticky top-0 z-40;
+    backdrop-filter: blur(8px);
+    transition: background-color 0.2s ease;
   }
 
   .page-title {
-    @apply text-2xl font-bold tracking-tight text-gray-900;
+    color: hsl(var(--foreground));
+    @apply text-[14px] font-semibold tracking-tight;
   }
 
-  /* Stat card */
+  /* ── Stat / metric cards ── */
   .stat-card {
-    @apply bg-white border border-gray-200 shadow-sm rounded-xl p-5;
+    background-color: hsl(var(--card));
+    border: 1px solid hsla(var(--border) / 0.8);
+    @apply shadow-sm rounded-xl p-4 transition-all active:scale-[0.99];
   }
-}
 
-/* ────────────────────────────────────────────────────────────────────────── */
-/*  Auth page — testimonial auto-scroll animation                            */
-/* ────────────────────────────────────────────────────────────────────────── */
-@keyframes scroll {
-  0% {
-    transform: translateX(0);
+  .stat-card:hover {
+    border-color: hsla(var(--brand-500) / 0.2);
   }
-  100% {
-    transform: translateX(-50%);
+
+  /* ── Data table — matches Retell's borderless row style ── */
+  .data-table {
+    @apply w-full text-sm;
+    border-collapse: separate;
+    border-spacing: 0;
   }
-}
 
-.animate-scroll {
-  animation: scroll 25s linear infinite;
-}
+  .data-table thead tr {
+    border-bottom: 1px solid hsl(var(--table-border));
+  }
 
-.animate-scroll:hover {
-  animation-play-state: paused;
+  .data-table th {
+    @apply px-4 py-2.5 text-left font-medium text-[11px] tracking-wide uppercase;
+    color: hsl(var(--muted-foreground));
+    opacity: 0.7;
+  }
+
+  .data-table td {
+    @apply px-4 py-2.5;
+    color: hsl(var(--foreground));
+    border-bottom: 1px solid hsla(var(--table-border) / 0.5);
+    font-size: 13px;
+  }
+
+  .data-table tbody tr {
+    transition: background-color 0.1s ease;
+  }
+
+  .data-table tbody tr:hover {
+    background-color: hsl(var(--table-row-hover));
+  }
+
+  /* ── Badge / pill — like "Single Prompt", "Conversation Flow" ── */
+  .badge {
+    @apply inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium;
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .badge-primary {
+    background-color: hsla(var(--brand-500) / 0.1);
+    color: hsl(var(--brand-500));
+    border-color: hsla(var(--brand-500) / 0.2);
+  }
+
+  /* ── Content area padding — matches Retell's inner page spacing ── */
+  .page-content {
+    @apply px-5 py-4;
+  }
+
+  /* ── Sub-sidebar panel (the "All Agents" folder pane in Retell) ── */
+  .sub-sidebar {
+    background-color: hsl(var(--card));
+    border-right: 1px solid hsl(var(--border));
+    @apply flex flex-col h-full;
+    width: var(--sidebar-sub-width);
+  }
+
+  .sub-sidebar-item {
+    @apply flex items-center gap-2.5 rounded-lg px-3 py-2 mx-2 transition-all duration-150;
+    color: hsl(var(--muted-foreground));
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .sub-sidebar-item:hover,
+  .sub-sidebar-item.active {
+    background-color: hsl(var(--sidebar-active-bg));
+    color: hsl(var(--foreground));
+  }
+
+  .sub-sidebar-group-label {
+    @apply px-3 mt-4 mb-1 text-[10px] font-semibold tracking-widest uppercase;
+    color: hsl(var(--muted-foreground));
+    opacity: 0.45;
+    letter-spacing: 0.12em;
+  }
 }

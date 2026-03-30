@@ -16,16 +16,17 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-11 w-full items-center justify-between whitespace-nowrap rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-content shadow-sm transition-all',
-      'placeholder:text-content-tertiary focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 focus:bg-background',
+      'flex h-11 w-full items-center justify-between whitespace-nowrap rounded-xl border border-input bg-background/50 px-4 py-3 text-sm text-foreground shadow-sm transition-all',
+      'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background',
       'disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      'dark:border-border dark:bg-card/30 dark:text-foreground dark:placeholder:text-muted-foreground dark:focus:ring-primary/30',
       className
     )}
     {...props}
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-content-tertiary" />
+      <ChevronDown className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ))
@@ -67,7 +68,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-card shadow-md dark:border-border dark:bg-card',
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         position === 'popper' && 'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className

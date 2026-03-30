@@ -28,14 +28,14 @@ export default function AgentChatPage({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-white">Test Agent Chat</h1>
-        <p className="text-slate-400">Test conversation with agent {params.id}</p>
+        <h1 className="text-3xl font-bold text-foreground">Test Agent Chat</h1>
+        <p className="text-muted-foreground">Test conversation with agent {params.id}</p>
       </div>
 
-      <Card className="flex flex-col h-96 bg-slate-800">
+      <Card className="flex flex-col h-96 bg-card border border-border/40">
         <CardContent className="flex-1 overflow-y-auto space-y-4 mb-4 pt-6">
           {messages.length === 0 ? (
-            <p className="text-center text-slate-400">No messages yet. Start a conversation!</p>
+            <p className="text-center text-muted-foreground/70">No messages yet. Start a conversation!</p>
           ) : (
             messages.map((msg, idx) => (
               <div
@@ -45,8 +45,8 @@ export default function AgentChatPage({ params }: { params: { id: string } }) {
                 <div
                   className={`max-w-xs rounded-lg px-4 py-2 ${
                     msg.role === 'user'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-700 text-slate-200'
+                      ? 'bg-primary/80 text-white'
+                      : 'bg-muted text-foreground'
                   }`}
                 >
                   {msg.content}
@@ -56,16 +56,16 @@ export default function AgentChatPage({ params }: { params: { id: string } }) {
           )}
         </CardContent>
 
-        <CardContent className="pt-4 border-t border-slate-700">
+        <CardContent className="pt-4 border-t border-border/40">
           <div className="flex gap-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type a message..."
-              className="bg-slate-700 border-slate-600"
+              className="bg-muted/30 border-border/40 text-foreground placeholder:text-muted-foreground/40 focus:ring-primary/40 focus:border-primary transition-all"
             />
-            <Button onClick={handleSend}>Send</Button>
+            <Button onClick={handleSend} className="bg-brand-500 hover:bg-brand-600 text-white">Send</Button>
           </div>
         </CardContent>
       </Card>

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { QueryProvider } from '@/providers/query-provider'
+import { ThemeProvider } from '@/providers/theme-provider'
 import './globals.css'
 import { Geist } from 'next/font/google'
 
@@ -18,17 +19,21 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
-  colorScheme: 'light',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={geist.variable} suppressHydrationWarning>
-      <body>
-        <QueryProvider>
-          {children}
-        </QueryProvider>
+      <body className="antialiased min-h-screen">
+        <ThemeProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

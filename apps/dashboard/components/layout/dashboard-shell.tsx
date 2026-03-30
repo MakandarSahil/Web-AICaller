@@ -3,130 +3,142 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { createClient } from '@aicaller/supabase/client'
-import { useUser } from '@/providers/user-provider'
-import { Phone, Bot, Book, MessageSquare, Key, Settings, LogOut, Menu, X, BarChart3 } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Menu, X } from 'lucide-react'
+import {
+  Button,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  ScrollArea,
+} from '@aicaller/ui'
+import { cn } from '@aicaller/ui/lib/utils'
+import { SidebarGlobal } from './sidebar-global'
+import { navigationGroups, isNavItemActive } from './dashboard-nav'
 
-const navItems = [
-  { href: '/', label: 'Overview', icon: BarChart3 },
-  { href: '/agents', label: 'Agents', icon: Bot },
-  { href: '/knowledge-bases', label: 'Knowledge Bases', icon: Book },
-  { href: '/conversations', label: 'Conversations', icon: MessageSquare },
-  { href: '/phone-numbers', label: 'Phone Numbers', icon: Phone },
-  { href: '/api-keys', label: 'API Keys', icon: Key },
-  { href: '/settings', label: 'Settings', icon: Settings },
-]
+import { WorkspaceSwitcher } from './workspace-switcher'
+import { UserNav } from './user-nav'
 
-export function DashboardShell({ children }: { children: ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+interface DashboardShellProps {
+  children: ReactNode
+  contextualSidebar?: ReactNode
+}
+
+/**
+ * Main Dashboard Shell (High Fidelity)
+ * 
+ * Implements a "stepped" dark mode with different shades for 
+ * sidebar, middle panels, and main content to match the Retell aesthetic.
+ */
+export function DashboardShell({ children, contextualSidebar }: DashboardShellProps) {
+  const [mainCollapsed, setMainCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
-    <div className="flex h-screen bg-[#f8f9fb] text-gray-900">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <div 
+      className="flex h-screen w-full overflow-hidden transition-colors duration-300"
+      style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
+    >
+      {/* 1. Desktop Global Sidebar (Darkest Step) */}
+      <div className="hidden md:block shrink-0 h-full border-r border-border">
+        <SidebarGlobal collapsed={mainCollapsed} setCollapsed={setMainCollapsed} />
+      </div>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <header className="flex h-14 items-center justify-between gap-4 border-b border-gray-200 bg-white px-6">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden text-gray-500 hover:text-gray-900"
-            aria-label="Toggle sidebar"
+      {/* 2. Main Content Area + Optional Contextual Sidebar */}
+      <div className="flex flex-1 min-w-0 h-full relative overflow-hidden">
+        
+        {/* Slot for Contextual Sidebar (Middle Step) */}
+        {contextualSidebar && (
+          <div 
+            className="hidden sm:flex shrink-0 h-full border-r border-border/60 transition-colors relative"
+            style={{ backgroundColor: 'hsla(var(--background) / 0.5)' }} 
           >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
-            <UserName />
+            {contextualSidebar}
           </div>
-        </header>
+        )}
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="p-6">{children}</div>
-        </main>
+        <div className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
+          {/* Mobile Header */}
+          <header className="flex md:hidden h-[var(--header-height)] items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-md shrink-0 z-40">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg transition-transform group-hover:scale-105 shadow-sm">C</div>
+              <span className="text-[18px] font-bold tracking-tight text-foreground">
+                call<span className="font-extrabold text-brand-500">Mind</span>
+              </span>
+            </Link>
+
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted transition-all rounded-xl">
+                  <Menu size={20} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 flex flex-col w-[300px] border-r-0 bg-sidebar shadow-2xl">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                {/* Mobile Drawer Header */}
+                <SheetHeader className="px-6 py-5 border-b border-border text-left shrink-0" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                  <div className="flex items-center gap-2">
+                     <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-base">C</div>
+                     <span className="text-[17px] font-bold tracking-tight text-foreground">
+                      call<span className="font-extrabold text-brand-500">Mind</span>
+                    </span>
+                  </div>
+                </SheetHeader>
+                
+                <ScrollArea className="flex-1" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                  <div className="flex flex-col h-full">
+                    
+                    <div className="p-4 border-b border-border bg-sidebar-active-bg dark:bg-sidebar-active-bg">
+                       <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-2 px-2 opacity-60">Current Workspace</div>
+                       <WorkspaceSwitcher />
+                    </div>
+
+                    <nav className="px-4 py-8 flex flex-col gap-8">
+                       {navigationGroups.map((group) => (
+                        <div key={group.label} className="flex flex-col gap-1.5">
+                          <div className="sidebar-group-label px-3 mb-1">{group.label}</div>
+                          {group.items.map((item) => {
+                            const Icon = item.icon
+                            const active = isNavItemActive(item, pathname)
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setMobileOpen(false)}
+                                className={cn(
+                                  'flex items-center gap-4 rounded-xl px-4 py-3 text-[14px] font-medium transition-all duration-200',
+                                  active ? 'bg-sidebar-active-bg dark:bg-sidebar-active-bg text-brand-500 shadow-sm border border-brand-500/10' : 'text-muted-foreground hover:bg-sidebar-active-bg dark:hover:bg-sidebar-active-bg hover:text-foreground'
+                                )}
+                              >
+                                <Icon className={cn('h-5 w-5', active ? 'text-brand-500' : 'text-muted-foreground')} />
+                                <span className={cn(active && 'font-bold tracking-tight text-foreground')}>{item.label}</span>
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      ))}
+                    </nav>
+
+                  </div>
+                </ScrollArea>
+                
+                {/* Mobile Drawer Footer */}
+                <div className="p-4 border-t border-border mt-auto" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                  <UserNav />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </header>
+
+          <main className="flex flex-1 overflow-auto min-w-0 bg-background transition-colors">
+            {children}
+          </main>
+        </div>
+
       </div>
     </div>
   )
 }
-
-function UserName() {
-  const { profile } = useUser()
-  const name = profile?.full_name?.trim() || 'Account'
-  return (
-    <span className="truncate text-sm font-medium text-slate-700" title={name}>
-      {name}
-    </span>
-  )
-}
-
-function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const pathname = usePathname()
-  const router = useRouter()
-
-  const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
-
-  return (
-    <>
-      {open && (
-        <div className="fixed inset-0 z-20 bg-black/20 backdrop-blur-sm md:hidden" onClick={onClose} />
-      )}
-      <aside
-        className={`fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-gray-200 bg-white transition-transform md:relative md:translate-x-0 ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex h-14 items-center border-b border-gray-200 px-6">
-          <Link href="/" className="flex items-center gap-1.5" onClick={onClose}>
-            <span className="text-xl font-bold tracking-tight text-gray-900">
-              call<span className="font-extrabold">Mind</span>
-            </span>
-            <span className="rounded-md bg-brand-50 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand-600">
-              AI
-            </span>
-          </Link>
-        </div>
-
-        <nav className="flex-1 space-y-1 overflow-y-auto px-4 py-6">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === '/'
-                ? pathname === '/'
-                : pathname === item.href || pathname.startsWith(`${item.href}/`)
-            const Icon = item.icon
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={`flex items-center space-x-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <Icon size={18} className={isActive ? 'text-brand-600' : 'text-gray-400'} />
-                <span>{item.label}</span>
-              </Link>
-            )
-          })}
-        </nav>
-
-        <div className="border-t border-gray-200 p-4">
-          <button
-            onClick={() => {
-              handleLogout()
-              onClose()
-            }}
-            className="flex w-full items-center space-x-3 rounded-xl px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-          >
-            <LogOut size={18} className="text-gray-400" />
-            <span>Log out</span>
-          </button>
-        </div>
-      </aside>
-    </>
-  )
-}
-

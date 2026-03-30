@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { OverviewClient } from './components/overview-client'
 import { getWorkspaceStats } from '@aicaller/supabase/queries'
+import { DashboardShell } from '@/components/layout/dashboard-shell'
 
 /**
  * Dashboard overview page — Server Component.
@@ -19,12 +20,14 @@ export default async function DashboardOverviewPage() {
   const { agentsCount, kbCount, callersCount, numbersCount, recentAgents } = await getWorkspaceStats(supabase)
 
   return (
-    <OverviewClient
-      initialAgents={recentAgents}
-      agentsCount={agentsCount}
-      kbCount={kbCount}
-      callersCount={callersCount}
-      phoneNumbersCount={numbersCount}
-    />
+    <DashboardShell>
+      <OverviewClient
+        initialAgents={recentAgents}
+        agentsCount={agentsCount}
+        kbCount={kbCount}
+        callersCount={callersCount}
+        phoneNumbersCount={numbersCount}
+      />
+    </DashboardShell>
   )
 }
