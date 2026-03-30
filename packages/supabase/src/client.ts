@@ -1,5 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from './types/database.types'
+import { getSupabaseEnv } from './env'
 
 /**
  * Browser Supabase client — uses anon key.
@@ -11,8 +12,10 @@ import type { Database } from './types/database.types'
  * Never use for sensitive data reads — use server client instead.
  */
 export function createClient() {
+  const { url, anonKey } = getSupabaseEnv()
+
   return createBrowserClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    url,
+    anonKey
   )
 }
