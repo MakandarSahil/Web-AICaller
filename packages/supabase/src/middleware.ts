@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 import type { Database } from './types/database.types'
+import { getSupabaseEnv } from './env'
 
 /**
  * Call this inside apps/dashboard/middleware.ts to refresh
@@ -10,6 +11,8 @@ import type { Database } from './types/database.types'
  * short-lived JWTs that need refreshing via the middleware.
  */
 export async function updateSession(request: NextRequest) {
+  const { url, anonKey } = getSupabaseEnv()
+
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
@@ -17,8 +20,8 @@ export async function updateSession(request: NextRequest) {
   })
 
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
         getAll() {

@@ -10,8 +10,8 @@ const AUTH_ROUTES = ['/login', '/signup', '/otp']
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Allow bypassing auth if NEXT_PUBLIC_DISABLE_AUTH is set
-  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === 'true') {
+  // Allow auth bypass only for non-production debugging.
+  if (process.env.DISABLE_AUTH === 'true' && process.env.NODE_ENV !== 'production') {
     return NextResponse.next()
   }
 

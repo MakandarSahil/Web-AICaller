@@ -8,14 +8,12 @@
     "start": "next start -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf .next"
+    "clean": "rimraf .next"
   },
   "dependencies": {
     "@aicaller/config": "workspace:*",
     "@aicaller/ui": "workspace:*",
     "@number-flow/react": "^0.6.0",
-    "@supabase/ssr": "^0.9.0",
-    "@supabase/supabase-js": "^2.100.1",
     "framer-motion": "^12.38.0",
     "geist": "^1.7.0",
     "lucide-react": "^1.7.0",
@@ -28,10 +26,11 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
-    "eslint": "^10.1.0",
+    "eslint": "^9.0.0",
     "eslint-config-next": "^16.2.1",
     "postcss": "^8.5.8",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4.2.2",
-    "typescript": "^6.0.2"
+    "typescript": "^5.7.2"
   }
 }

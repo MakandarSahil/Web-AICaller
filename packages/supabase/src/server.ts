@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from './types/database.types'
+import { getSupabaseEnv } from './env'
 
 /**
  * Server Supabase client — uses anon key + RLS.
@@ -14,10 +15,11 @@ import type { Database } from './types/database.types'
  */
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies()
+  const { url, anonKey } = getSupabaseEnv()
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
         getAll() {

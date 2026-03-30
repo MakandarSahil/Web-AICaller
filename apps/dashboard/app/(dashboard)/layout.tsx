@@ -4,7 +4,6 @@ import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { getProfile } from '@aicaller/supabase/queries/profile'
 import { getWorkspace } from '@aicaller/supabase/queries/workspace'
 import { UserProvider } from '@/providers/user-provider'
-import { DashboardShell } from '@/components/layout/dashboard-shell'
 
 /**
  * Root layout for all (dashboard) routes.
@@ -12,12 +11,12 @@ import { DashboardShell } from '@/components/layout/dashboard-shell'
  * Responsibilities:
  * 1. Auth guard — redirects to /login if no session.
  * 2. Onboarding guard — redirects to /onboarding if no workspace yet.
- * 3. Admin guard — number_pool route is handled in its own layout.
- * 4. SSR-fetches profile + workspace once per page load.
- * 5. Injects them into UserProvider so every client component has them instantly.
+ * 3. SSR-fetches profile + workspace once per page load.
+ * 4. Injects them into UserProvider so every client component has them instantly.
  *
- * This runs on every navigation inside the dashboard — Next.js caches the
- * server component output per request so it's not re-fetched on every render.
+ * This layout no longer wraps children in DashboardShell directly.
+ * Individual pages should use <DashboardShell> to allow for per-page 
+ * contextual sidebars and unique headers.
  */
 export default async function DashboardLayout({
   children,
@@ -31,7 +30,6 @@ export default async function DashboardLayout({
   if (!user) redirect('/login')
 
   // Fetch profile + workspace in parallel. 
-  // If they don't exist yet (new account), we just use null — we no longer kick to /login here.
   const [profile, workspace] = await Promise.all([
     getProfile(supabase).catch(() => null),
     getWorkspace(supabase).catch(() => null),
@@ -39,9 +37,7 @@ export default async function DashboardLayout({
 
   return (
     <UserProvider value={{ profile, workspace, email: user.email ?? '' }}>
-      <DashboardShell>
-        {children}
-      </DashboardShell>
+      {children}
     </UserProvider>
   )
 }
