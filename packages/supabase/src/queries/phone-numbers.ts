@@ -10,8 +10,8 @@ export type PhoneNumberRow = PhoneNumber & {
 type PhoneNumberType = TablesInsert<'phone_numbers'>['number_type']
 
 function defaultWebhookUrl(agentId: string) {
-  // Keep consistent with CONTEXT.md for TwiML webhook routing.
-  return `https://api.callmind.com/voice?agent_id=${agentId}`
+  // Keep consistent with backend voice routing.
+  return `https://api.iamspiderman.me/voice?agent_id=${agentId}`
 }
 
 /**

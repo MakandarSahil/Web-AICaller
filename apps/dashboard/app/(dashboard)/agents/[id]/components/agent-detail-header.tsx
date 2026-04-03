@@ -29,6 +29,8 @@ import { cn } from '@aicaller/ui/lib/utils'
 import type { Tables } from '@aicaller/supabase'
 import Link from 'next/link'
 
+import { MobileNavBack } from '@/components/layout/mobile-nav-back'
+
 type Agent = Tables<'agents'>
 
 interface AgentDetailHeaderProps {
@@ -50,12 +52,14 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
   }
 
   return (
-    <header className="page-header shrink-0 h-24 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
+    <header className="page-header shrink-0 h-auto md:h-24 px-4 md:px-10 py-4 md:py-0 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40 flex flex-col md:flex-row md:items-center justify-between gap-4">
       
       {/* Left Area: Name & ID Block */}
-      <div className="flex items-center gap-6 overflow-hidden">
-        <div className="h-14 w-14 rounded-2xl bg-brand-500/5 flex items-center justify-center border-2 border-brand-500/20 shadow-lg shadow-brand-500/5 group transition-all">
-           <Bot className="h-7 w-7 text-brand-500" />
+      <div className="flex items-center gap-4 md:gap-6 overflow-hidden">
+        <MobileNavBack href="/agents" label="Agents" />
+        
+        <div className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-brand-500/5 flex items-center justify-center border-2 border-brand-500/20 shadow-lg shadow-brand-500/5 group transition-all shrink-0">
+           <Bot className="h-6 w-6 md:h-7 md:w-7 text-brand-500" />
         </div>
         
         <div className="flex flex-col gap-1 overflow-hidden">

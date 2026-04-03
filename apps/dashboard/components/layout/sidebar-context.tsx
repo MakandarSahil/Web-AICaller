@@ -3,10 +3,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 
 interface SidebarContextType {
-  // Navigation visibility
+  // Navigation visibility (Desktop)
   contextualCollapsed: boolean
   setContextualCollapsed: (collapsed: boolean) => void
   toggleContextual: () => void
+
+  // Navigation visibility (Mobile)
+  mobileContextualOpen: boolean
+  setMobileContextualOpen: (open: boolean) => void
+  toggleMobileContextual: () => void
 
   // Dynamic Content (Sub-sidebars like Agent lists)
   contextualSidebar: React.ReactNode | null
@@ -17,9 +22,11 @@ const SidebarContext = createContext<SidebarContextType | undefined>(undefined)
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [contextualCollapsed, setContextualCollapsed] = useState(false)
+  const [mobileContextualOpen, setMobileContextualOpen] = useState(false)
   const [contextualSidebar, setContextualSidebar] = useState<React.ReactNode | null>(null)
 
   const toggleContextual = () => setContextualCollapsed(prev => !prev)
+  const toggleMobileContextual = () => setMobileContextualOpen(prev => !prev)
 
   return (
     <SidebarContext.Provider 
@@ -27,6 +34,9 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         contextualCollapsed, 
         setContextualCollapsed, 
         toggleContextual,
+        mobileContextualOpen,
+        setMobileContextualOpen,
+        toggleMobileContextual,
         contextualSidebar,
         setContextualSidebar
       }}

@@ -11,6 +11,7 @@ import { SubSidebarShell } from '@/components/layout/subsidebar-shell'
 
 interface SidebarAgentListProps {
   initialData?: any[]
+  hideHeader?: boolean
 }
 
 /**
@@ -18,7 +19,7 @@ interface SidebarAgentListProps {
  * UI mirrors Knowledge Bases sidebar, while keeping Agents UX (routes + toggle behavior)
  * handled elsewhere in the main content area.
  */
-export function SidebarAgentList({ initialData }: SidebarAgentListProps) {
+export function SidebarAgentList({ initialData, hideHeader = false }: SidebarAgentListProps) {
   const pathname = usePathname()
   const params = useParams()
   const currentId = params?.id as string | undefined
@@ -73,6 +74,7 @@ export function SidebarAgentList({ initialData }: SidebarAgentListProps) {
       searchQuery={searchQuery}
       onSearchQueryChange={setSearchQuery}
       headerRight={null}
+      hideHeader={hideHeader}
     >
       {isLoading ? (
         <>

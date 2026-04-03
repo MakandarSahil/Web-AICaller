@@ -23,6 +23,8 @@ import KBGeneralTab from './tabs/kb-general-tab'
 import KBDocumentsTab from './tabs/kb-documents-tab'
 import KBAgentsTab from './tabs/kb-agents-tab'
 
+import { MobileNavBack } from '@/components/layout/mobile-nav-back'
+
 type KnowledgeBaseDetail = NonNullable<Awaited<ReturnType<typeof getKnowledgeBase>>>
 type KBDocument = NonNullable<Awaited<ReturnType<typeof getKBDocuments>>>[number]
 
@@ -49,11 +51,11 @@ export default function KnowledgeBaseDetailClient({ id, initialKb, initialDocume
     <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background font-sans">
       
       {/* 1. Detail Header (Two-Row High Fidelity) */}
-      <header className="px-6 md:px-10 border-b border-border bg-background sticky top-0 z-50 transition-colors">
+      <header className="px-4 md:px-10 border-b border-border bg-background sticky top-0 z-50 transition-colors py-2 md:py-0 h-auto md:h-28">
         
         {/* Top Row: Info & Actions */}
-        <div className="h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6 min-w-0">
+        <div className="flex flex-col md:flex-row md:h-16 md:items-center justify-between gap-4 py-2 md:py-0">
+          <div className="flex items-center gap-4 md:gap-6 min-w-0">
             <ContextualSidebarToggleButton className="mr-1 shrink-0" />
             
             <div className="flex flex-col min-w-0">
@@ -73,21 +75,9 @@ export default function KnowledgeBaseDetailClient({ id, initialKb, initialDocume
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted text-muted-foreground transition-all active:scale-95">
-                <Code className="h-4 w-4" />
-             </Button>
-             
-             <div className="h-6 w-[1px] bg-border/50 mx-1" />
-
              <Button variant="outline" size="sm" className="h-10 px-5 rounded-xl font-bold text-[12px] gap-2 border-border/60 hover:bg-muted transition-all active:scale-95 group">
                 <Plus className="h-3.5 w-3.5 text-primary" />
                 <span className="text-foreground">Add Source</span>
-             </Button>
-
-             <div className="h-6 w-[1px] bg-border/50 mx-1" />
-
-             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted text-muted-foreground transition-all active:scale-95">
-                <MoreVertical className="h-4 w-4" />
              </Button>
           </div>
         </div>

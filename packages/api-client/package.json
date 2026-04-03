@@ -1,0 +1,21 @@
+{
+  "name": "@aicaller/api-client",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@aicaller/supabase": "workspace:*"
+  },
+  "devDependencies": {
+    "@aicaller/config": "workspace:*",
+    "@types/node": "^22.0.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.2"
+  }
+}

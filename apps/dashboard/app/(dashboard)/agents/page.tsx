@@ -2,9 +2,11 @@ import React from 'react'
 import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { getAgents } from '@aicaller/supabase/queries'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { Button } from '@aicaller/ui'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
+import { SidebarAgentList } from './components/sidebar-agent-list'
 
 /**
  * Agents Index Page — Intelligent Navigation (Minimal)
@@ -17,9 +19,39 @@ export default async function AgentsIndexPage() {
   const supabase = await createServerSupabaseClient()
   const agents = await getAgents(supabase).catch(() => [])
 
-  // If we have agents, go straight to the first one for current selection UX
-  if (agents && agents.length > 0 && agents[0]?.id) {
+  // Detect mobile device
+  const userAgent = (await headers()).get('user-agent') || ''
+  const isMobile = /mobile/i.test(userAgent)
+
+  // On Desktop: If we have agents, go straight to the first one
+  if (!isMobile && agents && agents.length > 0 && agents[0]?.id) {
     redirect(`/agents/${agents[0].id}`)
+  }
+
+  // On Mobile: If we have agents, show the list view in the main area
+  if (isMobile && agents && agents.length > 0) {
+    return (
+      <div className="flex-1 flex flex-col min-w-0 bg-background overflow-y-auto">
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-[24px] font-bold tracking-tight text-foreground uppercase">Agents</h1>
+              <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-[0.2em]">{agents.length} Total Agents</p>
+            </div>
+            <Button asChild size="sm" className="h-9 gap-2 font-bold text-[10px] uppercase tracking-widest rounded-xl">
+              <Link href="/agents/new">
+                <Plus className="h-3.5 w-3.5" />
+                New
+              </Link>
+            </Button>
+          </div>
+          
+          <div className="grid gap-3">
+             <SidebarAgentList initialData={agents} hideHeader={true} />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
