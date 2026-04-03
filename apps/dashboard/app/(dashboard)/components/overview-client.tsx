@@ -21,6 +21,15 @@ import {
 } from '@aicaller/ui'
 import { useUser } from '@/providers/user-provider'
 
+type BackendHealth = {
+  service: string
+  version: string
+  environment: string
+  uptime_seconds: number
+  python: string
+  platform: string
+}
+
 /**
  * Overview Client Component (Professional / Retell AI Density)
  * 
@@ -30,9 +39,43 @@ import { useUser } from '@/providers/user-provider'
 export function OverviewClient() {
   const { profile, workspace, email } = useUser()
   const [mounted, setMounted] = useState(false)
+  const [backendHealth, setBackendHealth] = useState<BackendHealth | null>(null)
+  const [backendHealthError, setBackendHealthError] = useState<string | null>(null)
 
   useEffect(() => {
     setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        setBackendHealthError(null)
+
+        const res = await fetch('https://api.iamspiderman.me/health/info', {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          cache: 'no-store',
+        })
+
+        if (!res.ok) {
+          throw new Error(`Health fetch failed: ${res.status}`)
+        }
+
+        const data = (await res.json()) as BackendHealth
+        if (!cancelled) setBackendHealth(data)
+      } catch (e) {
+        if (cancelled) return
+        setBackendHealth(null)
+        setBackendHealthError(e instanceof Error ? e.message : 'Unknown error')
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const formatDate = (dateString?: string) => {
@@ -51,6 +94,15 @@ export function OverviewClient() {
   const today = mounted 
     ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()) 
     : 'Loading date...'
+
+  const formatUptime = (uptimeSeconds: number) => {
+    const totalSeconds = Math.max(0, Math.floor(uptimeSeconds))
+    const days = Math.floor(totalSeconds / 86400)
+    const hours = Math.floor((totalSeconds % 86400) / 3600)
+
+    if (days > 0) return `${days}d ${hours}h`
+    return `${hours}h`
+  }
 
   return (
     <div className="flex flex-col flex-1 min-w-0 h-full font-sans transition-colors duration-300" style={{ backgroundColor: 'hsl(var(--background))' }}>
@@ -133,15 +185,49 @@ export function OverviewClient() {
               <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 p-0">
                 <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-2">
                    <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                   System Health
+                   Backend Service
                 </CardTitle>
                 <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
                    <Activity size={18} />
                 </div>
               </CardHeader>
               <CardContent className="p-0 pt-4">
-                <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Optimal</div>
-                <p className="text-[12px] text-muted-foreground font-semibold mt-2">All services online</p>
+                {backendHealth ? (
+                  <div className="space-y-2">
+                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Online</div>
+                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">
+                      {backendHealth.service} • v{backendHealth.version}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <Badge
+                        variant="secondary"
+                        className="px-3 py-1 border border-border/40 bg-white/5 text-foreground font-semibold text-[10px] rounded-full uppercase tracking-tight"
+                      >
+                        {backendHealth.environment}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border-border/60 text-muted-foreground"
+                      >
+                        Uptime {formatUptime(backendHealth.uptime_seconds)}
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground/50 font-semibold mt-1">
+                      Python {backendHealth.python} • {backendHealth.platform}
+                    </p>
+                  </div>
+                ) : backendHealthError ? (
+                  <div className="space-y-2">
+                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Offline</div>
+                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">Health check failed</p>
+                    <p className="text-[11px] text-muted-foreground/50 font-medium">{backendHealthError}</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Checking...</div>
+                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">Fetching backend status</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
