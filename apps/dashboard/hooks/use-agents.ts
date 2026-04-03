@@ -6,6 +6,7 @@ import {
   createAgent,
   updateAgent,
   deleteAgent,
+  setAgentKnowledgeBases,
 } from '@aicaller/supabase/queries'
 import { agentKeys } from '@/lib/query-keys'
 import type { TablesInsert, TablesUpdate } from '@aicaller/supabase'
@@ -29,12 +30,16 @@ export function useAgents(initialData?: Awaited<ReturnType<typeof getAgents>>) {
  * Fetch a single agent by ID.
  * Used on agent detail / edit pages.
  */
-export function useAgent(id: string) {
+export function useAgent(
+  id: string,
+  initialData?: Awaited<ReturnType<typeof getAgent>>
+) {
   const supabase = createClient()
   return useQuery({
     queryKey: agentKeys.detail(id),
     queryFn: () => getAgent(supabase, id),
     enabled: !!id,
+    initialData: initialData ?? undefined,
   })
 }
 
@@ -96,6 +101,23 @@ export function useDeleteAgent() {
   return useMutation({
     mutationFn: (id: string) => deleteAgent(supabase, id),
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: agentKeys.all })
+    },
+  })
+}
+
+/**
+ * Replace the KB attachments for a given agent.
+ */
+export function useSetAgentKnowledgeBases() {
+  const supabase = createClient()
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (payload: { agentId: string; kbIds: string[] }) =>
+      setAgentKnowledgeBases(supabase, payload.agentId, payload.kbIds),
+    onSuccess: (_void, variables) => {
+      qc.invalidateQueries({ queryKey: agentKeys.detail(variables.agentId) })
       qc.invalidateQueries({ queryKey: agentKeys.all })
     },
   })

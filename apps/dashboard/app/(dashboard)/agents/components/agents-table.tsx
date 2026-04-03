@@ -21,9 +21,10 @@ import {
 import { cn } from '@aicaller/ui/lib/utils'
 import { useAgents } from '@/hooks/use-agents'
 import { ContextualSidebarToggleButton } from '@/components/layout/contextual-sidebar-toggle-button'
+import type { getAgents } from '@aicaller/supabase/queries'
 
 interface AgentsTableProps {
-  initialData: any
+  initialData?: Awaited<ReturnType<typeof getAgents>>
 }
 
 /**
@@ -98,6 +99,27 @@ export function AgentsTable({ initialData }: AgentsTableProps) {
                     <span className="text-[11px] text-muted-foreground/40 truncate font-medium max-w-[280px]">
                       {agent.id}
                     </span>
+                    {agent.agent_knowledge_bases?.length ? (
+                      <div className="flex flex-wrap gap-1.5 mt-2">
+                        {agent.agent_knowledge_bases.slice(0, 2).map((link) => (
+                          <Badge
+                            key={link.kb_id}
+                            variant="secondary"
+                            className="h-5 px-2 bg-background border-border/40 text-[9px] font-bold uppercase tracking-widest text-foreground/70"
+                          >
+                            {link.knowledge_bases?.name ?? link.kb_id}
+                          </Badge>
+                        ))}
+                        {agent.agent_knowledge_bases.length > 2 ? (
+                          <Badge
+                            variant="secondary"
+                            className="h-5 px-2 text-[9px] font-bold bg-background border-border/40 text-foreground/50"
+                          >
+                            +{agent.agent_knowledge_bases.length - 2}
+                          </Badge>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </Link>
                 </TableCell>
                 

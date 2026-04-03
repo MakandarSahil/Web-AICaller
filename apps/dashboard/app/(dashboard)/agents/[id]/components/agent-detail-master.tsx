@@ -19,7 +19,9 @@ import {
 import Link from 'next/link'
 import { cn } from '@aicaller/ui/lib/utils'
 import type { getAgent } from '@aicaller/supabase/queries'
+import type { getKnowledgeBases } from '@aicaller/supabase/queries'
 import { ContextualSidebarToggleButton } from '@/components/layout/contextual-sidebar-toggle-button'
+import { useAgent } from '@/hooks/use-agents'
 
 // New Tabs
 import GeneralTab from './tabs/general-tab'
@@ -28,16 +30,20 @@ import KnowledgeBasesTab from './tabs/knowledge-bases-tab'
 import AdvancedTab from './tabs/advanced-tab'
 
 type Agent = NonNullable<Awaited<ReturnType<typeof getAgent>>>
+type KnowledgeBasesList = NonNullable<Awaited<ReturnType<typeof getKnowledgeBases>>>
 
 interface AgentDetailMasterProps {
   agent: Agent
+  knowledgeBases: KnowledgeBasesList
 }
 
 /**
  * Agent Detail Master — Refined to 4-Tab System
  */
-export function AgentDetailMaster({ agent }: AgentDetailMasterProps) {
+export function AgentDetailMaster({ agent, knowledgeBases }: AgentDetailMasterProps) {
   const [activeTab, setActiveTab] = useState<string>('general')
+  const { data: liveAgent } = useAgent(agent.id, agent)
+  const agentData = liveAgent ?? agent
 
   const tabs = [
     { id: 'general', label: 'General', icon: Brain },
@@ -64,15 +70,15 @@ export function AgentDetailMaster({ agent }: AgentDetailMasterProps) {
             <div className="flex flex-col min-w-0">
                <div className="flex items-center gap-2">
                   <h1 className="text-[18px] md:text-[20px] font-bold text-foreground tracking-tight truncate leading-none">
-                    {agent.name}
+                    {agentData.name}
                   </h1>
-                  {agent.is_default && (
+                  {agentData.is_default && (
                     <Badge variant="outline" className="h-5 px-2 text-[9px] font-bold uppercase tracking-widest bg-primary/5 text-primary border-primary/20">Default</Badge>
                   )}
                </div>
                <div className="flex items-center gap-1.5 mt-0.5 group cursor-pointer" onClick={handleCopyId}>
                   <span className="text-[11px] font-medium text-muted-foreground transition-colors group-hover:text-primary">
-                    {agent.id}
+                    {agentData.id}
                   </span>
                   <Copy className="h-2.5 w-2.5 text-muted-foreground group-hover:text-primary transition-opacity opacity-40 group-hover:opacity-100" />
                </div>
@@ -146,10 +152,10 @@ export function AgentDetailMaster({ agent }: AgentDetailMasterProps) {
               
               {/* Tab Content Rendering */}
               <div>
-                {activeTab === 'general' && <GeneralTab agent={agent} />}
-                {activeTab === 'voice-model' && <VoiceModelTab agent={agent} />}
-                {activeTab === 'knowledge' && <KnowledgeBasesTab agent={agent} />}
-                {activeTab === 'advanced' && <AdvancedTab agent={agent} />}
+                {activeTab === 'general' && <GeneralTab agent={agentData} />}
+                {activeTab === 'voice-model' && <VoiceModelTab agent={agentData} />}
+                {activeTab === 'knowledge' && <KnowledgeBasesTab agent={agentData} knowledgeBases={knowledgeBases} />}
+                {activeTab === 'advanced' && <AdvancedTab agent={agentData} />}
               </div>
 
            </div>

@@ -25,6 +25,10 @@ interface VoiceModelTabProps {
 }
 
 export default function VoiceModelTab({ agent }: VoiceModelTabProps) {
+  const defaultModel = agent.llm_model || 'llama-3.3-70b-versatile'
+  const defaultVoice = agent.tts_voice || 'en-IN-PrabhatNeural'
+  const providerLabel = agent.llm_provider === 'openai' ? 'OpenAI' : 'Groq'
+
   return (
     <div className="space-y-12">
       
@@ -43,22 +47,33 @@ export default function VoiceModelTab({ agent }: VoiceModelTabProps) {
                 <Cpu className="h-4 w-4 text-primary opacity-60" />
                 <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Selected Model</Label>
               </div>
-              <Select defaultValue={agent.llm_model || 'llama-3.3-70b-versatile'}>
-                <SelectTrigger className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]">
+              <Select defaultValue={defaultModel}>
+                <SelectTrigger
+                  className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]"
+                  disabled
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border/50">
-                  <SelectItem value="llama-3.3-70b-versatile" className="font-bold">Llama 3.3 70B (Recommended)</SelectItem>
-                  <SelectItem value="llama-3.1-8b-instant" className="font-bold">Llama 3.1 8B (Fastest)</SelectItem>
-                  <SelectItem value="mixtral-8x7b-32768" className="font-bold">Mixtral 8x7B (Large Context)</SelectItem>
+                  <SelectItem value={defaultModel} className="font-bold">
+                    {defaultModel} (Default)
+                  </SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-[11px] font-medium text-muted-foreground/40 uppercase tracking-widest">
+                Coming soon: model selection is not editable yet.
+              </p>
            </div>
 
            <div className="space-y-4">
               <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Provider Badge</Label>
               <div className="h-12 flex items-center px-5 rounded-xl border border-border/50 bg-muted/20 font-bold text-[14px] gap-3">
-                 <Badge variant="outline" className="h-6 bg-background rounded-md text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest border-border/40">Groq</Badge>
+                 <Badge
+                   variant="outline"
+                   className="h-6 bg-background rounded-md text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest border-border/40"
+                 >
+                   {providerLabel}
+                 </Badge>
                  <span className="text-muted-foreground/40 text-[12px] font-medium uppercase tracking-widest opacity-60 decoration-dotted underline underline-offset-4">Accelerated Intelligence</span>
               </div>
            </div>
@@ -80,20 +95,22 @@ export default function VoiceModelTab({ agent }: VoiceModelTabProps) {
                 <Volume2 className="h-4 w-4 text-emerald-500 opacity-60" />
                 <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">TTS Voice</Label>
               </div>
-              <Select defaultValue={agent.tts_voice || 'en-IN-PrabhatNeural'}>
-                <SelectTrigger className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]">
+              <Select defaultValue={defaultVoice}>
+                <SelectTrigger
+                  className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]"
+                  disabled
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border/50">
-                  <SelectItem value="en-IN-PrabhatNeural" className="font-bold">Prabhat (Indian Male)</SelectItem>
-                  <SelectItem value="en-US-JennyNeural" className="font-bold">Jenny (US Female)</SelectItem>
-                  <SelectItem value="en-US-AriaNeural" className="font-bold">Aria (US Female)</SelectItem>
-                  <SelectItem value="en-US-GuyNeural" className="font-bold">Guy (US Male)</SelectItem>
-                  <SelectItem value="en-GB-SoniaNeural" className="font-bold">Sonia (UK Female)</SelectItem>
-                  <SelectItem value="hi-IN-SwaraNeural" className="font-bold">Swara (Hindi Female)</SelectItem>
-                  <SelectItem value="en-AU-NatashaNeural" className="font-bold">Natasha (AU Female)</SelectItem>
+                  <SelectItem value={defaultVoice} className="font-bold">
+                    {defaultVoice} (Default)
+                  </SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-[11px] font-medium text-muted-foreground/40 uppercase tracking-widest">
+                Coming soon: voice selection is not editable yet.
+              </p>
            </div>
 
            <div className="space-y-4">

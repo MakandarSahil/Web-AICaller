@@ -27,7 +27,7 @@ export default async function KnowledgeBaseDetailPage({ params }: KBPageProps) {
 
   return (
     <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background font-sans transition-colors duration-300">
-       <KnowledgeBaseDetailClient id={id} />
+       <KnowledgeBaseDetailClient id={id} initialKb={kb} initialDocuments={documents} />
     </div>
   )
 }

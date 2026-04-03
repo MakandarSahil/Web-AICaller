@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from '@aicaller/supabase/server'
-import { getAgent } from '@aicaller/supabase/queries'
+import { getAgent, getKnowledgeBases } from '@aicaller/supabase/queries'
 import { AgentDetailMaster } from './components/agent-detail-master'
 import { notFound } from 'next/navigation'
 
@@ -17,10 +17,11 @@ export default async function AgentDetailPage({ params }: { params: Promise<{ id
   
   // Fetch specific agent data
   const agent = await getAgent(supabase, id).catch(() => null)
+  const knowledgeBases = await getKnowledgeBases(supabase).catch(() => [])
   
   if (!agent) {
     notFound()
   }
 
-  return <AgentDetailMaster agent={agent} />
+  return <AgentDetailMaster agent={agent} knowledgeBases={knowledgeBases} />
 }

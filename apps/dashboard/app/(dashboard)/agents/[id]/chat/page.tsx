@@ -129,10 +129,12 @@ export default function AgentChatPage({ params }: { params: Promise<{ id: string
               <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50">Attached Knowledge</h4>
               <div className="space-y-2">
                  {agent?.agent_knowledge_bases?.length ? (
-                    agent.agent_knowledge_bases.map((kb: any) => (
-                       <div key={kb.id} className="flex items-center gap-3 p-3 rounded-lg bg-background border border-border/50 group">
+                    agent.agent_knowledge_bases.map((link) => (
+                       <div key={link.kb_id} className="flex items-center gap-3 p-3 rounded-lg bg-background border border-border/50 group">
                           <Database className="h-3.5 w-3.5 text-primary/40 group-hover:text-primary transition-colors" />
-                          <span className="text-[12px] font-bold text-muted-foreground/80 truncate">{kb.knowledge_base?.name}</span>
+                          <span className="text-[12px] font-bold text-muted-foreground/80 truncate">
+                            {link.knowledge_bases?.name ?? 'Untitled Source'}
+                          </span>
                        </div>
                     ))
                  ) : (

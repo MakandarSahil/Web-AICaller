@@ -46,7 +46,7 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
            </p>
         </div>
 
-        <Card className="p-8 border-border/40 bg-muted/5 rounded-[32px] flex items-center justify-between">
+        <Card className="p-8 border-border/40 bg-muted/5 rounded-none flex items-center justify-between">
            <div className="flex flex-col gap-1">
               <Label className="text-[13px] font-bold text-foreground">Operational Status</Label>
               <p className="text-[11px] text-muted-foreground/60 font-medium italic">Disable this to prevent the agent from making or receiving calls.</p>
@@ -75,7 +75,7 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
       </div>
 
       {/* 3. Delete Agent Card */}
-      <Card className="p-10 border-destructive/20 bg-destructive/5 rounded-[32px] space-y-8">
+      <Card className="p-10 border-destructive/20 bg-destructive/5 rounded-none space-y-8">
          <div className="flex flex-col gap-2">
             <h4 className="text-[16px] font-bold text-foreground">Delete Agent</h4>
             <p className="text-[12px] text-muted-foreground/60 leading-relaxed font-medium">
