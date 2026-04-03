@@ -6,7 +6,6 @@ import { DashboardShell } from '@/components/layout/dashboard-shell'
 
 export default function AnalyticsPage() {
   return (
-    <DashboardShell>
       <div className="flex flex-col flex-1 min-w-0 bg-background h-full font-sans transition-colors duration-300">
         <header className="page-header shrink-0 px-6 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40">
           <div className="flex items-center gap-4 flex-1">
@@ -29,6 +28,5 @@ export default function AnalyticsPage() {
           </Card>
         </div>
       </div>
-    </DashboardShell>
   )
 }

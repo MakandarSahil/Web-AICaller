@@ -86,7 +86,7 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
-          className="w-72 bg-card border border-border shadow-[0_20px_80px_rgb(0,0,0,0.4)] rounded-2xl p-1.5 z-50 animate-in fade-in slide-in-from-bottom-2 duration-150" 
+          className="w-72 bg-card border border-border shadow-[0_20px_80px_rgb(0,0,0,0.4)] rounded-2xl p-1.5 z-50" 
           align={collapsed ? 'center' : 'start'} 
           side={collapsed ? 'right' : 'top'} 
           sideOffset={14}
@@ -122,7 +122,7 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
               <span className="ml-auto text-[11px] px-2 py-0.5 bg-muted rounded-lg text-muted-foreground font-black uppercase tracking-tighter capitalize opacity-60 dark:bg-muted">{theme}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent className="w-[180px] bg-card border border-border shadow-3xl p-1.5 rounded-2xl animate-in zoom-in-95 duration-200">
+              <DropdownMenuSubContent className="w-[180px] bg-card border border-border shadow-3xl p-1.5 rounded-2xl">
                 <DropdownMenuItem onSelect={() => setTheme('light')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
                    <div className="flex items-center gap-3 text-foreground">
                     <Sun className="h-4 w-4" /> Light

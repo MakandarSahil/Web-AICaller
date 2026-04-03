@@ -19,6 +19,7 @@ export { Input } from './components/ui/input'
 export { Label } from './components/ui/label'
 export { Separator } from './components/ui/separator'
 export { Avatar, AvatarImage, AvatarFallback } from './components/ui/avatar'
+export { Alert, AlertTitle, AlertDescription } from './components/ui/alert'
 export {
   Dialog,
   DialogPortal,
