@@ -1,59 +1,33 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@aicaller/ui'
-import { Button } from '@aicaller/ui'
-import { Input } from '@aicaller/ui'
-import { DashboardShell } from '@/components/layout/dashboard-shell'
+import React from 'react'
+import { createServerSupabaseClient } from '@aicaller/supabase/server'
+import { getKnowledgeBase, getKBDocuments } from '@aicaller/supabase/queries'
+import { redirect, notFound } from 'next/navigation'
+import KnowledgeBaseDetailClient from './components/kb-detail-client'
 
-export default function KnowledgeBaseDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <DashboardShell>
-      <div className="flex flex-col flex-1 min-w-0 bg-background h-full p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Knowledge Base</h1>
-          <p className="text-muted-foreground">Knowledge Base ID: {params.id}</p>
-        </div>
-
-        <Card className="bg-card border border-border/40">
-          <CardHeader>
-            <CardTitle className="text-foreground">Documents</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border/40">
-                    <th className="text-left py-2 text-muted-foreground/70">Name</th>
-                    <th className="text-left py-2 text-muted-foreground/70">Type</th>
-                    <th className="text-left py-2 text-muted-foreground/70">Status</th>
-                    <th className="text-left py-2 text-muted-foreground/70">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-border/40">
-                    <td className="py-3 text-foreground">No documents</td>
-                    <td className="py-3 text-muted-foreground/70">-</td>
-                    <td className="py-3 text-muted-foreground/70">-</td>
-                    <td className="py-3 text-muted-foreground/70">-</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card border border-border/40">
-          <CardHeader>
-            <CardTitle className="text-foreground">Upload Document</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Input
-              type="file"
-              className="bg-muted/30 border-border/40 text-foreground focus:ring-primary/40 focus:border-primary transition-all"
-            />
-            <Button className="bg-brand-500 hover:bg-brand-600 text-white">Upload</Button>
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardShell>
-  )
+interface KBPageProps {
+  params: Promise<{ id: string }>
 }
 
+/**
+ * Knowledge Base Detail Page — Master-Detail Integration
+ */
+export default async function KnowledgeBaseDetailPage({ params }: KBPageProps) {
+  const { id } = await params
+  const supabase = await createServerSupabaseClient()
+  
+  // 1. Fetch KB metadata (Server Side)
+  const kb = await getKnowledgeBase(supabase, id).catch(() => null)
+  
+  if (!kb) {
+    return notFound()
+  }
+
+  // 2. Fetch linked documents (Server Side)
+  const documents = await getKBDocuments(supabase, id).catch(() => [])
+
+  return (
+    <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background font-sans transition-colors duration-300">
+       <KnowledgeBaseDetailClient id={id} initialKb={kb} initialDocuments={documents} />
+    </div>
+  )
+}

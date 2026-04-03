@@ -14,8 +14,10 @@
 export * from './workspace'
 export * from './profile'
 export * from './agents'
-// export * from './knowledge-bases'   // add when KB page is built
-// export * from './conversations'     // add when conversations page is built
+export * from './knowledge-bases'
+export * from './conversations'
+export * from './kb-documents'
+export * from './phone-numbers'
 // export * from './phone-numbers'     // add when phone numbers page is built
 // export * from './api-keys'          // add when API keys page is built
 // export * from './callers'           // add when callers page is built

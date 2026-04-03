@@ -20,6 +20,7 @@ import { navigationGroups, isNavItemActive } from './dashboard-nav'
 
 import { WorkspaceSwitcher } from './workspace-switcher'
 import { UserNav } from './user-nav'
+import { SidebarProvider, useSidebar } from './sidebar-context'
 
 interface DashboardShellProps {
   children: ReactNode
@@ -27,46 +28,52 @@ interface DashboardShellProps {
 }
 
 /**
- * Main Dashboard Shell (High Fidelity)
- * 
- * Implements a "stepped" dark mode with different shades for 
- * sidebar, middle panels, and main content to match the Retell aesthetic.
+ * Main Content Area Wrapper to handle contextual sidebar collapsing
  */
-export function DashboardShell({ children, contextualSidebar }: DashboardShellProps) {
-  const [mainCollapsed, setMainCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+/**
+ * Main Content Area Wrapper to handle contextual sidebar collapsing
+ */
+function ShellContent({ children }: { children: ReactNode }) {
+  const { contextualCollapsed, contextualSidebar } = useSidebar()
   const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [mainCollapsed, setMainCollapsed] = useState(false)
 
   return (
     <div 
       className="flex h-screen w-full overflow-hidden transition-colors duration-300"
       style={{ backgroundColor: 'hsl(var(--background))', color: 'hsl(var(--foreground))' }}
     >
-      {/* 1. Desktop Global Sidebar (Darkest Step) */}
+      {/* 1. Desktop Global Sidebar */}
       <div className="hidden md:block shrink-0 h-full border-r border-border">
         <SidebarGlobal collapsed={mainCollapsed} setCollapsed={setMainCollapsed} />
       </div>
 
-      {/* 2. Main Content Area + Optional Contextual Sidebar */}
+      {/* 2. Main Content Area */}
       <div className="flex flex-1 min-w-0 h-full relative overflow-hidden">
         
-        {/* Slot for Contextual Sidebar (Middle Step) */}
+        {/* Contextual Sidebar (Middle Step) */}
         {contextualSidebar && (
           <div 
-            className="flex shrink-0 h-full border-r border-border/60 transition-colors relative"
+            className={cn(
+              "flex shrink-0 h-full border-r border-border/60 transition-all duration-300 ease-in-out relative overflow-hidden",
+              contextualCollapsed ? "w-0 border-r-0 opacity-0" : "w-[280px]"
+            )}
             style={{ backgroundColor: 'hsla(var(--background) / 0.5)' }} 
           >
-            {contextualSidebar}
+            <div className="w-[280px] h-full shrink-0">
+              {contextualSidebar}
+            </div>
           </div>
         )}
 
         <div className="flex flex-1 flex-col min-w-0 h-full relative overflow-hidden">
-          {/* Mobile Header */}
-          <header className="flex md:hidden h-(--header-height) items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-md shrink-0 z-40">
+          {/* Mobile Header logic remains similar */}
+          <header className="flex md:hidden h-16 items-center justify-between px-6 border-b border-border bg-background/95 backdrop-blur-md shrink-0 z-40">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-lg transition-transform group-hover:scale-105 shadow-sm">C</div>
+              <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">C</div>
               <span className="text-[18px] font-bold tracking-tight text-foreground">
-                call<span className="font-extrabold text-brand-500">Mind</span>
+                call<span className="font-extrabold text-primary">Mind</span>
               </span>
             </Link>
 
@@ -78,24 +85,20 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
               </SheetTrigger>
               <SheetContent side="left" className="p-0 flex flex-col w-65 border-r-0 bg-sidebar shadow-2xl">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                {/* Mobile Drawer Header */}
-                <SheetHeader className="px-3 py-3.5 border-b border-border text-left shrink-0" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                <SheetHeader className="px-3 py-3.5 border-b border-border text-left shrink-0">
                   <div className="flex items-center gap-2">
-                     <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-base">C</div>
+                     <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-base">C</div>
                      <span className="text-[17px] font-bold tracking-tight text-foreground">
-                      call<span className="font-extrabold text-brand-500">Mind</span>
+                      call<span className="font-extrabold text-primary">Mind</span>
                     </span>
                   </div>
                 </SheetHeader>
                 
-                <ScrollArea className="flex-1" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                <ScrollArea className="flex-1">
                   <div className="flex flex-col h-full">
-                    
-                      <div className="p-2 border-b border-border bg-sidebar-active-bg dark:bg-sidebar-active-bg">
-                        <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1 px-1 opacity-60">Current Workspace</div>
-                       <WorkspaceSwitcher inMobileDrawer />
-                    </div>
-
+                      <div className="p-2 border-b border-border">
+                        <WorkspaceSwitcher inMobileDrawer />
+                      </div>
                       <nav className="px-2 py-3 flex flex-col gap-4">
                        {navigationGroups.map((group) => (
                         <div key={group.label} className="flex flex-col gap-1">
@@ -110,10 +113,10 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                                 onClick={() => setMobileOpen(false)}
                                 className={cn(
                                   'flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-[12px] font-medium transition-all duration-200',
-                                  active ? 'bg-sidebar-active-bg dark:bg-sidebar-active-bg text-brand-500 shadow-sm border border-brand-500/10' : 'text-muted-foreground hover:bg-sidebar-active-bg dark:hover:bg-sidebar-active-bg hover:text-foreground'
+                                  active ? 'bg-sidebar-active-bg text-primary' : 'text-muted-foreground hover:bg-sidebar-active-bg hover:text-foreground'
                                 )}
                               >
-                                <Icon className={cn('h-5 w-5', active ? 'text-brand-500' : 'text-muted-foreground')} />
+                                <Icon className={cn('h-5 w-5', active ? 'text-primary' : 'text-muted-foreground')} />
                                 <span className={cn(active && 'font-bold tracking-tight text-foreground')}>{item.label}</span>
                               </Link>
                             )
@@ -121,24 +124,32 @@ export function DashboardShell({ children, contextualSidebar }: DashboardShellPr
                         </div>
                       ))}
                     </nav>
-
                   </div>
                 </ScrollArea>
                 
-                {/* Mobile Drawer Footer */}
-                <div className="p-2.5 border-t border-border mt-auto" style={{ backgroundColor: 'hsl(var(--sidebar-bg))' }}>
+                <div className="p-2.5 border-t border-border mt-auto">
                   <UserNav />
                 </div>
               </SheetContent>
             </Sheet>
           </header>
 
-          <main className="flex flex-1 overflow-auto min-w-0 bg-background transition-colors">
+          <main className="flex flex-1 overflow-auto min-w-0 bg-background transition-colors scrollbar-none">
             {children}
           </main>
         </div>
-
       </div>
     </div>
+  )
+}
+
+/**
+ * High-Level DashboardShell with SidebarProvider
+ */
+export function DashboardShell({ children }: { children: ReactNode }) {
+  return (
+    <ShellContent>
+       {children}
+    </ShellContent>
   )
 }

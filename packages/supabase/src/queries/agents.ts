@@ -121,3 +121,37 @@ export async function deleteAgent(supabase: SupabaseClientType, id: string) {
 
   if (error) throw error
 }
+
+/**
+ * Set the knowledge bases attached to an agent.
+ *
+ * This is a dashboard-level helper: it wipes existing links for the agent
+ * and inserts the provided KB IDs.
+ */
+export async function setAgentKnowledgeBases(
+  supabase: SupabaseClientType,
+  agentId: string,
+  kbIds: string[]
+) {
+  const uniqueKbIds = Array.from(new Set(kbIds))
+
+  const { error: deleteError } = await supabase
+    .from('agent_knowledge_bases')
+    .delete()
+    .eq('agent_id', agentId)
+
+  if (deleteError) throw deleteError
+
+  if (uniqueKbIds.length === 0) return
+
+  const { error: insertError } = await supabase
+    .from('agent_knowledge_bases')
+    .insert(
+      uniqueKbIds.map((kbId) => ({
+        agent_id: agentId,
+        kb_id: kbId,
+      }))
+    )
+
+  if (insertError) throw insertError
+}

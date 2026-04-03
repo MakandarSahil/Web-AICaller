@@ -7,9 +7,5 @@ import { OverviewClient } from './components/overview-client'
  * Profile + workspace come from the layout via UserProvider — no re-fetch here.
  */
 export default async function DashboardOverviewPage() {
-  return (
-    <DashboardShell>
-      <OverviewClient />
-    </DashboardShell>
-  )
+  return <OverviewClient />
 }

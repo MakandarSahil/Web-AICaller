@@ -2,13 +2,11 @@ import {
   BarChart3,
   Bot,
   Book,
-  MessageSquare,
   Phone,
   History,
-  ShieldCheck,
-  Bell,
-  Zap,
   LayoutDashboard,
+  Settings2,
+  Zap,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -27,7 +25,7 @@ export const navigationGroups: DashboardNavGroup[] = [
   {
     label: 'GENERAL',
     items: [
-      { href: '/', label: 'Home', icon: LayoutDashboard },
+      { href: '/', label: 'Overview', icon: LayoutDashboard },
     ],
   },
   {
@@ -35,23 +33,20 @@ export const navigationGroups: DashboardNavGroup[] = [
     items: [
       { href: '/agents', label: 'Agents', icon: Bot },
       { href: '/knowledge-bases', label: 'Knowledge Base', icon: Book },
+      { href: '/api-keys', label: 'API Keys (Coming Soon)', icon: Zap },
     ],
   },
   {
     label: 'DEPLOY',
     items: [
-      { href: '/phone-numbers', label: 'Phone Numbers', icon: Phone },
-      { href: '/batch-call', label: 'Batch Call', icon: Zap },
+      { href: '/phone-numbers', label: 'Phone Numbers (Coming Soon)', icon: Phone },
     ],
   },
   {
     label: 'MONITOR',
     items: [
-      { href: '/conversations', label: 'Call History', icon: History },
-      { href: '/chat-history', label: 'Chat History', icon: MessageSquare },
-      { href: '/analytics', label: 'Analytics', icon: BarChart3 },
-      { href: '/quality-assurance', label: 'AI Quality Assurance', icon: ShieldCheck },
-      { href: '/alerts', label: 'Alerting', icon: Bell },
+      { href: '/conversations', label: 'Call History (Coming Soon)', icon: History },
+      { href: '/analytics', label: 'Analytics (Coming Soon)', icon: BarChart3 },
     ],
   },
 ]

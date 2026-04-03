@@ -1,55 +1,27 @@
-import { Card, CardContent } from '@aicaller/ui'
-import { Button } from '@aicaller/ui'
-import { Label } from '@aicaller/ui'
-import { Input } from '@aicaller/ui'
-import { DashboardShell } from '@/components/layout/dashboard-shell'
+import { createServerSupabaseClient } from '@aicaller/supabase/server'
+import { getAgent, getKnowledgeBases } from '@aicaller/supabase/queries'
+import { AgentDetailMaster } from './components/agent-detail-master'
+import { notFound } from 'next/navigation'
 
-export default function AgentDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <DashboardShell>
-      <div className="flex flex-col flex-1 min-w-0 bg-background h-full p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Agent Detail</h1>
-          <p className="text-muted-foreground">Edit and manage agent {params.id}</p>
-        </div>
+/**
+ * Agent Detail Page — Server Component
+ * 
+ * 1. Fetches the specific agent by ID
+ * 2. Renders the tabbed Detail Master interface
+ * 
+ * Note: No DashboardShell here because it's already provided by agents/layout.tsx
+ */
+export default async function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const supabase = await createServerSupabaseClient()
+  
+  // Fetch specific agent data
+  const agent = await getAgent(supabase, id).catch(() => null)
+  const knowledgeBases = await getKnowledgeBases(supabase).catch(() => [])
+  
+  if (!agent) {
+    notFound()
+  }
 
-        <Card className="bg-card border border-border/40">
-          <CardContent className="pt-6">
-            <form className="space-y-6 max-w-2xl">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-foreground/80">
-                  Agent Name
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="Agent name"
-                  className="bg-muted/30 border-border/40 text-foreground placeholder:text-muted-foreground/40 focus:ring-primary/40 focus:border-primary transition-all"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="prompt" className="text-foreground/80">
-                  System Prompt
-                </Label>
-                <textarea
-                  id="prompt"
-                  placeholder="System prompt"
-                  className="w-full rounded-lg border border-border/40 bg-muted/30 px-4 py-2 text-foreground placeholder:text-muted-foreground/40 focus:ring-1 focus:ring-primary/40 transition-all"
-                  rows={8}
-                />
-              </div>
-
-              <div className="flex space-x-4">
-                <Button type="submit" className="bg-brand-500 hover:bg-brand-600 text-white">Save Changes</Button>
-                <Button type="button" variant="outline">
-                  Delete
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </DashboardShell>
-  )
+  return <AgentDetailMaster agent={agent} knowledgeBases={knowledgeBases} />
 }
-

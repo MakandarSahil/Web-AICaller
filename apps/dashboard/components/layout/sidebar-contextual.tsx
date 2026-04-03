@@ -5,7 +5,7 @@ import { cn } from '@aicaller/ui/lib/utils'
 import { ScrollArea, Separator } from '@aicaller/ui'
 
 interface SidebarContextualProps {
-  title: string
+  title: React.ReactNode
   children: React.ReactNode
   collapsed: boolean
 }

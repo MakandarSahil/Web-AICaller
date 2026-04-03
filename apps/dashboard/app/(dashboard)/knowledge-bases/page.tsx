@@ -1,74 +1,89 @@
-'use client'
-
 import React from 'react'
-import { Card, CardContent, Button, ScrollArea } from '@aicaller/ui'
-import { Plus, BookOpen, Search, Info } from 'lucide-react'
-import { DashboardShell } from '@/components/layout/dashboard-shell'
+import { createServerSupabaseClient } from '@aicaller/supabase/server'
+import { getKnowledgeBases } from '@aicaller/supabase/queries'
+import { redirect } from 'next/navigation'
+import { Button, Badge } from '@aicaller/ui'
+import { Plus, Database, Users } from 'lucide-react'
+import Link from 'next/link'
+import { ContextualSidebarToggleButton } from '@/components/layout/contextual-sidebar-toggle-button'
 
 /**
- * Knowledge Bases Page (Professional / Midnight Theme Optimized)
+ * Knowledge Bases Index Page — Intelligent Navigation
  * 
- * 1. Normalized font weights: font-black/extrabold -> font-bold.
- * 2. Background: #181b25 (Dashboard Area).
- * 3. Cards: #242630.
+ * 1. Fetches all knowledge bases.
+ * 2. If KBs exist, redirects to the first one for the Master-Detail UX.
+ * 3. Else, presents a professional "Zero State" interface.
  */
-export default function KnowledgeBasesPage() {
+export default async function KnowledgeBasesIndexPage() {
+  const supabase = await createServerSupabaseClient()
+  const kbs = await getKnowledgeBases(supabase).catch(() => [])
+
+  // If we have KBs, go straight to the first one
+  if (kbs && kbs.length > 0 && kbs[0]?.id) {
+    redirect(`/knowledge-bases/${kbs[0].id}`)
+  }
+
   return (
-    <DashboardShell>
-      <div className="flex flex-col flex-1 min-w-0 bg-background h-full font-sans transition-colors duration-300">
-        
-        {/* Page Header */}
-        <header className="page-header shrink-0 px-6 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40">
-          <div className="flex items-center gap-4 flex-1">
-            <h1 className="page-title leading-none text-[15px] font-bold tracking-tight text-foreground">Knowledge Bases</h1>
-            <p className="hidden sm:block text-[11px] font-semibold text-muted-foreground opacity-50 uppercase tracking-widest ml-2 border-l border-border/40 pl-4">Management</p>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <Button className="h-9 gap-2 px-5 bg-brand-500 hover:bg-brand-600 text-white border-0 text-[12px] font-bold shadow-lg shadow-brand-500/10 transition-all active:scale-95 rounded-xl">
-              <Plus size={16} />
-              <span>New Knowledge Base</span>
-            </Button>
-          </div>
-        </header>
-
-        <ScrollArea className="flex-1">
-          <div className="p-6 sm:p-10 flex flex-col gap-10 max-w-[1200px] mx-auto">
-            
-            {/* Context Info */}
-            <div className="bg-brand-500/5 border border-brand-500/10 rounded-2xl p-5 flex items-start gap-4">
-               <div className="h-9 w-9 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-500 shrink-0">
-                  <Info size={18} />
-               </div>
-               <div className="flex flex-col gap-1">
-                  <h3 className="text-[14px] font-bold text-foreground">Understanding Knowledge Bases</h3>
-                  <p className="text-[12.5px] text-muted-foreground font-medium opacity-70 leading-relaxed">
-                    Knowledge bases allow you to upload PDFs, text files, or URLs that your AI voice agents can reference in real-time. 
-                    This enables them to answer specific questions about your business, products, or FAQs.
-                  </p>
-               </div>
-            </div>
-
-            {/* Empty State / Grid */}
-            <Card className="stat-card border border-border/40 overflow-hidden shadow-2xl rounded-3xl bg-card">
-              <CardContent className="pt-32 pb-32">
-                <div className="text-center flex flex-col items-center">
-                  <div className="h-20 w-20 rounded-3xl bg-white/2 border border-border/40 flex items-center justify-center mb-8 shadow-3xl text-muted-foreground group hover:scale-105 transition-transform duration-300">
-                     <BookOpen size={28} className="opacity-30 group-hover:text-brand-500 group-hover:opacity-100 transition-colors" />
-                  </div>
-                  <h3 className="text-[18px] font-bold text-foreground tracking-tight">Zero knowledge bases yet</h3>
-                  <p className="text-[13px] text-muted-foreground mt-4 max-w-[320px] font-medium leading-relaxed opacity-50">
-                    Connect your data sources or upload files to give your agents specialized intelligence.
-                  </p>
-                  <Button variant="outline" className="mt-10 border-border/40 bg-white/2 hover:bg-white/5 h-11 px-10 font-bold text-[12.5px] uppercase tracking-widest rounded-xl transition-all active:scale-95 shadow-sm">
-                     Setup your first KB
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-          </div>
-        </ScrollArea>
+    <div className="flex-1 flex flex-col bg-background p-10">
+      <div className="shrink-0 mb-8">
+        <ContextualSidebarToggleButton />
       </div>
-    </DashboardShell>
+      <div className="flex-1 flex items-center justify-center">
+      <div className="max-w-[420px] w-full text-center space-y-12">
+        
+        {/* Visual Anchor */}
+        <div className="relative mx-auto w-28 h-28 flex items-center justify-center border border-dashed border-border/60 rounded-[32px]">
+            <Database className="h-10 w-10 text-muted-foreground opacity-20" />
+            <div className="absolute -top-2 -right-2 h-8 w-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
+                <Plus className="h-4 w-4" />
+            </div>
+        </div>
+
+        <div className="space-y-3">
+          <h1 className="text-[22px] font-bold tracking-tight text-foreground uppercase">Knowledge Center</h1>
+          <p className="text-[12px] text-muted-foreground/40 font-medium leading-relaxed uppercase tracking-widest px-6 italic">
+            Your agents are currently operating without custom context. Create a Knowledge Base to enhance their intelligence.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <Button 
+            className="w-full h-14 font-bold text-[12px] uppercase tracking-widest rounded-2xl transition-all gap-4 active:scale-95 shadow-xl shadow-primary/10"
+            asChild
+          >
+            <Link href="/knowledge-bases">
+              <Plus className="h-4 w-4" />
+              Initialize Knowledge Base
+            </Link>
+          </Button>
+          
+          <div className="flex items-center justify-center gap-4 py-2">
+             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-border/30" />
+             <span className="text-[9px] font-bold text-muted-foreground/20 uppercase tracking-[0.3em]">Documentation</span>
+             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-border/30" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+             <div className="p-4 rounded-xl border border-border/40 bg-muted/5 flex flex-col items-center gap-2">
+                <Badge variant="outline" className="h-5 bg-background text-[8px] border-border/60 uppercase font-bold text-muted-foreground/40">Phase 1</Badge>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Plain Text</span>
+             </div>
+             <div className="p-4 rounded-xl border border-border/40 bg-muted/5 flex flex-col items-center gap-2">
+                <Badge variant="outline" className="h-5 bg-background text-[8px] border-border/60 uppercase font-bold text-muted-foreground/40 opacity-40">Phase 2</Badge>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/20 italic">File Upload</span>
+             </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-6 opacity-10">
+           <span className="text-[10px] font-bold uppercase tracking-widest">Global RAG</span>
+           <div className="h-1 w-1 rounded-full bg-muted-foreground" />
+           <span className="text-[10px] font-bold uppercase tracking-widest">Vector Embedding</span>
+           <div className="h-1 w-1 rounded-full bg-muted-foreground" />
+           <span className="text-[10px] font-bold uppercase tracking-widest">Azure Storage</span>
+        </div>
+      </div>
+    </div>
+    </div>
   )
 }
