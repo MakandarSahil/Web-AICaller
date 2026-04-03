@@ -44,6 +44,7 @@ import {
   useUpdatePhoneNumber,
 } from '@/hooks/use-phone-numbers'
 import type { getAgents, getPhoneNumbers } from '@aicaller/supabase/queries'
+import { getVoiceWebhookUrl } from '@aicaller/api-client'
 
 type Agent = NonNullable<Awaited<ReturnType<typeof getAgents>>>[number]
 type PhoneNumberRow = NonNullable<Awaited<ReturnType<typeof getPhoneNumbers>>>[number]
@@ -54,7 +55,7 @@ type PhoneNumbersClientProps = {
 }
 
 function defaultWebhookUrl(agentId: string) {
-  return `https://api.callmind.com/voice?agent_id=${agentId}`
+  return getVoiceWebhookUrl(agentId)
 }
 
 export default function PhoneNumbersClient({

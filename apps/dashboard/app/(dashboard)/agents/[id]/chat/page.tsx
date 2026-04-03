@@ -1,63 +1,95 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
-import { 
-  Bot, 
-  Send, 
-  User, 
-  ArrowLeft, 
-  RefreshCw,
-  Database,
-  Activity,
-  ChevronLeft
-} from 'lucide-react'
-import { 
-  Button, 
-  ScrollArea,
-  Textarea,
-  Badge
-} from '@aicaller/ui'
-import { cn } from '@aicaller/ui/lib/utils'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Bot, ChevronLeft, Database, RefreshCw, Send, User } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
+
+import { Button, Textarea } from '@aicaller/ui'
+import { cn } from '@aicaller/ui/lib/utils'
+
 import { useAgent } from '@/hooks/use-agents'
 import { queryAgent } from '@/lib/fastapi'
 
-interface Message {
+type Message = {
+  id: string
   role: 'user' | 'assistant'
   content: string
+  error?: boolean
+}
+
+function createMessageId(prefix: string): string {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 }
 
 export default function AgentChatPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params)
   const { data: agent } = useAgent(id)
-  
+
   const [messages, setMessages] = useState<Message[]>([])
   const [conversationId, setConversationId] = useState<string | undefined>()
   const [streaming, setStreaming] = useState(false)
   const [inputText, setInputText] = useState('')
-  
+  const [showDetails, setShowDetails] = useState(false)
+
+  const abortRef = useRef<AbortController | null>(null)
+  const pendingAssistantRef = useRef('')
+  const flushFrameRef = useRef<number | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  // Auto-scroll logic
+  const kbCount = agent?.agent_knowledge_bases?.length ?? 0
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    return () => {
+      abortRef.current?.abort()
     }
+  }, [])
+
+  useEffect(() => {
+    if (!scrollRef.current) {
+      return
+    }
+
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight
   }, [messages, streaming])
 
+  useEffect(() => {
+    return () => {
+      if (flushFrameRef.current !== null) {
+        cancelAnimationFrame(flushFrameRef.current)
+      }
+    }
+  }, [])
+
+  const isSendDisabled = useMemo(() => {
+    return streaming || !inputText.trim()
+  }, [inputText, streaming])
+
   const handleSend = async () => {
-    if (!inputText.trim() || streaming) return
+    if (isSendDisabled) {
+      return
+    }
+
+    abortRef.current?.abort()
+    abortRef.current = new AbortController()
+    pendingAssistantRef.current = ''
+    if (flushFrameRef.current !== null) {
+      cancelAnimationFrame(flushFrameRef.current)
+      flushFrameRef.current = null
+    }
 
     const text = inputText.trim()
+    const userId = createMessageId('user')
+    const assistantId = createMessageId('assistant')
+
     setInputText('')
-    
-    // 1. Add user message
-    setMessages(prev => [...prev, { role: 'user', content: text }])
     setStreaming(true)
-    
-    // 2. Prepare assistant message placeholder
-    let assistantResponse = ''
-    setMessages(prev => [...prev, { role: 'assistant', content: '' }])
+
+    setMessages((prev) => [
+      ...prev,
+      { id: userId, role: 'user', content: text },
+      { id: assistantId, role: 'assistant', content: '' },
+    ])
 
     try {
       await queryAgent(
@@ -65,210 +97,237 @@ export default function AgentChatPage({ params }: { params: Promise<{ id: string
         text,
         conversationId,
         (delta) => {
-          assistantResponse += delta
-          setMessages(prev => {
-            const next = [...prev]
-            next[next.length - 1] = { role: 'assistant', content: assistantResponse }
-            return next
+          pendingAssistantRef.current += delta
+
+          if (flushFrameRef.current !== null) {
+            return
+          }
+
+          flushFrameRef.current = window.requestAnimationFrame(() => {
+            flushFrameRef.current = null
+            const chunk = pendingAssistantRef.current
+            pendingAssistantRef.current = ''
+
+            if (!chunk) {
+              return
+            }
+
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantId ? { ...msg, content: msg.content + chunk } : msg
+              )
+            )
           })
         },
-        (newId) => setConversationId(newId)
+        (newId) => setConversationId(newId),
+        { signal: abortRef.current.signal }
       )
     } catch (err) {
-      console.error('Chat error:', err)
+      if (!(err instanceof DOMException && err.name === 'AbortError')) {
+        console.error('Chat error:', err)
+        const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'
+        
+        // Update the assistant message to show the error
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantId 
+              ? { ...msg, content: `Error: ${errorMessage}. Please check if the backend is running.`, error: true } 
+              : msg
+          )
+        )
+        
+        toast.error('Failed to get a response from the agent.')
+      }
     } finally {
+      if (flushFrameRef.current !== null) {
+        cancelAnimationFrame(flushFrameRef.current)
+        flushFrameRef.current = null
+      }
+
+      if (pendingAssistantRef.current) {
+        const chunk = pendingAssistantRef.current
+        pendingAssistantRef.current = ''
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantId ? { ...msg, content: msg.content + chunk } : msg
+          )
+        )
+      }
+
       setStreaming(false)
+      abortRef.current = null
     }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
-      handleSend()
+      void handleSend()
     }
   }
 
   const resetChat = () => {
     setMessages([])
     setConversationId(undefined)
+    abortRef.current?.abort()
+    setStreaming(false)
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden font-sans">
-      
-      {/* 1. Sidebar (Metadata) */}
-      <aside className="w-80 border-r border-border bg-muted/5 flex flex-col shrink-0">
-        <header className="h-16 px-6 border-b border-border flex items-center gap-3">
-           <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" asChild>
-              <Link href={`/agents/${id}`}>
-                 <ChevronLeft className="h-4 w-4" />
-              </Link>
-           </Button>
-           <span className="text-[14px] font-bold tracking-tight">Agent Sandbox</span>
-        </header>
-
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
-           {/* Agent Profile info */}
-           <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                 <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
-                    <Bot className="h-5 w-5" />
-                 </div>
-                 <div className="flex flex-col min-w-0">
-                    <span className="text-[14px] font-bold truncate leading-none">{agent?.name || 'Loading...'}</span>
-                    <div className="flex items-center gap-1.5 mt-1">
-                       <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                       <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{agent?.status || 'Active'}</span>
-                    </div>
-                 </div>
+    <div className="h-dvh bg-background">
+      <div className="mx-auto flex h-full max-w-7xl">
+        <main className="relative flex min-w-0 flex-1 flex-col border-x border-border/60 bg-background">
+          <header className="sticky top-0 z-20 border-b border-border/70 bg-background/95 px-3 py-2 backdrop-blur sm:px-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                <Button variant="ghost" size="icon" className="h-8 w-8" asChild>
+                  <Link href={`/agents/${id}`}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold leading-none sm:text-base">
+                    {agent?.name ?? 'Agent Chat'}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {streaming ? 'Streaming response...' : 'Ready'}
+                  </p>
+                </div>
               </div>
-           </div>
 
-           {/* Attached KBs */}
-           <div className="space-y-4">
-              <h4 className="text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50">Attached Knowledge</h4>
-              <div className="space-y-2">
-                 {agent?.agent_knowledge_bases?.length ? (
-                    agent.agent_knowledge_bases.map((link) => (
-                       <div key={link.kb_id} className="flex items-center gap-3 p-3 rounded-lg bg-background border border-border/50 group">
-                          <Database className="h-3.5 w-3.5 text-primary/40 group-hover:text-primary transition-colors" />
-                          <span className="text-[12px] font-bold text-muted-foreground/80 truncate">
-                            {link.knowledge_bases?.name ?? 'Untitled Source'}
-                          </span>
-                       </div>
-                    ))
-                 ) : (
-                    <div className="py-6 px-4 rounded-xl border border-dashed border-border/60 text-center space-y-2">
-                       <p className="text-[11px] font-medium text-muted-foreground/30 uppercase tracking-widest">No KBs attached.</p>
-                       <Link href={`/agents/${id}?tab=knowledge`} className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline decoration-primary/20">Manage KBs</Link>
-                    </div>
-                 )}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-2 text-xs sm:px-3"
+                  onClick={() => setShowDetails((prev) => !prev)}
+                >
+                  <Database className="mr-1 h-3.5 w-3.5" />
+                  KB ({kbCount})
+                </Button>
+                <Button variant="outline" size="sm" className="h-8 px-2 text-xs sm:px-3" onClick={resetChat}>
+                  <RefreshCw className="mr-1 h-3.5 w-3.5" />
+                  New
+                </Button>
               </div>
-           </div>
-
-           {/* Sandbox Status */}
-           <div className="pt-6 border-t border-border/50 space-y-4">
-              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground/40">
-                 <span>Latency (ms)</span>
-                 <span className="text-foreground/60">~420ms</span>
-              </div>
-              <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground/40">
-                 <span>Tokens/s</span>
-                 <span className="text-foreground/60">~74.0</span>
-              </div>
-           </div>
-        </div>
-
-        <div className="p-6 border-t border-border">
-           <Button 
-            variant="outline" 
-            className="w-full h-11 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-background border-border/60 hover:bg-muted transition-all active:scale-95"
-            onClick={resetChat}
-           >
-              <RefreshCw className="h-3.5 w-3.5 opacity-40" />
-              New Conversation
-           </Button>
-        </div>
-      </aside>
-
-      {/* 2. Chat Area */}
-      <main className="flex-1 flex flex-col min-w-0 h-full relative">
-         
-         <div className="flex-1 overflow-y-auto scrollbar-none px-6 md:px-20 pb-40" ref={scrollRef}>
-            <div className="max-w-3xl mx-auto space-y-12 py-20 pt-16">
-              
-              {messages.length === 0 && (
-                 <div className="flex flex-col items-center justify-center py-20 text-center">
-                    <div className="h-16 w-16 rounded-[24px] bg-primary/5 flex items-center justify-center mb-8 border border-primary/5">
-                       <Bot className="h-8 w-8 text-primary shadow-2xl" />
-                    </div>
-                    <h2 className="text-[18px] font-bold tracking-tight text-foreground/80">Test Your Agent</h2>
-                    <p className="text-[12px] text-muted-foreground/40 mt-2 font-medium tracking-wide uppercase leading-relaxed max-w-sm">
-                       Send a message below to start a conversation. You can monitor streaming responses and latency in real-time.
-                    </p>
-                 </div>
-              )}
-
-              {messages.map((msg, i) => (
-                 <div 
-                   key={i} 
-                   className={cn(
-                     "flex gap-6",
-                     msg.role === 'user' ? "flex-row-reverse" : "flex-row"
-                   )}
-                 >
-                    <div className={cn(
-                       "h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center border shadow-sm transition-all",
-                       msg.role === 'assistant' 
-                        ? "bg-muted/40 border-border/50 text-muted-foreground/60" 
-                        : "bg-primary border-primary/20 text-primary-foreground shadow-lg shadow-primary/10"
-                    )}>
-                       {msg.role === 'assistant' ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
-                    </div>
-
-                    <div className={cn(
-                       "flex flex-col gap-2 max-w-[80%] pt-1",
-                       msg.role === 'user' ? "items-end text-right" : "items-start text-left"
-                    )}>
-                       <div className={cn(
-                          "px-6 py-4 rounded-[28px] text-[15px] leading-relaxed tracking-tight break-words font-medium",
-                          msg.role === 'assistant' 
-                            ? "bg-muted/10 border border-border/30 text-foreground rounded-tl-none" 
-                            : "bg-primary text-primary-foreground rounded-tr-none shadow-md shadow-primary/5"
-                       )}>
-                          {msg.content || (streaming && i === messages.length - 1 ? "..." : "")}
-                       </div>
-                    </div>
-                 </div>
-              ))}
-
-              {streaming && messages[messages.length - 1]?.role === 'user' && (
-                 <div className="flex gap-6">
-                    <div className="h-10 w-10 shrink-0 rounded-2xl bg-muted/40 border border-border/50 flex items-center justify-center text-muted-foreground/60">
-                       <Bot className="h-5 w-5" />
-                    </div>
-                    <div className="px-6 py-4 rounded-[28px] bg-muted/10 border border-border/30 flex gap-1.5 items-center rounded-tl-none mt-1">
-                       <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce" />
-                       <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce [animation-delay:0.2s]" />
-                       <div className="h-1.5 w-1.5 rounded-full bg-primary/40 animate-bounce [animation-delay:0.4s]" />
-                    </div>
-                 </div>
-              )}
             </div>
-         </div>
+          </header>
 
-         {/* Input Box Overlay */}
-         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 pointer-events-none">
-            <div className="max-w-3xl mx-auto w-full pointer-events-auto">
-               <div className="relative group bg-background rounded-[32px] shadow-2xl shadow-black/40 border border-border p-2">
-                  <Textarea 
-                    placeholder="Type to chat..."
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    disabled={streaming}
-                    className="h-16 max-h-48 min-h-16 pl-6 pr-20 bg-transparent border-none focus:ring-0 text-[15px] font-medium placeholder:text-muted-foreground/20 leading-relaxed py-5 resize-none scrollbar-none"
-                  />
-                  <div className="absolute right-3 bottom-3">
-                     <Button 
-                       size="icon" 
-                       className="h-11 w-11 bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl shadow-xl shadow-primary/10 transition-all active:scale-95 disabled:opacity-20"
-                       onClick={handleSend}
-                       disabled={!inputText.trim() || streaming}
-                     >
-                        <Send className="h-4 w-4" />
-                     </Button>
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 pb-36 pt-4 sm:px-5 sm:pt-6">
+            <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5">
+              {messages.length === 0 ? (
+                <div className="mt-10 rounded-2xl border border-dashed border-border/80 p-6 text-center sm:mt-16">
+                  <Bot className="mx-auto mb-3 h-8 w-8 text-primary/70" />
+                  <p className="text-sm font-medium">Start a quick conversation</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Lightweight chat mode. No sandbox panel, just real-time agent chat.
+                  </p>
+                </div>
+              ) : null}
+
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={cn('flex w-full items-end gap-2', msg.role === 'user' ? 'justify-end' : 'justify-start')}
+                >
+                  {msg.role === 'assistant' ? (
+                    <div className="mb-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-muted/40 sm:flex">
+                      <Bot className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  ) : null}
+
+                  <div
+                    className={cn(
+                      'max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed sm:max-w-[80%] sm:px-4 sm:py-2.5',
+                      msg.role === 'user'
+                        ? 'rounded-br-sm bg-primary text-primary-foreground'
+                        : cn(
+                            'rounded-bl-sm border border-border/70 bg-muted/30 text-foreground',
+                            msg.error && 'border-destructive/50 bg-destructive/10 text-destructive'
+                          )
+                    )}
+                  >
+                    {msg.content || (streaming && msg.role === 'assistant' ? '...' : '')}
                   </div>
-               </div>
-               <p className="text-center mt-4 text-[10px] font-bold text-muted-foreground/30 uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                  <Activity className="h-3 w-3 opacity-40" />
-                  Streaming Sandbox Mode Active
-               </p>
+
+                  {msg.role === 'user' ? (
+                    <div className="mb-1 hidden h-7 w-7 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary text-primary-foreground sm:flex">
+                      <User className="h-4 w-4" />
+                    </div>
+                  ) : null}
+                </div>
+              ))}
             </div>
-         </div>
+          </div>
 
-      </main>
+          <div className="absolute inset-x-0 bottom-0 border-t border-border/70 bg-background/95 px-3 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 backdrop-blur sm:px-5">
+            <div className="mx-auto w-full max-w-3xl">
+              <div className="relative">
+                <Textarea
+                  placeholder="Ask your agent..."
+                  value={inputText}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setInputText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={streaming}
+                  className="min-h-12 resize-none rounded-xl border-border/70 pr-12 text-sm"
+                />
+                <Button
+                  size="icon"
+                  className="absolute bottom-2 right-2 h-8 w-8"
+                  onClick={() => {
+                    void handleSend()
+                  }}
+                  disabled={isSendDisabled}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="mt-1 px-1 text-[11px] text-muted-foreground">Enter to send, Shift+Enter for newline.</p>
+            </div>
+          </div>
+        </main>
 
+        <aside
+          className={cn(
+            'fixed inset-y-0 right-0 z-30 w-[85vw] max-w-sm border-l border-border bg-background p-4 transition-transform duration-200 lg:static lg:z-auto lg:w-80 lg:translate-x-0',
+            showDetails ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+          )}
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold">Attached Knowledge</h2>
+            <Button variant="ghost" size="sm" className="h-8 px-2 lg:hidden" onClick={() => setShowDetails(false)}>
+              Close
+            </Button>
+          </div>
+
+          <div className="space-y-2 overflow-y-auto pr-1">
+            {agent?.agent_knowledge_bases?.length ? (
+              agent.agent_knowledge_bases.map((link) => (
+                <div key={link.kb_id} className="rounded-xl border border-border/70 p-3">
+                  <p className="truncate text-sm font-medium">{link.knowledge_bases?.name ?? 'Untitled Source'}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">KB ID: {link.kb_id}</p>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-xl border border-dashed border-border/70 p-4 text-center">
+                <p className="text-xs text-muted-foreground">No KB attached yet.</p>
+                <Link href={`/agents/${id}?tab=knowledge`} className="mt-2 inline-block text-xs font-medium text-primary">
+                  Attach KB
+                </Link>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {showDetails ? (
+          <button
+            type="button"
+            className="fixed inset-0 z-20 bg-black/35 lg:hidden"
+            onClick={() => setShowDetails(false)}
+            aria-label="Close knowledge sidebar"
+          />
+        ) : null}
+      </div>
     </div>
   )
 }

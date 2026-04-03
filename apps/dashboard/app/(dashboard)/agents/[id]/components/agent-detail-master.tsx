@@ -21,6 +21,7 @@ import { cn } from '@aicaller/ui/lib/utils'
 import type { getAgent } from '@aicaller/supabase/queries'
 import type { getKnowledgeBases } from '@aicaller/supabase/queries'
 import { ContextualSidebarToggleButton } from '@/components/layout/contextual-sidebar-toggle-button'
+import { MobileNavBack } from '@/components/layout/mobile-nav-back'
 import { useAgent } from '@/hooks/use-agents'
 
 // New Tabs
@@ -60,16 +61,16 @@ export function AgentDetailMaster({ agent, knowledgeBases }: AgentDetailMasterPr
     <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-background">
       
       {/* 1. Detail Header (Two-Row High Fidelity) */}
-      <header className="px-6 md:px-10 border-b border-border bg-background sticky top-0 z-50 transition-colors">
+      <header className="px-4 md:px-10 border-b border-border bg-background sticky top-0 z-50 transition-colors h-auto md:h-28">
         
         {/* Top Row: Info & Actions */}
-        <div className="h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6 min-w-0">
+        <div className="flex flex-col md:flex-row md:h-16 md:items-center justify-between gap-4 py-4 md:py-0">
+          <div className="flex items-center gap-4 md:gap-6 min-w-0">
             <ContextualSidebarToggleButton className="mr-1 shrink-0" />
             
             <div className="flex flex-col min-w-0">
                <div className="flex items-center gap-2">
-                  <h1 className="text-[18px] md:text-[20px] font-bold text-foreground tracking-tight truncate leading-none">
+                  <h1 className="text-[18px] md:text-[20px] font-bold text-foreground tracking-tight truncate leading-none uppercase">
                     {agentData.name}
                   </h1>
                   {agentData.is_default && (
@@ -86,14 +87,8 @@ export function AgentDetailMaster({ agent, knowledgeBases }: AgentDetailMasterPr
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted text-muted-foreground transition-all active:scale-95">
-                <Code className="h-4 w-4" />
-             </Button>
-             
-             <div className="h-6 w-[1px] bg-border/50 mx-1" />
-
              <Button variant="outline" size="sm" className="h-10 px-5 rounded-xl font-bold text-[12px] gap-2 border-border/60 hover:bg-muted transition-all active:scale-95 group" asChild>
-                <Link href={`/agents/${agent.id}/chat`}>
+               <Link href={`/agents/${agent.id}/talk`}>
                   <Phone className="h-3.5 w-3.5 text-emerald-500" />
                   <span className="text-foreground">Talk</span>
                 </Link>
@@ -104,12 +99,6 @@ export function AgentDetailMaster({ agent, knowledgeBases }: AgentDetailMasterPr
                   <MessageSquare className="h-3.5 w-3.5" />
                   <span>Chat</span>
                 </Link>
-             </Button>
-
-             <div className="h-6 w-[1px] bg-border/50 mx-1" />
-
-             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted text-muted-foreground transition-all active:scale-95">
-                <MoreVertical className="h-4 w-4" />
              </Button>
           </div>
         </div>

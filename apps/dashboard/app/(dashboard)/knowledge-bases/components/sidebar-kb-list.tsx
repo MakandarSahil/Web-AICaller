@@ -31,9 +31,10 @@ type KnowledgeBaseListItem = NonNullable<Awaited<ReturnType<typeof getKnowledgeB
 
 interface SidebarKBListProps {
   initialData?: KnowledgeBaseListItem[]
+  hideHeader?: boolean
 }
 
-export function SidebarKBList({ initialData }: SidebarKBListProps) {
+export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBListProps) {
   const { id: selectedId } = useParams()
   const { workspace } = useUser()
   const router = useRouter()
@@ -161,6 +162,7 @@ export function SidebarKBList({ initialData }: SidebarKBListProps) {
         searchPlaceholder="Filter sources..."
         searchQuery={search}
         onSearchQueryChange={setSearch}
+        hideHeader={hideHeader}
       >
         {filteredKBs.map((kb) => {
           const isActive = selectedId === kb.id

@@ -2,10 +2,12 @@ import React from 'react'
 import { createServerSupabaseClient } from '@aicaller/supabase/server'
 import { getKnowledgeBases } from '@aicaller/supabase/queries'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 import { Button, Badge } from '@aicaller/ui'
 import { Plus, Database, Users } from 'lucide-react'
 import Link from 'next/link'
 import { ContextualSidebarToggleButton } from '@/components/layout/contextual-sidebar-toggle-button'
+import { SidebarKBList } from './components/sidebar-kb-list'
 
 /**
  * Knowledge Bases Index Page — Intelligent Navigation
@@ -18,9 +20,39 @@ export default async function KnowledgeBasesIndexPage() {
   const supabase = await createServerSupabaseClient()
   const kbs = await getKnowledgeBases(supabase).catch(() => [])
 
-  // If we have KBs, go straight to the first one
-  if (kbs && kbs.length > 0 && kbs[0]?.id) {
+  // Detect mobile device
+  const userAgent = (await headers()).get('user-agent') || ''
+  const isMobile = /mobile/i.test(userAgent)
+
+  // On Desktop: If we have KBs, go straight to the first one
+  if (!isMobile && kbs && kbs.length > 0 && kbs[0]?.id) {
     redirect(`/knowledge-bases/${kbs[0].id}`)
+  }
+
+  // On Mobile: If we have KBs, show the list view in the main area
+  if (isMobile && kbs && kbs.length > 0) {
+    return (
+      <div className="flex-1 flex flex-col min-w-0 bg-background overflow-y-auto">
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-[24px] font-bold tracking-tight text-foreground uppercase">Knowledge HUB</h1>
+              <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-[0.2em]">{kbs.length} Total Knowledge Bases</p>
+            </div>
+            <Button asChild size="sm" className="h-9 gap-2 font-bold text-[10px] uppercase tracking-widest rounded-xl">
+              <Link href="/knowledge-bases">
+                <Plus className="h-3.5 w-3.5" />
+                Initialize
+              </Link>
+            </Button>
+          </div>
+          
+          <div className="grid gap-3">
+             <SidebarKBList initialData={kbs} hideHeader={true} />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
