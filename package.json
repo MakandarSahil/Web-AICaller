@@ -9,7 +9,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
-    "gen:types": "supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > packages/supabase/src/types/database.types.ts",
+    "gen:types": "pnpm exec supabase gen types typescript --project-id hlgsustxrsajxxvuekhn --schema public > packages/supabase/src/types/database.types.ts",
     "clean": "turbo run clean"
   },
   "devDependencies": {

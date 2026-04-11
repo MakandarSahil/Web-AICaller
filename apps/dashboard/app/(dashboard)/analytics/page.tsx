@@ -1,32 +1,64 @@
 'use client'
 
+import React from 'react'
 import { Card, CardContent } from '@aicaller/ui'
-import { BarChart3 } from 'lucide-react'
-import { DashboardShell } from '@/components/layout/dashboard-shell'
+import { BarChart3, Clock3, MessageSquareText, Sparkles } from 'lucide-react'
+import { useWorkspaceConversationAnalytics } from '@/hooks/use-analytics'
 
 export default function AnalyticsPage() {
-  return (
-      <div className="flex flex-col flex-1 min-w-0 bg-background h-full font-sans transition-colors duration-300">
-        <header className="page-header shrink-0 px-6 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40">
-          <div className="flex items-center gap-4 flex-1">
-            <h1 className="page-title leading-none text-[15px] font-bold tracking-tight text-foreground">Analytics</h1>
-            <p className="hidden sm:block text-[11px] font-semibold text-muted-foreground opacity-50 uppercase tracking-widest ml-2 border-l border-border/40 pl-4">Monitor</p>
-          </div>
-        </header>
+  const { data = [] } = useWorkspaceConversationAnalytics(30)
 
-        <div className="p-6">
-          <Card className="bg-card border border-border/40 shadow-sm rounded-xl">
-            <CardContent className="pt-24 pb-24">
-              <div className="text-center flex flex-col items-center">
-                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4 border border-border/40">
-                  <BarChart3 size={20} className="text-muted-foreground/60" />
-                </div>
-                <h3 className="text-sm font-bold text-foreground">Analytics placeholder</h3>
-                <p className="text-xs text-muted-foreground/70 mt-1 max-w-[260px]">Performance metrics, call trends, and conversion insights will be shown here.</p>
-              </div>
-            </CardContent>
-          </Card>
+  const totalCalls = data.length
+  const resolvedCalls = data.filter((row) => row.outcome === 'resolved').length
+  const bookedCalls = data.filter((row) => row.outcome === 'booked').length
+  const toolCalls = data.filter((row) => Boolean(row.conversations?.had_tool_call)).length
+
+  const cards = [
+    { label: 'Calls', value: totalCalls, icon: BarChart3 },
+    { label: 'Resolved', value: resolvedCalls, icon: Sparkles },
+    { label: 'Booked', value: bookedCalls, icon: Clock3 },
+    { label: 'Tool Calls', value: toolCalls, icon: MessageSquareText },
+  ]
+
+  return (
+    <div className="flex-1 flex flex-col min-w-0 bg-background h-screen overflow-hidden">
+      <header className="h-16 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md flex items-center justify-between shrink-0 sticky top-0 z-50">
+        <div className="flex items-center gap-4">
+          <h1 className="text-[15px] font-bold tracking-tight text-foreground uppercase">Analytics</h1>
+          <div className="h-4 w-px bg-border/40" />
+          <span className="text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-widest">V2 kickoff</span>
         </div>
+      </header>
+
+      <div className="flex-1 overflow-y-auto px-10 py-8 space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {cards.map((card) => {
+            const Icon = card.icon
+            return (
+              <Card key={card.label} className="rounded-2xl border-border/40 bg-background shadow-sm">
+                <CardContent className="p-5 flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">{card.label}</p>
+                    <p className="text-2xl font-black tracking-tight text-foreground">{card.value}</p>
+                  </div>
+                  <div className="h-11 w-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
+
+        <Card className="rounded-[28px] border-border/40 bg-background shadow-sm">
+          <CardContent className="p-8 space-y-3">
+            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">Next</h2>
+            <p className="text-sm text-muted-foreground/80 max-w-2xl">
+              This page is now wired to the new analytics query path. Next step is to replace these kickoff KPIs with chart data from conversation_analytics and turn_signals.
+            </p>
+          </CardContent>
+        </Card>
       </div>
+    </div>
   )
 }

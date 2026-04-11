@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { 
   Button, 
   Card,
@@ -17,6 +17,7 @@ import {
 } from '@aicaller/ui'
 import { AlertTriangle, Trash2, ShieldCheck, Activity } from 'lucide-react'
 import type { getAgent } from '@aicaller/supabase/queries'
+import { useUpdateAgent } from '@/hooks/use-agents'
 
 type Agent = NonNullable<Awaited<ReturnType<typeof getAgent>>>
 
@@ -28,6 +29,14 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
   // Mock check for "last agent" - in real wiring we'd check agents.length
   const isLastAgent = false 
   const isDefault = agent.is_default
+  const { mutate: updateAgent, isPending: saving } = useUpdateAgent()
+  const [status, setStatus] = useState(agent.status || 'active')
+
+  useEffect(() => {
+    setStatus(agent.status || 'active')
+  }, [agent])
+
+  const isDirty = useMemo(() => status !== (agent.status || 'active'), [agent.status, status])
 
   const deleteDisabled = isDefault || isLastAgent
 
@@ -51,7 +60,7 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
               <Label className="text-[13px] font-bold text-foreground">Operational Status</Label>
               <p className="text-[11px] text-muted-foreground/60 font-medium italic">Disable this to prevent the agent from making or receiving calls.</p>
            </div>
-           <Select defaultValue={agent.status || 'active'}>
+            <Select value={status} onValueChange={(value) => setStatus(value as 'active' | 'inactive' | 'suspended')}>
               <SelectTrigger className="w-40 h-11 bg-background border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[13px]">
                 <SelectValue />
               </SelectTrigger>
@@ -61,6 +70,23 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
               </SelectContent>
            </Select>
         </Card>
+
+        <div className="flex justify-end">
+          <Button
+            onClick={() => {
+              updateAgent({
+                id: agent.id,
+                payload: {
+                  status,
+                },
+              })
+            }}
+            disabled={saving || !isDirty}
+            className="h-11 px-6 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : 'Save Status'}
+          </Button>
+        </div>
       </section>
 
       {/* 2. Danger Zone Header */}
@@ -99,7 +125,7 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
                   </div>
                 </TooltipTrigger>
                 {deleteDisabled && (
-                  <TooltipContent className="bg-black text-white border-0 font-bold p-3 text-[11px] rounded-lg shadow-xl max-w-[240px] text-center mb-2">
+                  <TooltipContent className="bg-black text-white border-0 font-bold p-3 text-[11px] rounded-lg shadow-xl max-w-60 text-center mb-2">
                     {isDefault 
                       ? "Cannot delete the default agent. Assign another agent as default first." 
                       : "Cannot delete the only agent in your workspace."}

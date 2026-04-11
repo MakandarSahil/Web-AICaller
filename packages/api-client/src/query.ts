@@ -35,6 +35,10 @@ type QueryAgentOptions = {
   signal?: AbortSignal
 }
 
+type PreviewVoiceOptions = {
+  signal?: AbortSignal
+}
+
 export async function queryAgent(
   agentId: string,
   text: string,
@@ -102,6 +106,31 @@ export async function queryAgent(
     },
     options?.signal
   )
+}
+
+export async function previewAgentVoice(
+  agentId: string,
+  text: string,
+  voice: string,
+  options?: PreviewVoiceOptions
+): Promise<Blob> {
+  const headers = await getDashboardAuthHeaders()
+  const response = await fetch(`${getFastApiBaseUrl()}/query/tts-preview`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+    body: JSON.stringify({
+      agent_id: agentId,
+      text,
+      voice,
+    }),
+    signal: options?.signal,
+  })
+
+  await throwIfNotOk(response)
+  return response.blob()
 }
 
 export async function listApiKeys(): Promise<ApiKeyListItem[]> {

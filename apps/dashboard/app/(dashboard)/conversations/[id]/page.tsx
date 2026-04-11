@@ -15,17 +15,12 @@ export default async function ConversationDetailPage({ params }: ConversationPag
   const { id } = await params
   const supabase = await createServerSupabaseClient()
   
-  // 1. Fetch Conversation (Server Side)
   const conversation = await getConversation(supabase, id).catch(() => null)
-  
   if (!conversation) {
-    // For UI development, we'll allow mock data in the client if preferred, 
-    // but in real wiring this would be a 404.
-    // return notFound()
+    notFound()
   }
 
-  // 2. Fetch Messages (Server Side)
   const messages = await getMessages(supabase, id).catch(() => [])
 
-  return <ConversationDetailClient id={id} />
+  return <ConversationDetailClient id={id} conversation={conversation} messages={messages} />
 }

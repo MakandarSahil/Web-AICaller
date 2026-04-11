@@ -43,6 +43,13 @@ export const conversationKeys = {
   all: ['conversations'] as const,
   detail: (id: string) => ['conversations', id] as const,
   messages: (conversationId: string) => ['conversations', conversationId, 'messages'] as const,
+  agent: (agentId: string) => ['conversations', 'agent', agentId] as const,
+}
+
+export const analyticsKeys = {
+  all: ['analytics'] as const,
+  conversation: (conversationId: string) => ['analytics', 'conversation', conversationId] as const,
+  workspace: (days: 7 | 30 | 90) => ['analytics', 'workspace', days] as const,
 }
 
 export const phoneNumberKeys = {

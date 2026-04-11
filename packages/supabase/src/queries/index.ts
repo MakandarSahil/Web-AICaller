@@ -16,6 +16,7 @@ export * from './profile'
 export * from './agents'
 export * from './knowledge-bases'
 export * from './conversations'
+export * from './analytics'
 export * from './kb-documents'
 export * from './phone-numbers'
 // export * from './phone-numbers'     // add when phone numbers page is built

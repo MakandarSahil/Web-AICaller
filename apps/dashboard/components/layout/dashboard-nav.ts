@@ -4,6 +4,7 @@ import {
   Book,
   Phone,
   History,
+  MessageSquare,
   LayoutDashboard,
   Settings2,
   Zap,
@@ -45,7 +46,8 @@ export const navigationGroups: DashboardNavGroup[] = [
   {
     label: 'MONITOR',
     items: [
-      { href: '/conversations', label: 'Call History (Coming Soon)', icon: History },
+      { href: '/call-history', label: 'Call History', icon: History },
+      { href: '/chat-history', label: 'Chat History', icon: MessageSquare },
       { href: '/analytics', label: 'Analytics (Coming Soon)', icon: BarChart3 },
     ],
   },

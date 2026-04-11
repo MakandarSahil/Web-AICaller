@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo } from 'react'
 import { 
   Badge, 
   Button, 
@@ -27,18 +27,60 @@ import {
 import { cn } from '@aicaller/ui/lib/utils'
 import Link from 'next/link'
 import { useQueryState, parseAsString } from 'nuqs'
+import { useConversations } from '@/hooks/use-conversations'
+import { useAgents } from '@/hooks/use-agents'
 
-// Mock Data for UI development
-const mockConversations = [
-  { id: '1', agent: 'Front Desk Assistant', channel: 'Voice', status: 'active', duration: '2:45', messages: 12, caller: '+1 (555) 123-4567', date: 'Just now' },
-  { id: '2', agent: 'HR Support Bot', channel: 'Chat', status: 'completed', duration: '5:12', messages: 24, caller: 'User_882', date: '2 hours ago' },
-  { id: '3', agent: 'Front Desk Assistant', channel: 'Voice', status: 'completed', duration: '1:30', messages: 8, caller: '+1 (555) 987-6543', date: 'Yesterday' },
-]
+function formatDateLabel(startedAt: string): string {
+   const started = new Date(startedAt)
+   const now = new Date()
+   const diffMs = now.getTime() - started.getTime()
+   const diffMins = Math.floor(diffMs / 60000)
+   const diffHours = Math.floor(diffMins / 60)
+
+   if (diffMins < 1) return 'Just now'
+   if (diffMins < 60) return `${diffMins} min ago`
+   if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
+   return started.toLocaleDateString()
+}
+
+function formatDuration(startedAt: string, endedAt: string | null): string {
+   const end = endedAt ? new Date(endedAt) : new Date()
+   const start = new Date(startedAt)
+   const diffMs = Math.max(end.getTime() - start.getTime(), 0)
+   const totalSeconds = Math.max(Math.floor(diffMs / 1000), 0)
+   const minutes = Math.floor(totalSeconds / 60)
+   const seconds = totalSeconds % 60
+   return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
 
 export default function ConversationsPage() {
   const [agentFilter, setAgentFilter] = useQueryState('agent', parseAsString.withDefault('all'))
   const [statusFilter, setStatusFilter] = useQueryState('status', parseAsString.withDefault('all'))
   const [search, setSearch] = useQueryState('q', parseAsString.withDefault(''))
+
+   const { data: conversations = [] } = useConversations()
+   const { data: agents = [] } = useAgents()
+
+   const filteredConversations = useMemo(() => {
+      const term = search.trim().toLowerCase()
+      return conversations.filter((conversation) => {
+         const agentName = conversation.agents?.name || 'Unknown Agent'
+         const caller = conversation.callers?.phone_number || conversation.caller_id || 'Unknown Caller'
+         const matchesSearch =
+            !term ||
+            agentName.toLowerCase().includes(term) ||
+            caller.toLowerCase().includes(term) ||
+            conversation.id.toLowerCase().includes(term)
+         const matchesAgent = agentFilter === 'all' || conversation.agent_id === agentFilter
+         const matchesStatus = statusFilter === 'all' || conversation.status === statusFilter
+         return matchesSearch && matchesAgent && matchesStatus
+      })
+   }, [agentFilter, conversations, search, statusFilter])
+
+   const agentOptions = useMemo(
+      () => agents.map((agent) => ({ id: agent.id, name: agent.name })),
+      [agents]
+   )
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background h-screen font-sans overflow-hidden">
@@ -78,8 +120,11 @@ export default function ConversationsPage() {
                </SelectTrigger>
                <SelectContent className="rounded-xl border-border/50">
                   <SelectItem value="all" className="font-bold">All Agents</SelectItem>
-                  <SelectItem value="agt1" className="font-bold">Front Desk Assistant</SelectItem>
-                  <SelectItem value="agt2" className="font-bold">HR Support Bot</SelectItem>
+                  {agentOptions.map((agent) => (
+                    <SelectItem key={agent.id} value={agent.id} className="font-bold">
+                      {agent.name}
+                    </SelectItem>
+                  ))}
                </SelectContent>
             </Select>
 
@@ -119,37 +164,43 @@ export default function ConversationsPage() {
                         </tr>
                      </thead>
                      <tbody className="divide-y divide-border/20">
-                        {mockConversations.map((conv) => (
+                        {filteredConversations.map((conv) => (
                            <tr key={conv.id} className="group hover:bg-muted/20 transition-colors cursor-pointer">
                               <td className="py-6 px-8">
                                  <Link href={`/conversations/${conv.id}`} className="flex items-center gap-4">
                                     <div className="h-9 w-9 rounded-xl border border-border/40 bg-background flex items-center justify-center text-primary/40 group-hover:text-primary transition-all">
-                                       {conv.channel === 'Voice' ? <Phone className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
+                                          {conv.channel === 'twilio' ? <Phone className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
                                     </div>
                                     <div className="flex flex-col">
-                                       <span className="text-[13px] font-bold text-foreground tracking-tight group-hover:text-primary transition-colors">{conv.agent}</span>
-                                       <span className="text-[10px] font-medium text-muted-foreground/30 uppercase tracking-widest mt-0.5">{conv.channel}</span>
+                                          <span className="text-[13px] font-bold text-foreground tracking-tight group-hover:text-primary transition-colors">
+                                            {conv.agents?.name ?? 'Unknown Agent'}
+                                          </span>
+                                          <span className="text-[10px] font-medium text-muted-foreground/30 uppercase tracking-widest mt-0.5">
+                                                                  {conv.channel === 'twilio' ? 'Call' : conv.channel === 'text_api' ? 'Text API' : 'Websocket'}
+                                          </span>
                                     </div>
                                  </Link>
                               </td>
                               <td className="py-6 px-8">
-                                 <span className="text-[14px] font-mono font-bold text-foreground/80 tracking-tight">{conv.caller}</span>
+                                    <span className="text-[14px] font-mono font-bold text-foreground/80 tracking-tight">
+                                      {conv.callers?.phone_number ?? conv.caller_id ?? 'Unknown Caller'}
+                                    </span>
                               </td>
                               <td className="py-6 px-8">
                                  <div className="flex items-center gap-5">
                                     <div className="flex flex-col gap-0.5">
-                                       <span className="text-[12px] font-bold text-foreground/60 leading-none">{conv.duration}</span>
+                                          <span className="text-[12px] font-bold text-foreground/60 leading-none">{formatDuration(conv.started_at, conv.ended_at)}</span>
                                        <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/20">Duration</span>
                                     </div>
                                     <div className="h-6 w-[1px] bg-border/20" />
                                     <div className="flex flex-col gap-0.5">
-                                       <span className="text-[12px] font-bold text-foreground/60 leading-none">{conv.messages}</span>
+                                       <span className="text-[12px] font-bold text-foreground/60 leading-none">{conv.message_count}</span>
                                        <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/20">Messages</span>
                                     </div>
                                  </div>
                               </td>
                               <td className="py-6 px-8">
-                                 <span className="text-[12px] font-medium text-muted-foreground/60">{conv.date}</span>
+                                 <span className="text-[12px] font-medium text-muted-foreground/60">{formatDateLabel(conv.started_at)}</span>
                               </td>
                               <td className="py-6 px-8">
                                  <div className="flex items-center gap-2">
@@ -181,7 +232,7 @@ export default function ConversationsPage() {
 
             {/* Pagination / Load More Placeholder */}
             <div className="flex justify-center pt-4">
-               <Button variant="ghost" className="h-10 px-8 rounded-xl font-bold text-[11px] uppercase tracking-widest text-muted-foreground hover:bg-muted/50 transition-all opacity-40">
+               <Button variant="ghost" className="h-10 px-8 rounded-xl font-bold text-[11px] uppercase tracking-widest text-muted-foreground hover:bg-muted/50 transition-all opacity-40" disabled>
                   Load Older Conversations
                </Button>
             </div>
