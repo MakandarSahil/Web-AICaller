@@ -115,7 +115,7 @@ function SignupForm() {
   if (success) {
     return (
       <div className="space-y-6 text-center animate-in fade-in zoom-in duration-300">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 ring-8 ring-brand-50/50">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-8 ring-brand-50/50">
           <Mail className="h-7 w-7" />
         </div>
         <div className="space-y-2">

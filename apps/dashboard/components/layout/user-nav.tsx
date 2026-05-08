@@ -68,7 +68,7 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
                {profile?.avatar_url ? (
                   <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
                ) : (
-                  <span className="text-[12px] uppercase font-extrabold">
+                  <span className="text-[12px] uppercase font-semibold">
                     {initials}
                   </span>
                )}
@@ -86,17 +86,17 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent 
-          className="w-72 bg-card border border-border shadow-[0_20px_80px_rgb(0,0,0,0.4)] rounded-2xl p-1.5 z-50" 
+          className="w-72 bg-card border border-border shadow-[0_20px_80px_rgb(0,0,0,0.4)] rounded-xl p-1.5 z-50" 
           align={collapsed ? 'center' : 'start'} 
           side={collapsed ? 'right' : 'top'} 
           sideOffset={14}
         >
-          <div className="px-3.5 py-4 mb-1.5 bg-muted rounded-2xl border border-border/30 flex items-center gap-3 dark:bg-muted dark:border-border/20">
+          <div className="px-3.5 py-4 mb-1.5 bg-muted rounded-xl border border-border/30 flex items-center gap-3 dark:bg-muted dark:border-border/20">
              <div className="h-9 w-9 rounded-xl bg-background border border-border flex items-center justify-center text-emerald-400">
                 <Mail size={16} />
              </div>
              <div className="overflow-hidden text-left">
-                <p className="text-[14px] font-black text-foreground truncate tracking-tight">
+                <p className="text-[14px] font-semibold text-foreground truncate tracking-tight">
                    {profile?.full_name || 'My Account'}
                 </p>
                 <p className="text-[11px] text-muted-foreground truncate font-bold mt-0.5 tracking-tight uppercase opacity-50">{email}</p>
@@ -119,10 +119,10 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
             <DropdownMenuSubTrigger className="flex items-center gap-3 cursor-pointer w-full text-[13px] font-semibold py-3 px-4 rounded-xl hover:bg-sidebar-active-bg dark:hover:bg-sidebar-active-bg transition-all text-foreground focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg">
               {theme === 'dark' ? <Moon className="h-4.5 w-4.5 text-brand-500" /> : <Sun className="h-4.5 w-4.5 text-brand-500" />}
               Appearance
-              <span className="ml-auto text-[11px] px-2 py-0.5 bg-muted rounded-lg text-muted-foreground font-black uppercase tracking-tighter capitalize opacity-60 dark:bg-muted">{theme}</span>
+              <span className="ml-auto text-[11px] px-2 py-0.5 bg-muted rounded-lg text-muted-foreground font-semibold uppercase tracking-tighter capitalize opacity-60 dark:bg-muted">{theme}</span>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent className="w-[180px] bg-card border border-border shadow-3xl p-1.5 rounded-2xl">
+              <DropdownMenuSubContent className="w-[180px] bg-card border border-border shadow-3xl p-1.5 rounded-xl">
                 <DropdownMenuItem onSelect={() => setTheme('light')} className="flex items-center justify-between py-2.5 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg font-bold cursor-pointer text-[12.5px]">
                    <div className="flex items-center gap-3 text-foreground">
                     <Sun className="h-4 w-4" /> Light
@@ -154,7 +154,7 @@ export function UserNav({ collapsed = false }: { collapsed?: boolean }) {
           
           <DropdownMenuItem 
             onSelect={handleLogout} 
-            className="flex items-center gap-3 cursor-pointer w-full text-[13px] font-black py-3 px-4 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all uppercase tracking-tighter"
+            className="flex items-center gap-3 cursor-pointer w-full text-[13px] font-semibold py-3 px-4 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all uppercase tracking-tighter"
           >
             <LogOut className="h-4.5 w-4.5" />
             Log out

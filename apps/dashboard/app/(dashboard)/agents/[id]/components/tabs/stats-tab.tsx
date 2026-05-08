@@ -45,7 +45,7 @@ export function StatsTab({ agent }: StatsTabProps) {
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <div key={i} className="p-6 rounded-2xl bg-muted/20 dark:bg-black/20 border border-border/50 space-y-4">
+          <div key={i} className="p-6 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50 space-y-4">
              <div className="flex items-center justify-between">
                 <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center text-muted-foreground/60 shadow-sm">
                    <stat.icon className="h-4 w-4" />
@@ -63,9 +63,9 @@ export function StatsTab({ agent }: StatsTabProps) {
       </div>
 
       {/* Latency Table */}
-      <div className="p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50 space-y-6">
+      <div className="p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50 space-y-6">
          <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase px-1">Latency Breakdown</h3>
-         <div className="rounded-2xl border border-border/50 overflow-hidden bg-background/50">
+         <div className="rounded-xl border border-border/50 overflow-hidden bg-background/50">
             <Table>
                <TableHeader>
                   <TableRow className="hover:bg-transparent border-border/50 bg-muted/30">

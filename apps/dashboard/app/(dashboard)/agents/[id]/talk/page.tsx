@@ -36,7 +36,7 @@ export default function AgentTalkPage({ params }: { params: Promise<{ id: string
           </Badge>
         </div>
 
-        <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
+        <section className="rounded-xl border border-border bg-card p-6 md:p-8">
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Talk With {agent?.name ?? 'Agent'}</h1>

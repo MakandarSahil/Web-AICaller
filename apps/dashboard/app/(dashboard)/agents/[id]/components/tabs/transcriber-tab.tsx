@@ -34,7 +34,7 @@ export function TranscriberTab({ agent }: TranscriberTabProps) {
     <div className="space-y-12 animate-in fade-in duration-300">
       
       {/* Transcriber Block */}
-      <div className="flex flex-col gap-8 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-8 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
           <div className="flex flex-col gap-1">
              <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Assistant Transcriber</h3>
              <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">
@@ -73,7 +73,7 @@ export function TranscriberTab({ agent }: TranscriberTabProps) {
       </div>
 
       {/* Listening Sensitivity Block */}
-      <div className="flex flex-col gap-8 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-8 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
         <div className="flex flex-col gap-1">
            <h2 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Listening Settings</h2>
            <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">

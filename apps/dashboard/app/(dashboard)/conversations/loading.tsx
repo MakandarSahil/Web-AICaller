@@ -24,7 +24,7 @@ export default function ConversationsLoading() {
       </div>
 
       <div className="flex-1 overflow-hidden px-10 py-10 pb-40 space-y-10">
-        <div className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5 shadow-sm">
+        <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5 shadow-sm">
           <div className="overflow-x-auto">
             <div className="min-w-[960px]">
               <div className="grid grid-cols-6 gap-4 border-b border-border/40 bg-muted/10 px-8 py-4">

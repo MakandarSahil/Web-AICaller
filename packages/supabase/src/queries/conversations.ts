@@ -12,14 +12,11 @@ export type ConversationListRow = Pick<
   | 'caller_id'
   | 'channel'
   | 'ended_at'
-  | 'had_tool_call'
   | 'message_count'
   | 'outcome'
-  | 'session_id'
   | 'started_at'
   | 'status'
   | 'summary'
-  | 'summary_edited'
   | 'visitor_id'
 > & {
   agents?: Pick<AgentRow, 'name'> | null
@@ -38,14 +35,11 @@ export async function getConversationsByAgent(supabase: SupabaseClientType, agen
       caller_id,
       channel,
       ended_at,
-      had_tool_call,
       message_count,
       outcome,
-      session_id,
       started_at,
       status,
       summary,
-      summary_edited,
       visitor_id,
       agents ( name ),
       callers ( phone_number )
@@ -83,14 +77,11 @@ export async function getConversations(supabase: SupabaseClientType) {
       caller_id,
       channel,
       ended_at,
-      had_tool_call,
       message_count,
       outcome,
-      session_id,
       started_at,
       status,
       summary,
-      summary_edited,
       visitor_id,
       agents ( name ),
       callers ( phone_number )

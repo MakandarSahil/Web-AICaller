@@ -21,7 +21,7 @@ interface SidebarGlobalProps {
 /**
  * Global Sidebar (Professional / Retell AI Density)
  * 
- * 1. Normalized font weights: font-black -> font-bold/semibold.
+ * 1. Normalized font weights: font-semibold -> font-bold/semibold.
  * 2. Background: #0e121b
  * 3. Softened group labels and active states.
  */
@@ -80,7 +80,7 @@ export function SidebarGlobal({ collapsed, setCollapsed }: SidebarGlobalProps) {
                             <Icon className="h-5 w-5" />
                           </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right" className="bg-foreground text-background border-0 font-bold p-2 text-[11px] rounded-lg shadow-xl shadow-black/50">
+                        <TooltipContent side="right" className="bg-foreground text-background border-0 font-bold p-2 text-[11px] rounded-lg shadow-sm shadow-black/50">
                           {item.label}
                         </TooltipContent>
                       </Tooltip>

@@ -57,12 +57,12 @@ export default function DashboardLoading() {
                 <Skeleton className="h-4 w-32 rounded-lg opacity-40" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {[1, 2, 3].map((i) => (
-                        <div key={i} className="p-6 rounded-[24px] border border-border/50 bg-muted/5 space-y-4">
+                        <div key={i} className="p-6 rounded-xl border border-border/50 bg-muted/5 space-y-4">
                             <div className="flex items-center gap-3">
                                 <Skeleton className="h-10 w-10 rounded-xl" />
                                 <Skeleton className="h-4 w-24 rounded-md" />
                             </div>
-                            <Skeleton className="h-20 w-full rounded-2xl opacity-30" />
+                            <Skeleton className="h-20 w-full rounded-xl opacity-30" />
                         </div>
                     ))}
                 </div>
@@ -73,12 +73,12 @@ export default function DashboardLoading() {
                 <Skeleton className="h-4 w-40 rounded-lg opacity-40 ml-1" />
                 <div className="space-y-4">
                     {[1, 2].map((i) => (
-                        <div key={i} className="p-8 rounded-[32px] border border-border/40 bg-muted/5 space-y-6">
+                        <div key={i} className="p-8 rounded-xl border border-border/40 bg-muted/5 space-y-6">
                             <div className="flex flex-col gap-3">
                                 <Skeleton className="h-5 w-1/4 rounded-lg" />
                                 <Skeleton className="h-3 w-3/4 rounded-md opacity-50" />
                             </div>
-                            <Skeleton className="h-40 w-full rounded-[24px] opacity-20" />
+                            <Skeleton className="h-40 w-full rounded-xl opacity-20" />
                         </div>
                     ))}
                 </div>

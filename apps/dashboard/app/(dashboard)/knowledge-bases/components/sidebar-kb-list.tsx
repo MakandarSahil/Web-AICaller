@@ -83,13 +83,13 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
         createButton={
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <Button
-              className="w-full h-10 gap-2.5 font-bold text-[11px] uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary/10 active:scale-[0.98] group"
+              className="w-full h-10 gap-2.5 font-bold text-[11px] uppercase tracking-widest rounded-xl transition-all shadow-sm shadow-primary/10 active:scale-[0.98] group"
               onClick={() => setCreateOpen(true)}
             >
               <Plus className="h-3.5 w-3.5 transition-transform group-hover:rotate-90 duration-300" />
               Create Knowledge Base
             </Button>
-            <DialogContent className="max-w-2xl bg-card border-border/50 rounded-[32px] p-0 overflow-hidden shadow-2xl">
+            <DialogContent className="max-w-2xl bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
               <DialogHeader className="p-8 pb-4 border-b border-border/10 bg-muted/5">
                 <DialogTitle className="text-[16px] font-bold tracking-tight uppercase">Create Knowledge Base</DialogTitle>
                 <UIDialogDescription className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
@@ -129,7 +129,7 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
                   )}
                   <Button
                     disabled={!workspace || createPending || !kbName.trim()}
-                    className="w-full h-12 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/10 transition-all active:scale-95"
+                    className="w-full h-12 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-sm shadow-primary/10 transition-all active:scale-95"
                     onClick={() => {
                       if (!workspace) return
                       createKb(
@@ -171,7 +171,7 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
             <div
               key={kb.id}
               className={cn(
-                'group relative flex flex-col gap-1.5 p-4 rounded-2xl transition-all duration-300 ease-in-out border border-transparent',
+                'group relative flex flex-col gap-1.5 p-4 rounded-xl transition-all duration-300 ease-in-out border border-transparent',
                 isActive
                   ? 'bg-muted/40 dark:bg-muted/10 border-border/40 shadow-sm'
                   : 'hover:bg-muted/20 hover:border-border/20'
@@ -276,7 +276,7 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
       </SubSidebarShell>
 
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent className="max-w-2xl bg-card border-border/50 rounded-[32px] p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-2xl bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
           <DialogHeader className="p-8 pb-4 border-b border-border/10 bg-muted/5">
             <DialogTitle className="text-[16px] font-bold tracking-tight uppercase">Delete Knowledge Base</DialogTitle>
             <UIDialogDescription className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
@@ -287,7 +287,7 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
           <div className="p-8 space-y-6">
             {deleteTarget ? (
               <>
-                <Alert className="bg-destructive/5 border-destructive/20 text-destructive rounded-2xl p-5">
+                <Alert className="bg-destructive/5 border-destructive/20 text-destructive rounded-xl p-5">
                   <AlertTitle className="text-[12px] font-bold uppercase tracking-widest mb-1 ml-1">
                     KB is attached to agents
                   </AlertTitle>
@@ -319,7 +319,7 @@ export function SidebarKBList({ initialData, hideHeader = false }: SidebarKBList
                 Cancel
               </Button>
               <Button
-                className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-destructive text-destructive-foreground shadow-lg shadow-destructive/10 transition-all active:scale-95"
+                className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-destructive text-destructive-foreground shadow-sm shadow-destructive/10 transition-all active:scale-95"
                 onClick={() => {
                   if (!deleteTarget) return
                   deleteKb(deleteTarget.id, {

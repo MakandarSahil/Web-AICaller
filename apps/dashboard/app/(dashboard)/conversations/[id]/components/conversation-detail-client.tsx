@@ -107,7 +107,7 @@ export default function ConversationDetailClient({
                         <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">AI Summary</h3>
                      </div>
 
-                     <div className="p-8 rounded-[32px] transition-all duration-500 border bg-muted/10 border-border/40">
+                     <div className="p-8 rounded-xl transition-all duration-500 border bg-muted/10 border-border/40">
                         {summary ? (
                            <p className="text-[15px] font-medium text-foreground/80 leading-relaxed">{summary}</p>
                         ) : (
@@ -135,10 +135,10 @@ export default function ConversationDetailClient({
                               >
                                  <div
                                     className={cn(
-                                       'h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center border shadow-sm transition-all',
+                                       'h-10 w-10 shrink-0 rounded-xl flex items-center justify-center border shadow-sm transition-all',
                                        msg.role === 'assistant'
                                           ? 'bg-muted/40 border-border/50 text-muted-foreground/60'
-                                          : 'bg-primary border-primary/20 text-primary-foreground shadow-lg shadow-primary/10'
+                                          : 'bg-primary border-primary/20 text-primary-foreground shadow-sm shadow-primary/10'
                                     )}
                                  >
                                     {msg.role === 'assistant' ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
@@ -147,7 +147,7 @@ export default function ConversationDetailClient({
                                  <div className={cn('flex flex-col gap-2 max-w-[80%] pt-1', msg.role === 'user' ? 'items-end text-right' : 'items-start text-left')}>
                                     <div
                                        className={cn(
-                                          'px-6 py-4 rounded-[28px] text-[15px] leading-relaxed tracking-tight break-words font-medium',
+                                          'px-6 py-4 rounded-xl text-[15px] leading-relaxed tracking-tight break-words font-medium',
                                           msg.role === 'assistant'
                                              ? 'bg-muted/10 border border-border/30 text-foreground rounded-tl-none'
                                              : 'bg-primary text-primary-foreground rounded-tr-none shadow-md shadow-primary/5'
@@ -160,7 +160,7 @@ export default function ConversationDetailClient({
                               </div>
                            ))
                         ) : (
-                           <div className="rounded-[28px] border border-dashed border-border/40 bg-muted/10 p-8 text-center">
+                           <div className="rounded-xl border border-dashed border-border/40 bg-muted/10 p-8 text-center">
                               <p className="text-sm font-medium text-muted-foreground/60">
                                  No transcript messages are available for this conversation yet.
                               </p>
@@ -178,8 +178,8 @@ export default function ConversationDetailClient({
                <div className="p-8 space-y-10">
                   <section className="space-y-6">
                      <h4 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">Caller Profile</h4>
-                     <div className="flex flex-col items-center text-center p-8 rounded-[32px] bg-background border border-border/40 shadow-sm">
-                        <div className="h-20 w-20 rounded-[28px] bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-primary mb-5 shadow-inner">
+                     <div className="flex flex-col items-center text-center p-8 rounded-xl bg-background border border-border/40 shadow-sm">
+                        <div className="h-20 w-20 rounded-xl bg-primary/5 dark:bg-primary/10 flex items-center justify-center text-primary mb-5 shadow-inner">
                            <Phone className="h-8 w-8" />
                         </div>
                         <span className="text-[18px] font-bold text-foreground tracking-tight">

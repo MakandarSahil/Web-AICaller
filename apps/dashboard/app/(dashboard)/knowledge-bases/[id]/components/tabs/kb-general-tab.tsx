@@ -35,7 +35,7 @@ export default function KBGeneralTab({ kbId, initialDocuments }: KBGeneralTabPro
             </p>
           </div>
 
-          <div className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5">
+          <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>

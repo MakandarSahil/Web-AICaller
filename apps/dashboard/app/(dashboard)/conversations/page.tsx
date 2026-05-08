@@ -150,7 +150,7 @@ export default function ConversationsPage() {
       <ScrollArea className="flex-1">
          <div className="max-w-6xl mx-auto px-10 py-10 pb-40 space-y-10">
             
-            <div className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5 shadow-sm">
+            <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5 shadow-sm">
                <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                      <thead>

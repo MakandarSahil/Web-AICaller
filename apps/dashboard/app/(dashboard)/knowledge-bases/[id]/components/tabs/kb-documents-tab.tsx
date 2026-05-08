@@ -153,7 +153,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                     }
                   }}
                 >
-                  <DialogContent className="max-w-2xl bg-card border-border/50 rounded-[32px] p-0 overflow-hidden shadow-2xl">
+                  <DialogContent className="max-w-2xl bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
                     <DialogHeader className="p-8 pb-4 border-b border-border/10 bg-muted/5">
                       <DialogTitle className="text-[16px] font-bold tracking-tight uppercase">New Plain Text Document</DialogTitle>
                       <DialogDescription className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
@@ -193,7 +193,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                           placeholder="Paste or type your documentation here..."
                           value={plainTextContent}
                           onChange={(e) => setPlainTextContent(e.target.value)}
-                          className="min-h-[300px] bg-background border-border/50 rounded-2xl p-6 text-[14px] leading-relaxed resize-none font-medium"
+                          className="min-h-[300px] bg-background border-border/50 rounded-xl p-6 text-[14px] leading-relaxed resize-none font-medium"
                         />
                       </div>
 
@@ -228,7 +228,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                               }
                             )
                           }}
-                          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
+                          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-sm shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
                         >
                           <Save className="h-4 w-4" />
                           Save Plain Text
@@ -238,7 +238,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                   </DialogContent>
                 </Dialog>
 
-                <div className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5">
+                <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5">
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                       <thead>
@@ -385,7 +385,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                     }
                   }}
                 >
-                  <DialogContent className="max-w-2xl bg-card border-border/50 rounded-[32px] p-0 overflow-hidden shadow-2xl">
+                  <DialogContent className="max-w-2xl bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
                     <DialogHeader className="p-8 pb-4 border-b border-border/10 bg-muted/5">
                       <DialogTitle className="text-[16px] font-bold tracking-tight uppercase">Upload Knowledge Source</DialogTitle>
                       <DialogDescription className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
@@ -394,7 +394,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                     </DialogHeader>
 
                     <div className="p-8 space-y-6">
-                      <div className="bg-amber-500/5 border border-amber-500/20 rounded-[28px] p-6 flex items-start gap-4">
+                      <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-6 flex items-start gap-4">
                         <div className="h-8 w-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
                           <AlertCircle className="h-4 w-4" />
                         </div>
@@ -419,7 +419,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                       />
 
                       <div
-                        className="h-64 rounded-[32px] border-2 border-dashed border-border/60 bg-muted/5 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-muted/10 transition-all cursor-pointer"
+                        className="h-64 rounded-xl border-2 border-dashed border-border/60 bg-muted/5 flex flex-col items-center justify-center group hover:border-primary/40 hover:bg-muted/10 transition-all cursor-pointer"
                         onClick={() => fileInputRef.current?.click()}
                         role="button"
                         tabIndex={0}
@@ -427,7 +427,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                           if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click()
                         }}
                       >
-                        <div className="h-14 w-14 rounded-[20px] bg-background border border-border/50 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-all shadow-sm">
+                        <div className="h-14 w-14 rounded-lg bg-background border border-border/50 flex items-center justify-center text-muted-foreground group-hover:text-primary transition-all shadow-sm">
                           <Upload className="h-6 w-6" />
                         </div>
                         <p className="mt-6 text-[13px] font-bold text-foreground">
@@ -480,7 +480,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                               }
                             )
                           }}
-                          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
+                          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-sm shadow-primary/10 transition-all active:scale-95 disabled:opacity-50"
                         >
                           <Upload className="h-4 w-4" />
                           Upload to Storage
@@ -490,7 +490,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
                   </DialogContent>
                 </Dialog>
 
-                <div className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5">
+                <div className="rounded-xl border border-border/40 overflow-hidden bg-muted/5">
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                       <thead>
@@ -612,7 +612,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
           if (!open) setDeleteTarget(null)
         }}
       >
-        <DialogContent className="max-w-md bg-card border-border/50 rounded-3xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-md bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
           <DialogHeader className="p-6 pb-4 border-b border-border/10 bg-muted/5">
             <DialogTitle className="text-[15px] font-bold tracking-tight uppercase">
               Delete document
@@ -672,7 +672,7 @@ export default function KBDocumentsTab({ kbId, initialDocuments }: KBDocumentsTa
           if (!open) setPreviewTarget(null)
         }}
       >
-        <DialogContent className="max-w-3xl bg-card border-border/50 rounded-[32px] p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-3xl bg-card border-border/50 rounded-xl p-0 overflow-hidden shadow-sm">
           <DialogHeader className="p-6 pb-4 border-b border-border/10 bg-muted/5">
             <DialogTitle className="text-[16px] font-bold tracking-tight uppercase">
               {previewTarget?.name ?? 'Document'}

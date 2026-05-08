@@ -110,10 +110,35 @@ export async function updateAgent(
 
 /**
  * Delete an agent.
- * Caller must verify this is NOT the last/default agent before calling.
- * The DB does not enforce this — it's a frontend responsibility.
+ *
+ * The schema intentionally cascades this delete to dependent rows:
+ * agent_knowledge_bases, phone_numbers, conversations, messages via
+ * conversations, agent_usage, and V2 tool/analytics tables.
+ *
+ * Business guards live here so every frontend caller gets the same protection.
  */
 export async function deleteAgent(supabase: SupabaseClientType, id: string) {
+  const { data: agent, error: agentError } = await supabase
+    .from('agents')
+    .select('id, workspace_id, is_default')
+    .eq('id', id)
+    .single()
+
+  if (agentError) throw agentError
+  if (agent.is_default) {
+    throw new Error('Cannot delete the default agent.')
+  }
+
+  const { count, error: countError } = await supabase
+    .from('agents')
+    .select('id', { count: 'exact', head: true })
+    .eq('workspace_id', agent.workspace_id)
+
+  if (countError) throw countError
+  if ((count ?? 0) <= 1) {
+    throw new Error('Cannot delete the only agent in this workspace.')
+  }
+
   const { error } = await supabase
     .from('agents')
     .delete()
