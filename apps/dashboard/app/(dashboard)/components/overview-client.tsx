@@ -1,25 +1,33 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { 
-  Users, 
-  PhoneCall, 
-  MessageSquare, 
-  Activity, 
+import Link from 'next/link'
+import {
+  Activity,
+  ArrowRight,
+  Bot,
   Calendar,
+  CheckCircle2,
   ExternalLink,
-  Info
+  MessageSquare,
+  PhoneCall,
+  ShieldCheck,
+  Users,
 } from 'lucide-react'
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle,
-  Button,
+import type { LucideIcon } from 'lucide-react'
+import {
   Badge,
-  ScrollArea
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  ScrollArea,
 } from '@aicaller/ui'
 import { useUser } from '@/providers/user-provider'
+import { MetricCard } from '@/components/ui/metric-card'
+import { PageHeader } from '@/components/ui/page-header'
 
 type BackendHealth = {
   service: string
@@ -30,12 +38,27 @@ type BackendHealth = {
   platform: string
 }
 
-/**
- * Overview Client Component (Professional / Retell AI Density)
- * 
- * 1. Normalized font weights: font-black -> font-bold/semibold.
- * 2. Softened borders for a more integrated look.
- */
+const quickActions = [
+  {
+    title: 'Create an agent',
+    description: 'Build a voice assistant for calls, chat, or support workflows.',
+    href: '/agents/new',
+    icon: Bot,
+  },
+  {
+    title: 'Add knowledge',
+    description: 'Connect documents so agents can answer with workspace context.',
+    href: '/knowledge-bases',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Review conversations',
+    description: 'Audit recent call and chat history for quality signals.',
+    href: '/call-history',
+    icon: MessageSquare,
+  },
+]
+
 export function OverviewClient() {
   const { profile, workspace, email } = useUser()
   const [mounted, setMounted] = useState(false)
@@ -79,21 +102,25 @@ export function OverviewClient() {
   }, [])
 
   const formatDate = (dateString?: string) => {
-    if (!mounted || !dateString) return '...'
+    if (!mounted || !dateString) return 'Pending'
     try {
       return new Intl.DateTimeFormat('en-GB', {
         day: '2-digit',
         month: 'short',
-        year: 'numeric'
+        year: 'numeric',
       }).format(new Date(dateString))
     } catch {
-      return 'Invalid Date'
+      return 'Unavailable'
     }
   }
 
-  const today = mounted 
-    ? new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()) 
-    : 'Loading date...'
+  const today = mounted
+    ? new Intl.DateTimeFormat('en-GB', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      }).format(new Date())
+    : 'Today'
 
   const formatUptime = (uptimeSeconds: number) => {
     const totalSeconds = Math.max(0, Math.floor(uptimeSeconds))
@@ -104,206 +131,177 @@ export function OverviewClient() {
     return `${hours}h`
   }
 
+  const serviceStatus = backendHealth ? 'Online' : backendHealthError ? 'Offline' : 'Checking'
+
   return (
-    <div className="flex flex-col flex-1 min-w-0 h-full font-sans transition-colors duration-300" style={{ backgroundColor: 'hsl(var(--background))' }}>
-      <header className="page-header shrink-0 px-6 sm:px-8 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40 h-[var(--header-height)]">
-        <div className="flex flex-col gap-0.5 text-left">
-          <h1 className="page-title text-[15px] sm:text-[16px] font-bold tracking-tight text-foreground">Overview</h1>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Calendar size={11} className="shrink-0" />
-            <span className="text-[11px] font-semibold uppercase tracking-wider opacity-50">{today}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="hidden sm:flex h-9 gap-2 text-[12px] font-semibold border-border/40 bg-white/2 hover:bg-white/5 transition-all active:scale-95 rounded-xl">
-            <Activity className="h-4 w-4 text-emerald-500" />
-            Live Monitor
+    <div className="flex h-full min-w-0 flex-1 flex-col bg-background font-sans">
+      <PageHeader
+        title="Overview"
+        description={workspace?.name ? `${workspace.name} workspace` : 'Workspace operations'}
+        eyebrow={today}
+        actions={
+          <Button asChild size="sm" className="hidden h-8 gap-2 sm:inline-flex">
+            <Link href="/agents/new">
+              <Bot className="h-3.5 w-3.5" />
+              New agent
+            </Link>
           </Button>
-        </div>
-      </header>
+        }
+      />
 
       <ScrollArea className="flex-1">
-        <div className="p-6 sm:p-8 flex flex-col gap-8 max-w-[1600px] mx-auto">
-          
-          {/* 1. Metric Cards Grid - Professional Density */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="stat-card border-brand-500/5 hover:shadow-2xl transition-all group bg-card">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 p-0">
-                <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                   Total Calls
-                </CardTitle>
-                <div className="h-9 w-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                   <PhoneCall size={18} />
+        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 p-5 sm:p-6 lg:p-8">
+          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="Total calls"
+              value="0"
+              icon={PhoneCall}
+              description="Last 7 days"
+              trend={<span className="text-emerald-600 dark:text-emerald-400">0%</span>}
+              tone="success"
+            />
+            <MetricCard
+              label="Active chats"
+              value="0"
+              icon={MessageSquare}
+              description="Live conversations"
+            />
+            <MetricCard
+              label="Managed users"
+              value="0"
+              icon={Users}
+              description="Workspace members"
+              tone="warning"
+            />
+            <MetricCard
+              label="Backend service"
+              value={serviceStatus}
+              icon={Activity}
+              description={backendHealth ? `${backendHealth.service} v${backendHealth.version}` : backendHealthError ?? 'Fetching status'}
+              trend={backendHealth ? `Up ${formatUptime(backendHealth.uptime_seconds)}` : undefined}
+              tone={backendHealth ? 'success' : backendHealthError ? 'warning' : 'info'}
+            />
+          </section>
+
+          <section className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+            <Card className="rounded-xl border-border/70 bg-card shadow-sm">
+              <CardHeader className="border-b border-border/70 p-5 sm:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <CardTitle className="text-base font-semibold">Workspace summary</CardTitle>
+                    <CardDescription className="mt-1">
+                      Account context, plan status, and service readiness.
+                    </CardDescription>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="w-fit border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                  >
+                    <CheckCircle2 className="mr-1.5 h-3 w-3" />
+                    Connected
+                  </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-0 pt-4">
-                <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter">0</div>
-                <p className="text-[12px] text-muted-foreground font-semibold mt-2 flex items-center gap-1.5">
-                  <span className="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-md text-[10px]">+0%</span>
-                  vs last 7 days
+              <CardContent className="p-0">
+                <div className="grid divide-y divide-border/70 md:grid-cols-3 md:divide-x md:divide-y-0">
+                  <InfoBlock label="Name" value={profile?.full_name || 'Loading'} />
+                  <InfoBlock label="Email" value={email || 'Pending'} />
+                  <InfoBlock label="Workspace" value={workspace?.name || 'Loading'} />
+                </div>
+                <div className="grid gap-4 border-t border-border/70 p-5 sm:grid-cols-3 sm:p-6">
+                  <InfoPill label="Joined" value={formatDate(workspace?.created_at)} icon={Calendar} />
+                  <InfoPill label="Plan" value="Free tier" icon={ShieldCheck} />
+                  <InfoPill
+                    label="Role"
+                    value={profile?.is_admin ? 'Admin' : 'Member'}
+                    icon={Users}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-xl border-border/70 bg-card shadow-sm">
+              <CardHeader className="p-5 pb-3 sm:p-6 sm:pb-3">
+                <CardTitle className="text-base font-semibold">Next actions</CardTitle>
+                <CardDescription>Common setup steps for a production workspace.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2 p-3 sm:p-4">
+                {quickActions.map((action) => {
+                  const Icon = action.icon
+                  return (
+                    <Link
+                      key={action.href}
+                      href={action.href}
+                      className="group flex items-start gap-3 rounded-lg p-3 transition-colors hover:bg-muted/60"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-medium text-foreground">{action.title}</span>
+                        <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
+                          {action.description}
+                        </span>
+                      </span>
+                      <ArrowRight className="mt-2 h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                    </Link>
+                  )
+                })}
+              </CardContent>
+            </Card>
+          </section>
+
+          <Card className="rounded-xl border-border/70 bg-card shadow-sm">
+            <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-foreground">Service details</p>
+                <p className="mt-1 truncate text-xs text-muted-foreground">
+                  {backendHealth
+                    ? `${backendHealth.environment} environment on ${backendHealth.platform} with Python ${backendHealth.python}`
+                    : backendHealthError || 'Waiting for the health endpoint to respond.'}
                 </p>
-              </CardContent>
-            </Card>
-
-            <Card className="stat-card border-brand-500/5 hover:shadow-2xl transition-all group bg-card">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 p-0">
-                <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-                   Active Chats
-                </CardTitle>
-                <div className="h-9 w-9 rounded-xl bg-brand-500/10 flex items-center justify-center text-brand-400 group-hover:scale-110 transition-transform">
-                   <MessageSquare size={18} />
-                </div>
-              </CardHeader>
-              <CardContent className="p-0 pt-4">
-                <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter">0</div>
-                <p className="text-[12px] text-muted-foreground font-semibold mt-2 flex items-center gap-1.5">
-                  <span className="text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded-md text-[10px]">+0%</span>
-                  vs last 7 days
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="stat-card border-brand-500/5 hover:shadow-2xl transition-all group bg-card">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 p-0">
-                <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                   Users Managed
-                </CardTitle>
-                <div className="h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
-                   <Users size={18} />
-                </div>
-              </CardHeader>
-              <CardContent className="p-0 pt-4">
-                <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter">0</div>
-                <p className="text-[12px] text-muted-foreground font-semibold mt-2">Current Active Population</p>
-              </CardContent>
-            </Card>
-
-            <Card className="stat-card border-brand-500/5 hover:shadow-2xl transition-all group bg-card">
-              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 p-0">
-                <CardTitle className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground flex items-center gap-2">
-                   <div className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                   Backend Service
-                </CardTitle>
-                <div className="h-9 w-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
-                   <Activity size={18} />
-                </div>
-              </CardHeader>
-              <CardContent className="p-0 pt-4">
-                {backendHealth ? (
-                  <div className="space-y-2">
-                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Online</div>
-                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">
-                      {backendHealth.service} • v{backendHealth.version}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 pt-1">
-                      <Badge
-                        variant="secondary"
-                        className="px-3 py-1 border border-border/40 bg-white/5 text-foreground font-semibold text-[10px] rounded-full uppercase tracking-tight"
-                      >
-                        {backendHealth.environment}
-                      </Badge>
-                      <Badge
-                        variant="outline"
-                        className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full border-border/60 text-muted-foreground"
-                      >
-                        Uptime {formatUptime(backendHealth.uptime_seconds)}
-                      </Badge>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground/50 font-semibold mt-1">
-                      Python {backendHealth.python} • {backendHealth.platform}
-                    </p>
-                  </div>
-                ) : backendHealthError ? (
-                  <div className="space-y-2">
-                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Offline</div>
-                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">Health check failed</p>
-                    <p className="text-[11px] text-muted-foreground/50 font-medium">{backendHealthError}</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter uppercase">Checking...</div>
-                    <p className="text-[12px] text-muted-foreground font-semibold mt-0.5">Fetching backend status</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/*  diagnostic Card - Professional Midnight */}
-          <Card className="bg-card border border-border/40 overflow-hidden shadow-2xl rounded-3xl">
-            <CardHeader className="border-b border-border/20 p-6 sm:p-8 bg-white/2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <CardTitle className="text-base font-bold text-foreground flex items-center gap-3">
-                    <div className="h-8 w-8 bg-brand-500 text-white rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20 ring-1 ring-white/10">
-                       <Info size={16} />
-                    </div>
-                    Session Context Diagnostics
-                  </CardTitle>
-                  <p className="text-[13px] text-muted-foreground font-medium opacity-60">System information retrieved from Supabase UserProvider.</p>
-                </div>
-                <Badge variant="outline" className="border-emerald-500/20 text-emerald-400 bg-emerald-500/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full">
-                   Connected
-                </Badge>
               </div>
-            </CardHeader>
-            <CardContent className="p-6 sm:p-10">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {/* User Info */}
-                <div className="space-y-6">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">User Profile</h4>
-                  <div className="space-y-5 text-left">
-                    <div className="flex flex-col gap-1">
-                       <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">Full Name</span>
-                       <span className="text-[14px] font-semibold text-foreground">{profile?.full_name || 'Loading...'}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                       <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">Auth Email</span>
-                       <span className="text-[14px] font-semibold text-brand-500 truncate decoration-brand-500/20">{email || '...'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Workspace Info */}
-                <div className="space-y-6 lg:border-l lg:border-border/10 lg:pl-10">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">Workspace</h4>
-                  <div className="space-y-5 text-left">
-                    <div className="flex flex-col gap-1">
-                       <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">Active Name</span>
-                       <span className="text-[14px] font-semibold text-foreground">{workspace?.name || 'Loading...'}</span>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                       <span className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">Joined On</span>
-                       <span className="text-[14px] font-semibold text-foreground">{formatDate(workspace?.created_at)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Account Settings */}
-                <div className="space-y-6 lg:border-l lg:border-border/10 lg:pl-10 text-left">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 mb-4">Settings</h4>
-                  <div className="flex flex-wrap gap-2">
-                     <Badge variant="secondary" className="px-3.5 py-1 border border-border/40 bg-white/5 text-foreground font-semibold text-[10px] rounded-full uppercase tracking-tight">Free Tier</Badge>
-                     <Badge variant="secondary" className="px-3.5 py-1 border border-border/40 bg-white/5 text-foreground font-semibold text-[10px] rounded-full uppercase tracking-tight">Early Access</Badge>
-                     {profile?.is_admin && (
-                        <Badge className="px-3.5 py-1 bg-brand-500 text-white font-bold text-[10px] rounded-full uppercase tracking-tight">ADMIN</Badge>
-                     )}
-                  </div>
-                  <div className="mt-8">
-                     <Button variant="outline" className="w-full justify-between h-11 px-5 border-border/40 bg-white/2 text-foreground font-semibold hover:bg-white/5 transition-all rounded-2xl group shadow-sm">
-                        Account Settings
-                        <ExternalLink size={14} className="text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-                     </Button>
-                  </div>
-                </div>
-              </div>
+              <Button asChild variant="outline" size="sm" className="w-full justify-center sm:w-auto">
+                <a href="https://api.iamspiderman.me/health/info" target="_blank" rel="noreferrer">
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  Open status
+                </a>
+              </Button>
             </CardContent>
           </Card>
         </div>
       </ScrollArea>
+    </div>
+  )
+}
+
+function InfoBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 p-5 sm:p-6">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="mt-2 truncate text-sm font-semibold text-foreground">{value}</p>
+    </div>
+  )
+}
+
+function InfoPill({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string
+  value: string
+  icon: LucideIcon
+}) {
+  return (
+    <div className="flex min-w-0 items-center gap-3 rounded-lg border border-border/70 bg-muted/20 p-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-background text-muted-foreground">
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+        <p className="truncate text-sm font-medium text-foreground">{value}</p>
+      </div>
     </div>
   )
 }

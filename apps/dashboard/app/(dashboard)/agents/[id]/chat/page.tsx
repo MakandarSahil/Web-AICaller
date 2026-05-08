@@ -216,7 +216,7 @@ export default function AgentChatPage({ params }: { params: Promise<{ id: string
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 pb-36 pt-4 sm:px-5 sm:pt-6">
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5">
               {messages.length === 0 ? (
-                <div className="mt-10 rounded-2xl border border-dashed border-border/80 p-6 text-center sm:mt-16">
+                <div className="mt-10 rounded-xl border border-dashed border-border/80 p-6 text-center sm:mt-16">
                   <Bot className="mx-auto mb-3 h-8 w-8 text-primary/70" />
                   <p className="text-sm font-medium">Start a quick conversation</p>
                   <p className="mt-1 text-xs text-muted-foreground">
@@ -238,7 +238,7 @@ export default function AgentChatPage({ params }: { params: Promise<{ id: string
 
                   <div
                     className={cn(
-                      'max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-relaxed sm:max-w-[80%] sm:px-4 sm:py-2.5',
+                      'max-w-[88%] rounded-xl px-3 py-2 text-sm leading-relaxed sm:max-w-[80%] sm:px-4 sm:py-2.5',
                       msg.role === 'user'
                         ? 'rounded-br-sm bg-primary text-primary-foreground'
                         : cn(

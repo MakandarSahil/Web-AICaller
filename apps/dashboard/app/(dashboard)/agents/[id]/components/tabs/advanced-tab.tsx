@@ -1,23 +1,33 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { 
-  Button, 
+import { useRouter } from 'next/navigation'
+import {
+  Button,
   Card,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
   Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from '@aicaller/ui'
-import { AlertTriangle, Trash2, ShieldCheck, Activity } from 'lucide-react'
+import { Activity, ShieldCheck, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import type { getAgent } from '@aicaller/supabase/queries'
-import { useUpdateAgent } from '@/hooks/use-agents'
+import { useAgents, useDeleteAgent, useUpdateAgent } from '@/hooks/use-agents'
 
 type Agent = NonNullable<Awaited<ReturnType<typeof getAgent>>>
 
@@ -26,49 +36,62 @@ interface AdvancedTabProps {
 }
 
 export default function AdvancedTab({ agent }: AdvancedTabProps) {
-  // Mock check for "last agent" - in real wiring we'd check agents.length
-  const isLastAgent = false 
-  const isDefault = agent.is_default
+  const router = useRouter()
+  const { data: agents } = useAgents()
   const { mutate: updateAgent, isPending: saving } = useUpdateAgent()
+  const { mutate: deleteAgent, isPending: deleting } = useDeleteAgent()
   const [status, setStatus] = useState(agent.status || 'active')
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [confirmName, setConfirmName] = useState('')
 
   useEffect(() => {
     setStatus(agent.status || 'active')
   }, [agent])
 
-  const isDirty = useMemo(() => status !== (agent.status || 'active'), [agent.status, status])
+  useEffect(() => {
+    if (!deleteOpen) setConfirmName('')
+  }, [deleteOpen])
 
-  const deleteDisabled = isDefault || isLastAgent
+  const isDirty = useMemo(() => status !== (agent.status || 'active'), [agent.status, status])
+  const isDefault = agent.is_default
+  const isLastAgent = (agents?.length ?? 1) <= 1
+  const deleteDisabled = isDefault || isLastAgent || deleting
+  const confirmMatches = confirmName.trim() === agent.name
+
+  const deleteHelpText = isDefault
+    ? 'Cannot delete the default agent. Create or promote another agent first.'
+    : isLastAgent
+      ? 'Cannot delete the only agent in your workspace.'
+      : 'This permanently removes the agent and its dependent records.'
 
   return (
-    <div className="space-y-10 max-w-2xl">
-      
-      {/* 1. Agent Status (Moved from General) */}
-      <section className="space-y-6">
-        <div className="flex flex-col gap-1 border-b border-border/10 pb-6">
-           <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase flex items-center gap-2">
-             <Activity className="h-4 w-4 text-primary" />
-             Agent Availability
-           </h3>
-           <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
-             Control whether this agent is currently active and accepting calls.
-           </p>
+    <div className="max-w-2xl space-y-6">
+      <section className="space-y-5 rounded-xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-1">
+          <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
+            <Activity className="h-4 w-4 text-primary" />
+            Agent availability
+          </h3>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Control whether this agent can make and receive calls.
+          </p>
         </div>
 
-        <Card className="p-8 border-border/40 bg-muted/5 rounded-none flex items-center justify-between">
-           <div className="flex flex-col gap-1">
-              <Label className="text-[13px] font-bold text-foreground">Operational Status</Label>
-              <p className="text-[11px] text-muted-foreground/60 font-medium italic">Disable this to prevent the agent from making or receiving calls.</p>
-           </div>
-            <Select value={status} onValueChange={(value) => setStatus(value as 'active' | 'inactive' | 'suspended')}>
-              <SelectTrigger className="w-40 h-11 bg-background border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[13px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-border/50">
-                <SelectItem value="active" className="font-bold">Active</SelectItem>
-                <SelectItem value="inactive" className="font-bold">Inactive</SelectItem>
-              </SelectContent>
-           </Select>
+        <Card className="flex flex-col gap-4 rounded-lg border-border/70 bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <Label className="text-sm font-medium text-foreground">Operational status</Label>
+            <p className="text-sm text-muted-foreground">Inactive agents remain configured but will not handle traffic.</p>
+          </div>
+          <Select value={status} onValueChange={(value) => setStatus(value as 'active' | 'inactive' | 'suspended')}>
+            <SelectTrigger className="h-10 w-full bg-background sm:w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="suspended">Suspended</SelectItem>
+            </SelectContent>
+          </Select>
         </Card>
 
         <div className="flex justify-end">
@@ -76,72 +99,118 @@ export default function AdvancedTab({ agent }: AdvancedTabProps) {
             onClick={() => {
               updateAgent({
                 id: agent.id,
-                payload: {
-                  status,
-                },
+                payload: { status },
               })
             }}
             disabled={saving || !isDirty}
-            className="h-11 px-6 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 disabled:opacity-50"
+            className="h-10 px-6"
           >
-            {saving ? 'Saving...' : 'Save Status'}
+            {saving ? 'Saving...' : 'Save status'}
           </Button>
         </div>
       </section>
 
-      {/* 2. Danger Zone Header */}
-      <div className="flex flex-col gap-1 border-b border-border/10 pb-6 pt-4">
-         <h3 className="text-[14px] font-bold text-destructive tracking-tight uppercase flex items-center gap-2">
-           <ShieldCheck className="h-4 w-4" />
-           Critical Management
-         </h3>
-         <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest mt-1">
-           Irreversible management actions for this agent.
-         </p>
-      </div>
+      <section className="space-y-5 rounded-xl border border-destructive/20 bg-destructive/5 p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-1">
+          <h3 className="flex items-center gap-2 text-base font-semibold text-destructive">
+            <ShieldCheck className="h-4 w-4" />
+            Danger zone
+          </h3>
+          <p className="text-sm leading-relaxed text-destructive/75">
+            Irreversible management actions for this agent.
+          </p>
+        </div>
 
-      {/* 3. Delete Agent Card */}
-      <Card className="p-10 border-destructive/20 bg-destructive/5 rounded-none space-y-8">
-         <div className="flex flex-col gap-2">
-            <h4 className="text-[16px] font-bold text-foreground">Delete Agent</h4>
-            <p className="text-[12px] text-muted-foreground/60 leading-relaxed font-medium">
-              This action is permanent and cannot be undone. All call history, statistics, and configurations associated with <strong>{agent.name}</strong> will be permanently removed.
-            </p>
-         </div>
+        <div className="rounded-lg border border-destructive/20 bg-background p-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h4 className="text-sm font-semibold text-foreground">Delete agent</h4>
+              <p className="mt-1 max-w-xl text-sm leading-6 text-muted-foreground">
+                Deleting <strong>{agent.name}</strong> removes its KB links, assigned phone numbers, conversation history,
+                transcript messages, usage stats, and V2 tool or analytics rows through database cascades.
+              </p>
+              {deleteDisabled ? (
+                <p className="mt-2 text-sm font-medium text-muted-foreground">{deleteHelpText}</p>
+              ) : null}
+            </div>
 
-         <div className="flex items-center gap-6">
             <TooltipProvider>
-               <Tooltip>
+              <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="inline-block">
-                    <Button 
-                      variant="outline" 
-                      className="h-12 px-8 rounded-xl border-destructive/20 text-destructive font-bold text-[12px] uppercase tracking-widest hover:bg-destructive hover:text-destructive-foreground transition-all active:scale-95 gap-3"
-                      disabled={deleteDisabled}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete {agent.name}
-                    </Button>
+                  <div className="shrink-0">
+                    <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="h-10 gap-2 border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                          disabled={deleteDisabled}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          Delete
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-lg rounded-xl border-border/70 bg-card">
+                        <DialogHeader>
+                          <DialogTitle>Delete {agent.name}?</DialogTitle>
+                          <DialogDescription>
+                            This cannot be undone. Type the agent name to confirm deletion.
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="space-y-3">
+                          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive/80">
+                            Related rows are removed by database cascade: knowledge-base links, phone numbers,
+                            conversations, messages, usage, tools, tool executions, and analytics.
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="confirm-agent-name">Agent name</Label>
+                            <Input
+                              id="confirm-agent-name"
+                              value={confirmName}
+                              onChange={(event) => setConfirmName(event.target.value)}
+                              placeholder={agent.name}
+                              autoComplete="off"
+                            />
+                          </div>
+                        </div>
+
+                        <DialogFooter>
+                          <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleting}>
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            disabled={!confirmMatches || deleting}
+                            onClick={() => {
+                              deleteAgent(agent.id, {
+                                onSuccess: () => {
+                                  toast.success('Agent deleted.')
+                                  setDeleteOpen(false)
+                                  router.push('/agents')
+                                },
+                                onError: (error) => {
+                                  toast.error(error instanceof Error ? error.message : 'Failed to delete agent.')
+                                },
+                              })
+                            }}
+                          >
+                            {deleting ? 'Deleting...' : 'Delete agent'}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </TooltipTrigger>
-                {deleteDisabled && (
-                  <TooltipContent className="bg-black text-white border-0 font-bold p-3 text-[11px] rounded-lg shadow-xl max-w-60 text-center mb-2">
-                    {isDefault 
-                      ? "Cannot delete the default agent. Assign another agent as default first." 
-                      : "Cannot delete the only agent in your workspace."}
+                {deleteDisabled ? (
+                  <TooltipContent className="max-w-64 text-center">
+                    {deleteHelpText}
                   </TooltipContent>
-                )}
-               </Tooltip>
+                ) : null}
+              </Tooltip>
             </TooltipProvider>
-
-            {deleteDisabled && (
-               <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/30 italic">
-                 Protected by system guard
-               </span>
-            )}
-         </div>
-      </Card>
-
+          </div>
+        </div>
+      </section>
     </div>
   )
 }

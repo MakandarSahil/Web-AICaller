@@ -25,17 +25,17 @@ export default function ConversationDetailLoading() {
         <main className="flex-1 overflow-y-auto px-10 py-12 pb-40 border-r border-border/40 space-y-10">
           <div className="max-w-4xl mx-auto space-y-8">
             <Skeleton className="h-4 w-36 rounded-md" />
-            <div className="p-8 rounded-[32px] border border-border/40 bg-muted/10 space-y-4">
+            <div className="p-8 rounded-xl border border-border/40 bg-muted/10 space-y-4">
               <Skeleton className="h-4 w-48 rounded-md" />
-              <Skeleton className="h-24 w-full rounded-2xl" />
+              <Skeleton className="h-24 w-full rounded-xl" />
             </div>
 
             <Skeleton className="h-4 w-48 rounded-md" />
             <div className="space-y-6">
               {[1, 2, 3, 4].map((item) => (
                 <div key={item} className={`flex gap-6 ${item % 2 ? '' : 'flex-row-reverse'}`}>
-                  <Skeleton className="h-10 w-10 rounded-2xl" />
-                  <Skeleton className="h-16 w-full max-w-[70%] rounded-[28px]" />
+                  <Skeleton className="h-10 w-10 rounded-xl" />
+                  <Skeleton className="h-16 w-full max-w-[70%] rounded-xl" />
                 </div>
               ))}
             </div>
@@ -44,7 +44,7 @@ export default function ConversationDetailLoading() {
 
         <aside className="w-80 overflow-hidden flex flex-col shrink-0 bg-muted/5 p-8 space-y-8">
           <Skeleton className="h-4 w-32 rounded-md" />
-          <Skeleton className="h-44 w-full rounded-[32px]" />
+          <Skeleton className="h-44 w-full rounded-xl" />
           <Skeleton className="h-4 w-24 rounded-md" />
           <div className="space-y-3">
             {[1, 2, 3, 4].map((item) => (

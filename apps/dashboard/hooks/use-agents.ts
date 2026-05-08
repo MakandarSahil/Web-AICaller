@@ -9,6 +9,7 @@ import {
   setAgentKnowledgeBases,
 } from '@aicaller/supabase/queries'
 import { agentKeys } from '@/lib/query-keys'
+import { analyticsKeys, conversationKeys, phoneNumberKeys } from '@/lib/query-keys'
 import type { TablesInsert, TablesUpdate } from '@aicaller/supabase'
 
 /**
@@ -100,8 +101,12 @@ export function useDeleteAgent() {
 
   return useMutation({
     mutationFn: (id: string) => deleteAgent(supabase, id),
-    onSuccess: () => {
+    onSuccess: (_void, id) => {
       qc.invalidateQueries({ queryKey: agentKeys.all })
+      qc.removeQueries({ queryKey: agentKeys.detail(id) })
+      qc.invalidateQueries({ queryKey: phoneNumberKeys.all })
+      qc.invalidateQueries({ queryKey: conversationKeys.all })
+      qc.invalidateQueries({ queryKey: analyticsKeys.all })
     },
   })
 }

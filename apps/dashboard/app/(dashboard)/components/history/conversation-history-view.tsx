@@ -2,17 +2,22 @@
 
 import React, { useMemo, useState } from 'react'
 import {
-  Badge,
   Button,
   Input,
+  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
 } from '@aicaller/ui'
 import { cn } from '@aicaller/ui/lib/utils'
 import {
+  Bot,
   ChevronsLeft,
   ChevronsRight,
   ChevronLeft,
@@ -21,8 +26,9 @@ import {
   MessageSquare,
   Phone,
   Search,
+  User,
+  X,
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import {
   useReactTable,
   getCoreRowModel,
@@ -38,6 +44,10 @@ import {
 
 import type { ConversationListRow } from '@aicaller/supabase/queries'
 import { useConversations } from '@/hooks/use-conversations'
+import { useConversationMessages } from '@/hooks/use-conversations'
+import { EmptyState } from '@/components/ui/empty-state'
+import { PageHeader } from '@/components/ui/page-header'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 type Mode = 'voice' | 'chat'
 
@@ -62,24 +72,14 @@ function formatDuration(startedAt: string, endedAt: string | null): string {
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`
 }
 
+function formatMessageTime(value: string): string {
+  return new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
 function getIdentity(row: ConversationListRow): string {
   if (isCallChannel(row.channel)) return row.callers?.phone_number ?? row.caller_id ?? 'Unknown caller'
   if (row.visitor_id) return `Dashboard User ${row.visitor_id.slice(0, 8)}`
   return row.caller_id ?? 'Unknown chat user'
-}
-
-function getSource(row: ConversationListRow): string {
-  if (isCallChannel(row.channel)) return 'Call'
-  if (row.channel === 'text_api') return row.visitor_id ? 'Dashboard Chat' : 'Text API'
-  if (row.channel === 'websocket') return 'Web Widget'
-  return 'Chat'
-}
-
-function getSourceKey(row: ConversationListRow): string {
-  if (isCallChannel(row.channel)) return 'call'
-  if (row.channel === 'text_api') return row.visitor_id ? 'dashboard_chat' : 'text_api'
-  if (row.channel === 'websocket') return 'web_widget'
-  return 'chat'
 }
 
 function getOutcomeLabel(outcome: ConversationListRow['outcome']): string {
@@ -102,6 +102,21 @@ function getOutcomeStyle(outcome: ConversationListRow['outcome']): string {
   }
 }
 
+function getOutcomeTone(outcome: ConversationListRow['outcome']) {
+  switch (outcome) {
+    case 'resolved':
+    case 'booked':
+      return 'success' as const
+    case 'transferred':
+      return 'info' as const
+    case 'unresolved':
+    case 'hung_up':
+      return 'warning' as const
+    default:
+      return 'default' as const
+  }
+}
+
 export function ConversationHistoryView({
   mode,
   title,
@@ -111,12 +126,14 @@ export function ConversationHistoryView({
   title: string
   subtitle: string
 }) {
-  const router = useRouter()
   const { data: allConversations = [] } = useConversations()
   const [globalFilter, setGlobalFilter] = useState('')
   const [sorting, setSorting] = useState<SortingState>([{ id: 'started_at', desc: true }])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 12 })
+  const [selectedConversation, setSelectedConversation] = useState<ConversationListRow | null>(null)
+  const [sheetWidth, setSheetWidth] = useState<'sm' | 'md' | 'lg'>('lg')
+  const { data: detailMessages = [], isLoading: isMessagesLoading } = useConversationMessages(selectedConversation?.id ?? '')
 
   const scopedRows = useMemo(
     () => allConversations.filter((row) => (mode === 'voice' ? isCallChannel(row.channel) : !isCallChannel(row.channel))),
@@ -128,18 +145,12 @@ export function ConversationHistoryView({
     return values.sort((a, b) => a.localeCompare(b))
   }, [scopedRows])
 
-  const sourceOptions = useMemo(() => {
-    const values = Array.from(new Set(scopedRows.map((row) => getSourceKey(row))))
-    return values.sort((a, b) => a.localeCompare(b))
-  }, [scopedRows])
-
   const outcomeOptions = useMemo(() => {
     const values = Array.from(new Set(scopedRows.map((row) => row.outcome).filter(Boolean)))
     return values.sort((a, b) => String(a).localeCompare(String(b)))
   }, [scopedRows])
 
   const currentStatusFilter = (columnFilters.find((f) => f.id === 'status')?.value as string) ?? 'all'
-  const currentSourceFilter = (columnFilters.find((f) => f.id === 'sourceKey')?.value as string) ?? 'all'
   const currentOutcomeFilter = (columnFilters.find((f) => f.id === 'outcome')?.value as string) ?? 'all'
 
   const columns = useMemo<ColumnDef<ConversationListRow>[]>(
@@ -152,34 +163,10 @@ export function ConversationHistoryView({
         cell: ({ row }) => <span className="text-sm font-semibold text-foreground/90">{formatDateTime(row.original.started_at)}</span>,
       },
       {
-        id: 'duration',
-        header: 'Duration',
-        accessorFn: (row) => formatDuration(row.started_at, row.ended_at),
-        cell: ({ row }) => <span className="text-sm font-semibold text-foreground/80">{formatDuration(row.original.started_at, row.original.ended_at)}</span>,
-      },
-      {
         id: 'agent',
         accessorFn: (row) => row.agents?.name ?? 'Unknown Agent',
         header: 'Agent',
         cell: ({ row }) => <span className="text-sm font-semibold text-foreground/90">{row.original.agents?.name ?? 'Unknown Agent'}</span>,
-      },
-      {
-        id: 'sourceKey',
-        accessorFn: (row) => getSourceKey(row),
-        filterFn: (row, id, value) => {
-          if (!value || value === 'all') return true
-          return row.getValue(id) === value
-        },
-      },
-      {
-        id: 'source',
-        accessorFn: (row) => getSource(row),
-        header: 'Source',
-        cell: ({ row }) => (
-          <Badge variant="outline" className="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest">
-            {getSource(row.original)}
-          </Badge>
-        ),
       },
       {
         id: 'identity',
@@ -194,16 +181,6 @@ export function ConversationHistoryView({
         cell: ({ row }) => <span className="text-sm font-semibold text-foreground/80">{row.original.message_count}</span>,
       },
       {
-        id: 'tool_call',
-        accessorFn: (row) => (row.had_tool_call ? 'yes' : 'no'),
-        header: 'Tool Call',
-        cell: ({ row }) => (
-          <Badge variant="outline" className={cn('rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest', row.original.had_tool_call ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground')}>
-            {row.original.had_tool_call ? 'Yes' : 'No'}
-          </Badge>
-        ),
-      },
-      {
         id: 'outcome',
         accessorKey: 'outcome',
         header: 'Outcome',
@@ -212,9 +189,9 @@ export function ConversationHistoryView({
           return String(row.getValue(id) ?? '') === String(value)
         },
         cell: ({ row }) => (
-          <Badge variant="outline" className={cn('rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest', getOutcomeStyle(row.original.outcome))}>
+          <StatusBadge tone={getOutcomeTone(row.original.outcome)}>
             {getOutcomeLabel(row.original.outcome)}
-          </Badge>
+          </StatusBadge>
         ),
       },
       {
@@ -226,25 +203,34 @@ export function ConversationHistoryView({
           return String(row.getValue(id)) === String(value)
         },
         cell: ({ row }) => (
-          <span
-            className={cn(
-              'inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest',
+          <StatusBadge
+            tone={
               row.original.status === 'active'
-                ? 'bg-emerald-500/10 text-emerald-500'
+                ? 'success'
                 : row.original.status === 'failed'
-                ? 'bg-destructive/10 text-destructive'
-                : 'bg-muted text-muted-foreground'
-            )}
+                  ? 'danger'
+                  : 'default'
+            }
           >
             {row.original.status}
-          </span>
+          </StatusBadge>
         ),
       },
+      ...(mode === 'voice'
+        ? [
+            {
+              id: 'duration',
+              header: 'Duration',
+              accessorFn: (row: ConversationListRow) => formatDuration(row.started_at, row.ended_at),
+              cell: ({ row }: { row: { original: ConversationListRow } }) => (
+                <span className="text-sm font-semibold text-foreground/80">{formatDuration(row.original.started_at, row.original.ended_at)}</span>
+              ),
+            },
+          ]
+        : []),
     ],
     [mode]
   )
-
-  const filteredColumns = useMemo(() => columns.filter((column) => column.id !== 'sourceKey'), [columns])
 
   const table = useReactTable({
     data: scopedRows,
@@ -264,6 +250,8 @@ export function ConversationHistoryView({
         row.original.callers?.phone_number ?? '',
         row.original.caller_id ?? '',
         row.original.visitor_id ?? '',
+        row.original.status ?? '',
+        row.original.outcome ?? '',
       ]
         .join(' ')
         .toLowerCase()
@@ -277,21 +265,16 @@ export function ConversationHistoryView({
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-background h-screen overflow-hidden">
-      <header className="h-16 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md flex items-center justify-between shrink-0 sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <h1 className="text-[15px] font-bold tracking-tight text-foreground uppercase">{title}</h1>
-          <div className="h-4 w-px bg-border/40" />
-          <span className="text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-widest">{subtitle}</span>
-        </div>
+      <PageHeader title={title} description={subtitle} />
 
-        <div className="flex items-center gap-2">
-          <div className="relative w-72">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/30" />
+      <div className="flex w-full flex-wrap items-center justify-start gap-2 border-b border-border/70 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="relative w-full sm:w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/50" />
             <Input
               placeholder={`Search ${mode === 'voice' ? 'calls' : 'chats'}...`}
               value={globalFilter}
               onChange={(event) => setGlobalFilter(event.target.value)}
-              className="h-10 pl-9 bg-muted/10 border-border/40 rounded-xl text-[12px] font-medium"
+              className="h-9 pl-9 bg-background border-border/70 rounded-lg text-sm"
             />
           </div>
           <Select
@@ -300,7 +283,7 @@ export function ConversationHistoryView({
               table.getColumn('status')?.setFilterValue(value === 'all' ? undefined : value)
             }
           >
-            <SelectTrigger className="h-10 w-36 rounded-xl border-border/40 bg-background text-[11px] font-bold uppercase tracking-widest">
+            <SelectTrigger className="h-9 w-[calc(50%-4px)] sm:w-36 rounded-lg border-border/70 bg-background text-sm">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/50">
@@ -313,30 +296,12 @@ export function ConversationHistoryView({
             </SelectContent>
           </Select>
           <Select
-            value={currentSourceFilter}
-            onValueChange={(value) =>
-              table.getColumn('sourceKey')?.setFilterValue(value === 'all' ? undefined : value)
-            }
-          >
-            <SelectTrigger className="h-10 w-40 rounded-xl border-border/40 bg-background text-[11px] font-bold uppercase tracking-widest">
-              <SelectValue placeholder="Source" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/50">
-              <SelectItem value="all">All Sources</SelectItem>
-              {sourceOptions.map((source) => (
-                <SelectItem key={source} value={source}>
-                  {source.replaceAll('_', ' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
             value={currentOutcomeFilter}
             onValueChange={(value) =>
               table.getColumn('outcome')?.setFilterValue(value === 'all' ? undefined : value)
             }
           >
-            <SelectTrigger className="h-10 w-40 rounded-xl border-border/40 bg-background text-[11px] font-bold uppercase tracking-widest">
+            <SelectTrigger className="h-9 w-[calc(50%-4px)] sm:w-40 rounded-lg border-border/70 bg-background text-sm">
               <SelectValue placeholder="Outcome" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/50">
@@ -352,7 +317,7 @@ export function ConversationHistoryView({
             value={String(table.getState().pagination.pageSize)}
             onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <SelectTrigger className="h-10 w-24 rounded-xl border-border/40 bg-background text-[11px] font-bold uppercase tracking-widest">
+            <SelectTrigger className="h-9 w-24 rounded-lg border-border/70 bg-background text-sm">
               <SelectValue placeholder="Size" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-border/50">
@@ -362,22 +327,19 @@ export function ConversationHistoryView({
               <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-      </header>
+      </div>
 
-      <div className="flex-1 px-10 py-6 overflow-hidden">
-        <div className="rounded-[28px] border border-border/40 bg-background shadow-sm overflow-hidden h-full flex flex-col">
-          <div className="overflow-auto flex-1">
-            <table className="w-full border-collapse min-w-[1040px]">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 overflow-hidden">
+        <div className="rounded-xl border border-border/70 bg-card shadow-sm overflow-hidden h-full flex flex-col">
+          <div className="overflow-x-auto overflow-y-auto flex-1">
+            <table className="w-full border-collapse min-w-[920px]">
               <thead className="sticky top-0 z-10 bg-muted/30">
                 {table.getHeaderGroups().map((group) => (
                   <tr key={group.id} className="border-b border-border/40">
-                    {group.headers
-                      .filter((header) => header.id !== 'sourceKey')
-                      .map((header) => (
+                    {group.headers.map((header) => (
                         <th
                           key={header.id}
-                          className="px-5 py-4 text-left text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40"
+                          className="px-5 py-3.5 text-left text-xs font-medium text-muted-foreground"
                         >
                           {header.column.getCanSort() ? (
                             <button
@@ -401,13 +363,10 @@ export function ConversationHistoryView({
                   table.getRowModel().rows.map((row) => (
                     <tr
                       key={row.id}
-                      onClick={() => router.push(`/conversations/${row.original.id}`)}
+                      onClick={() => setSelectedConversation(row.original)}
                       className="cursor-pointer transition-colors hover:bg-muted/20"
                     >
-                      {row
-                        .getVisibleCells()
-                        .filter((cell) => cell.column.id !== 'sourceKey')
-                        .map((cell) => (
+                      {row.getVisibleCells().map((cell) => (
                           <td key={cell.id} className="px-5 py-4 align-middle">
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </td>
@@ -416,15 +375,13 @@ export function ConversationHistoryView({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-20 text-center">
-                      <div className="space-y-2">
-                        {mode === 'voice' ? (
-                          <Phone className="mx-auto h-7 w-7 text-muted-foreground/30" />
-                        ) : (
-                          <MessageSquare className="mx-auto h-7 w-7 text-muted-foreground/30" />
-                        )}
-                        <p className="text-sm font-medium text-foreground/80">No {mode === 'voice' ? 'calls' : 'chats'} match current filters</p>
-                      </div>
+                    <td colSpan={table.getVisibleLeafColumns().length} className="px-6 py-8 text-center">
+                      <EmptyState
+                        icon={mode === 'voice' ? Phone : MessageSquare}
+                        title={`No ${mode === 'voice' ? 'calls' : 'chats'} found`}
+                        description="Adjust your search or filters to see more conversation records."
+                        className="min-h-[240px]"
+                      />
                     </td>
                   </tr>
                 )}
@@ -432,7 +389,7 @@ export function ConversationHistoryView({
             </table>
           </div>
 
-          <div className="border-t border-border/40 px-5 py-3 flex items-center justify-between gap-3 bg-muted/10">
+          <div className="border-t border-border/70 px-5 py-3 flex items-center justify-between gap-3 bg-muted/20">
             <p className="text-xs text-muted-foreground/70">
               Showing {table.getRowModel().rows.length} of {table.getFilteredRowModel().rows.length} rows
             </p>
@@ -457,6 +414,140 @@ export function ConversationHistoryView({
           </div>
         </div>
       </div>
+
+      <Sheet
+        open={Boolean(selectedConversation)}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setSelectedConversation(null)
+        }}
+      >
+        <SheetContent
+          side="right"
+          className={cn(
+            'w-full p-0 border-l border-border/50',
+            sheetWidth === 'sm' ? 'sm:max-w-2xl' : sheetWidth === 'md' ? 'sm:max-w-3xl' : 'sm:max-w-5xl'
+          )}
+        >
+          <SheetHeader className="px-6 py-5 border-b border-border/70 bg-background/95 backdrop-blur-sm text-left">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1">
+                <SheetTitle className="text-sm font-semibold tracking-tight text-foreground">
+                  {mode === 'voice' ? 'Call Detail' : 'Chat Detail'}
+                </SheetTitle>
+              </div>
+              <div className="flex items-center gap-3">
+                <Select value={sheetWidth} onValueChange={(value) => setSheetWidth(value as 'sm' | 'md' | 'lg')}>
+                  <SelectTrigger className="hidden sm:flex h-8 w-32 rounded-lg border-border/70 bg-background text-xs">
+                    <SelectValue placeholder="Width" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-border/50">
+                    <SelectItem value="sm">Small</SelectItem>
+                    <SelectItem value="md">Medium</SelectItem>
+                    <SelectItem value="lg">Large</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 rounded-lg"
+                  onClick={() => setSelectedConversation(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            {selectedConversation ? (
+              <div className="grid grid-cols-2 gap-3 pt-4">
+                <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Time</p>
+                  <p className="text-xs font-semibold text-foreground/90">{formatDateTime(selectedConversation.started_at)}</p>
+                </div>
+                {mode === 'voice' ? (
+                  <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                    <p className="text-xs text-muted-foreground">Duration</p>
+                    <p className="text-xs font-semibold text-foreground/90">{formatDuration(selectedConversation.started_at, selectedConversation.ended_at)}</p>
+                  </div>
+                ) : (
+                  <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                    <p className="text-xs text-muted-foreground">Messages</p>
+                    <p className="text-xs font-semibold text-foreground/90">{selectedConversation.message_count}</p>
+                  </div>
+                )}
+                <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Agent</p>
+                  <p className="text-xs font-semibold text-foreground/90">{selectedConversation.agents?.name ?? 'Unknown Agent'}</p>
+                </div>
+                <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">{mode === 'voice' ? 'Caller' : 'Identity'}</p>
+                  <p className="text-xs font-semibold text-foreground/90">{getIdentity(selectedConversation)}</p>
+                </div>
+                <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Status</p>
+                  <p className="text-xs font-semibold text-foreground/90">{selectedConversation.status}</p>
+                </div>
+                <div className="rounded-lg border border-border/70 bg-muted/20 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Outcome</p>
+                  <StatusBadge tone={getOutcomeTone(selectedConversation.outcome)} className="mt-1">
+                    {getOutcomeLabel(selectedConversation.outcome)}
+                  </StatusBadge>
+                </div>
+              </div>
+            ) : null}
+          </SheetHeader>
+
+          <ScrollArea className="h-[calc(100vh-230px)] px-6 py-6">
+            {selectedConversation ? (
+              <div className="space-y-6">
+                <section className="space-y-2">
+                  <h3 className="text-sm font-semibold text-foreground">Summary</h3>
+                  <div className="rounded-lg border border-border/70 bg-muted/20 px-4 py-3">
+                    <p className="text-sm leading-relaxed text-foreground/85">
+                      {selectedConversation.summary || 'No summary available for this conversation.'}
+                    </p>
+                  </div>
+                </section>
+
+                <section className="space-y-3">
+                  <h3 className="text-sm font-semibold text-foreground">Transcript</h3>
+                  {isMessagesLoading ? (
+                    <p className="text-sm text-muted-foreground/70">Loading messages...</p>
+                  ) : detailMessages.length ? (
+                    <div className="space-y-3">
+                      {detailMessages.map((message) => {
+                        const isAssistant = message.role === 'assistant'
+                        return (
+                          <div key={message.id} className={cn('flex gap-3', isAssistant ? 'justify-start' : 'justify-end')}>
+                            {isAssistant ? (
+                              <div className="h-8 w-8 shrink-0 rounded-lg border border-border/70 bg-muted/20 text-muted-foreground/70 flex items-center justify-center">
+                                <Bot className="h-4 w-4" />
+                              </div>
+                            ) : null}
+                            <div className={cn('max-w-[85%] rounded-xl px-4 py-3 text-sm', isAssistant ? 'bg-muted/20 border border-border/70 text-foreground/85' : 'bg-primary text-primary-foreground')}>
+                              <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                              <p className={cn('mt-2 text-xs font-medium', isAssistant ? 'text-muted-foreground/70' : 'text-primary-foreground/70')}>
+                                {formatMessageTime(message.created_at)}
+                              </p>
+                            </div>
+                            {!isAssistant ? (
+                              <div className="h-8 w-8 shrink-0 rounded-lg border border-primary/30 bg-primary/10 text-primary flex items-center justify-center">
+                                <User className="h-4 w-4" />
+                              </div>
+                            ) : null}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-dashed border-border/70 bg-muted/20 p-4">
+                      <p className="text-sm text-muted-foreground/70">No transcript messages available.</p>
+                    </div>
+                  )}
+                </section>
+              </div>
+            ) : null}
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

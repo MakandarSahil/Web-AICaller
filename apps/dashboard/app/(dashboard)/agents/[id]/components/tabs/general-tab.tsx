@@ -58,61 +58,59 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
   }, [systemPrompt])
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       
       {/* 1. Identity Section */}
-      <section className="space-y-6">
+      <section className="space-y-5 rounded-xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-1">
-           <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Agent Identity</h3>
-           <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">
+           <h3 className="text-base font-semibold text-foreground tracking-tight">Agent identity</h3>
+           <p className="text-sm text-muted-foreground leading-relaxed">
              Basic identification for your AI assistant.
            </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
            <div className="space-y-3">
-              <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Agent Name</Label>
+              <Label>Agent name</Label>
               <Input 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Front Desk Assistant"
-                className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]"
+                className="h-10"
               />
            </div>
 
            <div className="space-y-3">
-              <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">Persona (Optional)</Label>
+              <Label>Persona</Label>
               <Input 
                 value={persona}
                 onChange={(e) => setPersona(e.target.value)}
                 placeholder="e.g. A friendly and professional receptionist"
-                className="h-12 bg-muted/20 border-border/50 rounded-xl focus:ring-1 focus:ring-primary/20 font-bold transition-all px-5 text-[14px]"
+                className="h-10"
               />
            </div>
         </div>
       </section>
 
       {/* 2. Attached Numbers */}
-      <section className="space-y-6 pt-2">
+      <section className="space-y-5 rounded-xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-1">
-          <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">
-            Attached Numbers
+          <h3 className="text-base font-semibold text-foreground tracking-tight">
+            Attached numbers
           </h3>
-          <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Phone numbers currently routed to this agent.
           </p>
         </div>
 
-        <div className="flex items-end gap-3">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
           <div className="flex-1 space-y-2">
-            <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60">
-              Reassign Number To This Agent
-            </Label>
+            <Label>Reassign number to this agent</Label>
             <Select value={phoneToAttach} onValueChange={setPhoneToAttach}>
-              <SelectTrigger className="h-11 rounded-none bg-muted/10 border-border/50">
+              <SelectTrigger className="h-10">
                 <SelectValue placeholder="Select a number" />
               </SelectTrigger>
-              <SelectContent className="rounded-none border-border/50">
+              <SelectContent>
                 {attachableNumbers.length === 0 ? (
                   <SelectItem value="__none__" disabled>
                     No other numbers available
@@ -129,7 +127,7 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
           </div>
           <Button
             disabled={!phoneToAttach || reassigningPhone}
-            className="h-11 rounded-none px-6 text-[11px] font-bold uppercase tracking-widest"
+            className="h-10 px-6"
             onClick={() => {
               if (!phoneToAttach) return
               reassignPhone(
@@ -149,15 +147,15 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
             {agent.phone_numbers.map((line) => (
               <div
                 key={line.id}
-                className="flex items-center justify-between p-4 border border-border/40 bg-muted/5 rounded-none"
+                className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/20 p-4"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-8 w-8 rounded-none bg-primary/5 border border-primary/10 flex items-center justify-center text-primary/60 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 border border-primary/10 flex items-center justify-center text-primary shrink-0">
                     <Phone className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-bold text-foreground truncate">{line.number}</p>
-                    <p className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">
+                    <p className="text-sm font-semibold text-foreground truncate">{line.number}</p>
+                    <p className="text-xs text-muted-foreground capitalize">
                       {line.number_type} • {line.is_active ? 'active' : 'inactive'}
                     </p>
                   </div>
@@ -166,11 +164,11 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
             ))}
           </div>
         ) : (
-          <div className="p-6 border border-dashed border-border/50 bg-muted/5 rounded-none">
-            <p className="text-[11px] font-medium text-muted-foreground/40 uppercase tracking-widest">
+          <div className="rounded-lg border border-dashed border-border/70 bg-muted/20 p-6">
+            <p className="text-sm text-muted-foreground">
               No numbers attached yet.
             </p>
-            <Link href="/phone-numbers" className="text-[11px] font-bold text-primary uppercase tracking-widest mt-2 inline-block">
+            <Link href="/phone-numbers" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
               Manage in Phone Numbers
             </Link>
           </div>
@@ -178,15 +176,15 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
       </section>
 
       {/* 2. Intelligence Section */}
-      <section className="space-y-6 pt-4">
+      <section className="space-y-5 rounded-xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-1">
-           <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">System Instructions</h3>
-           <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">
+           <h3 className="text-base font-semibold text-foreground tracking-tight">System instructions</h3>
+           <p className="text-sm text-muted-foreground leading-relaxed">
              This is the core logic that governs how your agent behaves and responds.
            </p>
         </div>
 
-        <div className="p-1 rounded-none bg-gradient-to-b from-border/50 to-transparent">
+        <div className="rounded-lg border border-border/70 bg-background">
           <Textarea 
             ref={systemPromptRef}
             value={systemPrompt}
@@ -195,12 +193,12 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
               autosizeSystemPrompt()
             }}
             placeholder="Introduce yourself and explain your purpose..."
-            className="min-h-[200px] max-h-[520px] bg-background border-none rounded-none resize-none text-[15px] leading-relaxed p-6 focus:ring-0 transition-all placeholder:text-muted-foreground/20 font-medium overflow-hidden"
+            className="min-h-[200px] max-h-[520px] border-none bg-transparent resize-none text-sm leading-relaxed p-4 focus:ring-0 transition-all overflow-hidden"
           />
         </div>
       </section>
 
-      <div className="pt-6 border-t border-border/40 flex justify-end">
+      <div className="flex justify-end">
         <Button
           onClick={() => {
             updateAgent({
@@ -213,9 +211,9 @@ export default function GeneralTab({ agent }: GeneralTabProps) {
             })
           }}
           disabled={updatingAgent || !name.trim() || !isDirty}
-          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 disabled:opacity-50"
+          className="h-10 px-6 gap-2 disabled:opacity-50"
         >
-          {updatingAgent ? 'Saving...' : 'Save Agent'}
+          {updatingAgent ? 'Saving...' : 'Save agent'}
         </Button>
       </div>
 

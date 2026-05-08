@@ -58,7 +58,7 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
       <div className="flex items-center gap-4 md:gap-6 overflow-hidden">
         <MobileNavBack href="/agents" label="Agents" />
         
-        <div className="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-brand-500/5 flex items-center justify-center border-2 border-brand-500/20 shadow-lg shadow-brand-500/5 group transition-all shrink-0">
+        <div className="h-12 w-12 md:h-14 md:w-14 rounded-xl bg-brand-500/5 flex items-center justify-center border-2 border-brand-500/20 shadow-sm shadow-brand-500/5 group transition-all shrink-0">
            <Bot className="h-6 w-6 md:h-7 md:w-7 text-brand-500" />
         </div>
         
@@ -66,8 +66,8 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
           <div className="flex items-center gap-3">
              <h1 className="text-[20px] font-bold text-foreground truncate tracking-tight uppercase">{agent.name}</h1>
              <Badge className={cn(
-               "h-5 text-[9px] font-extrabold uppercase px-2 py-0 border-0 tracking-widest",
-               agent.status === 'active' ? "bg-emerald-500/10 text-emerald-400" : "bg-white/5 text-muted-foreground"
+               "h-5 text-[9px] font-semibold uppercase px-2 py-0 border-0 tracking-widest",
+               agent.status === 'active' ? "bg-emerald-500/10 text-emerald-400" : "bg-muted/30 text-muted-foreground"
              )}>
                <span className={cn("h-1.5 w-1.5 rounded-full mr-1.5", agent.status === 'active' ? "bg-emerald-400" : "bg-muted-foreground")} />
                {agent.status === 'active' ? 'Published' : 'Inactive'}
@@ -89,7 +89,7 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
            <TooltipProvider>
              <Tooltip>
                <TooltipTrigger asChild>
-                 <Button variant="outline" size="icon" className="h-10 w-10 border-border/40 bg-white/2 hover:bg-white/5 rounded-xl opacity-60 hover:opacity-100 transition-all">
+                 <Button variant="outline" size="icon" className="h-10 w-10 border-border/40 bg-muted/20 hover:bg-muted/30 rounded-xl opacity-60 hover:opacity-100 transition-all">
                     <Terminal className="h-4 w-4" />
                  </Button>
                </TooltipTrigger>
@@ -98,7 +98,7 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
 
              <Tooltip>
                <TooltipTrigger asChild>
-                 <Button variant="outline" size="icon" className="h-10 w-10 border-border/40 bg-white/2 hover:bg-white/5 rounded-xl opacity-60 hover:opacity-100 transition-all">
+                 <Button variant="outline" size="icon" className="h-10 w-10 border-border/40 bg-muted/20 hover:bg-muted/30 rounded-xl opacity-60 hover:opacity-100 transition-all">
                     <Play className="h-4 w-4" />
                  </Button>
                </TooltipTrigger>
@@ -121,7 +121,7 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
 
         <Button 
           className={cn(
-            "h-10 px-6 font-bold text-[13px] rounded-xl transition-all shadow-xl active:scale-95 gap-2",
+            "h-10 px-6 font-bold text-[13px] rounded-xl transition-all shadow-sm active:scale-95 gap-2",
             isUpdating 
               ? "bg-brand-500 hover:bg-brand-600 text-white shadow-brand-500/20" 
               : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-none hover:bg-emerald-500/20"
@@ -141,7 +141,7 @@ export function AgentDetailHeader({ agent, onUpdate, isUpdating }: AgentDetailHe
           )}
         </Button>
 
-        <Button variant="ghost" size="icon" className="h-10 w-10 opacity-40 hover:opacity-100 rounded-xl hover:bg-white/5 transition-all">
+        <Button variant="ghost" size="icon" className="h-10 w-10 opacity-40 hover:opacity-100 rounded-xl hover:bg-muted/30 transition-all">
           <MoreHorizontal className="h-5 w-5" />
         </Button>
       </div>

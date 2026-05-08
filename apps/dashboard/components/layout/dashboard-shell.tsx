@@ -73,7 +73,7 @@ function ShellContent({ children }: { children: ReactNode }) {
             <Link href="/" className="flex items-center gap-2 group">
               <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">C</div>
               <span className="text-[18px] font-bold tracking-tight text-foreground">
-                call<span className="font-extrabold text-primary">Mind</span>
+                call<span className="font-semibold text-primary">Mind</span>
               </span>
             </Link>
 
@@ -84,13 +84,13 @@ function ShellContent({ children }: { children: ReactNode }) {
                     <Menu size={20} />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="p-0 flex flex-col w-65 border-l border-border bg-sidebar shadow-2xl">
+                <SheetContent side="right" className="p-0 flex flex-col w-65 border-l border-border bg-sidebar shadow-sm">
                   <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                   <SheetHeader className="px-3 py-3.5 border-b border-border text-left shrink-0">
                     <div className="flex items-center gap-2">
                        <div className="h-7 w-7 flex items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-base">C</div>
                        <span className="text-[17px] font-bold tracking-tight text-foreground">
-                        call<span className="font-extrabold text-primary">Mind</span>
+                        call<span className="font-semibold text-primary">Mind</span>
                       </span>
                     </div>
                   </SheetHeader>
@@ -139,7 +139,7 @@ function ShellContent({ children }: { children: ReactNode }) {
           {/* Contextual Sidebar Drawer for Mobile - Triggered by page-level toggle button */}
           {contextualSidebar && (
              <Sheet open={mobileContextualOpen} onOpenChange={setMobileContextualOpen}>
-               <SheetContent side="right" className="p-0 border-l border-border bg-background shadow-2xl flex flex-col w-[300px]">
+               <SheetContent side="right" className="p-0 border-l border-border bg-background shadow-sm flex flex-col w-[300px]">
                   <SheetTitle className="sr-only">Contextual Navigation</SheetTitle>
                   <div className="flex-1 overflow-hidden" onClick={() => setMobileContextualOpen(false)}>
                      {contextualSidebar}

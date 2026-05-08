@@ -64,9 +64,9 @@ export default async function KnowledgeBasesIndexPage() {
       <div className="max-w-[420px] w-full text-center space-y-12">
         
         {/* Visual Anchor */}
-        <div className="relative mx-auto w-28 h-28 flex items-center justify-center border border-dashed border-border/60 rounded-[32px]">
+        <div className="relative mx-auto w-28 h-28 flex items-center justify-center border border-dashed border-border/60 rounded-xl">
             <Database className="h-10 w-10 text-muted-foreground opacity-20" />
-            <div className="absolute -top-2 -right-2 h-8 w-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-lg shadow-primary/5">
+            <div className="absolute -top-2 -right-2 h-8 w-8 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-sm shadow-primary/5">
                 <Plus className="h-4 w-4" />
             </div>
         </div>
@@ -80,7 +80,7 @@ export default async function KnowledgeBasesIndexPage() {
 
         <div className="space-y-4">
           <Button 
-            className="w-full h-14 font-bold text-[12px] uppercase tracking-widest rounded-2xl transition-all gap-4 active:scale-95 shadow-xl shadow-primary/10"
+            className="w-full h-14 font-bold text-[12px] uppercase tracking-widest rounded-xl transition-all gap-4 active:scale-95 shadow-sm shadow-primary/10"
             asChild
           >
             <Link href="/knowledge-bases">

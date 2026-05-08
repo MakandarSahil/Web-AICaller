@@ -88,7 +88,7 @@ export default function KnowledgeBasesTab({ agent, knowledgeBases }: KnowledgeBa
               </Select>
            </div>
            <Button
-             className="h-12 px-6 rounded-xl font-bold text-[12px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/10 transition-all active:scale-95 shrink-0 disabled:opacity-50"
+             className="h-12 px-6 rounded-xl font-bold text-[12px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-sm shadow-primary/10 transition-all active:scale-95 shrink-0 disabled:opacity-50"
              disabled={settingKb || !kbToAttach}
              onClick={handleAttach}
            >
@@ -145,7 +145,7 @@ export default function KnowledgeBasesTab({ agent, knowledgeBases }: KnowledgeBa
               )
             })
           ) : (
-             <div className="flex flex-col items-center justify-center py-20 text-center bg-muted/5 rounded-[32px] border border-dashed border-border/50">
+             <div className="flex flex-col items-center justify-center py-20 text-center bg-muted/5 rounded-xl border border-dashed border-border/50">
                 <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mb-6 opacity-40">
                    <Database className="h-6 w-6 text-muted-foreground" />
                 </div>

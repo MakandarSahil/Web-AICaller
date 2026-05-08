@@ -35,7 +35,7 @@ export default function KBAgentsTab({ knowledgeBase }: KBAgentsTabProps) {
 
       <section>
         {agents.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center bg-muted/5 rounded-[32px] border border-dashed border-border/50">
+          <div className="flex flex-col items-center justify-center py-16 text-center bg-muted/5 rounded-xl border border-dashed border-border/50">
             <div className="h-12 w-12 rounded-full bg-muted/20 flex items-center justify-center mb-6 opacity-40">
               <Users className="h-6 w-6 text-muted-foreground" />
             </div>

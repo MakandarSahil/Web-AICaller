@@ -35,7 +35,7 @@ export default function AgentDetailLoading() {
           <Skeleton className="h-4 w-40 rounded-md" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="rounded-2xl border border-border/40 p-6 space-y-4 bg-muted/5">
+              <div key={i} className="rounded-xl border border-border/40 p-6 space-y-4 bg-muted/5">
                 <Skeleton className="h-4 w-32 rounded-md" />
                 <Skeleton className="h-11 w-full rounded-xl" />
                 <Skeleton className="h-3 w-4/5 rounded-md opacity-50" />

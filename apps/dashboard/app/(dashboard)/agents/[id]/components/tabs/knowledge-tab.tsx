@@ -33,7 +33,7 @@ export function KnowledgeTab({ agent }: KnowledgeTabProps) {
     <div className="space-y-12 animate-in fade-in duration-300">
       
       {/* Knowledge Base Block */}
-      <div className="flex flex-col gap-8 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-8 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
           <div className="flex items-center justify-between px-1">
             <div className="flex flex-col gap-1">
                <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Knowledge Bases</h3>
@@ -76,7 +76,7 @@ export function KnowledgeTab({ agent }: KnowledgeTabProps) {
                 </div>
               ))
             ) : (
-               <div className="flex flex-col items-center justify-center py-16 text-center bg-muted/10 dark:bg-black/5 rounded-[32px] border border-dashed border-border/50 group/empty">
+               <div className="flex flex-col items-center justify-center py-16 text-center bg-muted/10 dark:bg-black/5 rounded-xl border border-dashed border-border/50 group/empty">
                   <h3 className="text-[13px] font-bold text-foreground/60 tracking-tight uppercase">No Data Linked</h3>
                   <p className="text-[11px] text-muted-foreground/30 mt-1 max-w-[280px] font-medium leading-relaxed uppercase tracking-widest">
                     Link documentation to enhance agent intelligence.
@@ -91,7 +91,7 @@ export function KnowledgeTab({ agent }: KnowledgeTabProps) {
       </div>
 
       {/* Retrieval Settings Block */}
-      <div className="flex flex-col gap-10 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-10 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
         <div className="flex flex-col gap-1 px-1">
            <h2 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Retrieval Strategy</h2>
            <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">

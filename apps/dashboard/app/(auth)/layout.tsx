@@ -42,16 +42,16 @@ function BrandPanel() {
     <div className="relative hidden h-full w-full flex-col justify-between overflow-hidden bg-gradient-to-br from-[#4338ca] via-[#6366f1] to-[#a78bfa] p-10 lg:flex xl:p-14">
       {/* Decorative orbs */}
       <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-32 h-[500px] w-[500px] rounded-full bg-white/5 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -left-32 h-[500px] w-[500px] rounded-full bg-muted/30 blur-3xl" />
       <div className="pointer-events-none absolute right-1/3 top-1/2 h-64 w-64 rounded-full bg-indigo-300/10 blur-2xl" />
 
       {/* Logo */}
       <div className="relative z-10">
         <Link href="/" className="flex items-center gap-1.5">
           <span className="text-xl font-bold tracking-tight text-white">
-            call<span className="font-extrabold">Mind</span>
+            call<span className="font-semibold">Mind</span>
           </span>
-          <span className="rounded-md bg-white/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+          <span className="rounded-md bg-muted/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
             AI
           </span>
         </Link>
@@ -125,7 +125,7 @@ function BrandPanel() {
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 text-xs font-bold text-white">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/20 text-xs font-bold text-white">
                     {t.name.charAt(0)}
                   </div>
                   <div>
@@ -164,7 +164,7 @@ export default function AuthLayout({
         <div className="absolute left-6 top-6 lg:hidden">
           <Link href="/" className="flex items-center gap-1.5">
             <span className="text-lg font-bold tracking-tight text-gray-900">
-              call<span className="font-extrabold">Mind</span>
+              call<span className="font-semibold">Mind</span>
             </span>
             <span className="rounded-md bg-indigo-50 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-600">
               AI

@@ -12,7 +12,7 @@ export default function AgentTalkLoading() {
           <Skeleton className="h-6 w-28 rounded-full" />
         </div>
 
-        <section className="rounded-2xl border border-border bg-card p-6 md:p-8 space-y-6">
+        <section className="rounded-xl border border-border bg-card p-6 md:p-8 space-y-6">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-3 w-full">
               <Skeleton className="h-8 w-64 rounded-lg" />

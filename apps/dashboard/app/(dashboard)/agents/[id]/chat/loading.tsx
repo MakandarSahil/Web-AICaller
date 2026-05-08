@@ -28,7 +28,7 @@ export default function AgentChatLoading() {
             <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 sm:gap-5">
               {[1, 2, 3].map((i) => (
                 <div key={i} className={`flex w-full ${i % 2 ? 'justify-start' : 'justify-end'}`}>
-                  <Skeleton className={`h-16 rounded-2xl ${i % 2 ? 'w-72' : 'w-64'}`} />
+                  <Skeleton className={`h-16 rounded-xl ${i % 2 ? 'w-72' : 'w-64'}`} />
                 </div>
               ))}
             </div>

@@ -36,7 +36,7 @@ export function ModelTab({ agent }: ModelTabProps) {
     <div className="space-y-12 animate-in fade-in duration-300">
       
       {/* System Prompt Block */}
-      <div className="flex flex-col gap-6 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-6 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
              <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">System Prompt</h3>
@@ -52,12 +52,12 @@ export function ModelTab({ agent }: ModelTabProps) {
         <Textarea 
           defaultValue={agent.system_prompt || ''} 
           placeholder="You are a helpful AI assistant..."
-          className="min-h-[400px] bg-background border-border/50 rounded-2xl resize-none text-[14px] leading-relaxed p-6 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/20"
+          className="min-h-[400px] bg-background border-border/50 rounded-xl resize-none text-[14px] leading-relaxed p-6 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/20"
         />
       </div>
 
       {/* Model Selection Block */}
-      <div className="flex flex-col gap-8 p-8 rounded-[32px] bg-muted/20 dark:bg-black/20 border border-border/50">
+      <div className="flex flex-col gap-8 p-8 rounded-xl bg-muted/20 dark:bg-muted/20 border border-border/50">
         <div className="flex flex-col gap-1">
            <h3 className="text-[14px] font-bold text-foreground tracking-tight uppercase">Intelligence & Creativity</h3>
            <p className="text-[11px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">

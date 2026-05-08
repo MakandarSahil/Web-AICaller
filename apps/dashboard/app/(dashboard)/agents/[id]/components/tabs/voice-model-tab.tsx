@@ -491,7 +491,7 @@ export default function VoiceModelTab({ agent }: VoiceModelTabProps) {
             })
           }}
           disabled={saving || !isDirty}
-          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-lg shadow-primary/10 disabled:opacity-50"
+          className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-3 shadow-sm shadow-primary/10 disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Voice & Model'}
         </Button>

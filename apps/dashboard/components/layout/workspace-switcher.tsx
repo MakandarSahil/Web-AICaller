@@ -40,7 +40,7 @@ export function WorkspaceSwitcher({ collapsed = false, inMobileDrawer = false }:
           )}
         >
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-[11px] shrink-0 shadow-lg shadow-brand-500/20 transition-transform group-hover:scale-105">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-500 text-white font-bold text-[11px] shrink-0 shadow-sm shadow-brand-500/20 transition-transform group-hover:scale-105">
               {workspace?.name?.[0]?.toUpperCase() || 'W'}
             </div>
             {!collapsed && (
@@ -48,7 +48,7 @@ export function WorkspaceSwitcher({ collapsed = false, inMobileDrawer = false }:
                 <span className="truncate text-[13.5px] font-bold text-foreground tracking-tight leading-none mb-0.5 opacity-90">
                   {workspace?.name || 'My Workspace'}
                 </span>
-                <span className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-40 scale-90 origin-left">Workspace</span>
+                <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest opacity-40 scale-90 origin-left">Workspace</span>
               </div>
             )}
           </div>
@@ -56,12 +56,12 @@ export function WorkspaceSwitcher({ collapsed = false, inMobileDrawer = false }:
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-64 p-1.5 shadow-3xl border border-border bg-card rounded-2xl animate-in zoom-in-95 duration-200"
+        className="w-64 p-1.5 shadow-3xl border border-border bg-card rounded-xl animate-in zoom-in-95 duration-200"
         align={collapsed ? 'center' : 'start'}
         side={inMobileDrawer ? 'bottom' : 'right'}
         sideOffset={inMobileDrawer ? 8 : 12}
       >
-        <DropdownMenuLabel className="px-3.5 py-3 text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-40">
+        <DropdownMenuLabel className="px-3.5 py-3 text-[10px] text-muted-foreground font-semibold uppercase tracking-[0.3em] opacity-40">
           Change Workspace
         </DropdownMenuLabel>
         <DropdownMenuItem className="gap-3 py-3 px-3.5 rounded-xl focus:bg-sidebar-active-bg dark:focus:bg-sidebar-active-bg cursor-pointer transition-colors group">

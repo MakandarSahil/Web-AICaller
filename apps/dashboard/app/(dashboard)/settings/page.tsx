@@ -1,13 +1,16 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { 
-  Badge, 
-  Button, 
-  ScrollArea, 
+import React, { useEffect, useState } from 'react'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
   Card,
   Input,
   Label,
+  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
@@ -17,29 +20,13 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Avatar,
-  AvatarFallback,
-  AvatarImage
 } from '@aicaller/ui'
-import { 
-  Settings as SettingsIcon, 
-  Building2, 
-  Globe, 
-  Shield, 
-  User, 
-  CheckCircle2, 
-  AlertCircle,
-  Loader2,
-  Camera,
-  Trash2
-} from 'lucide-react'
+import { AlertCircle, Building2, Camera, CheckCircle2, Loader2, Shield, Trash2, User } from 'lucide-react'
 import { cn } from '@aicaller/ui/lib/utils'
 import { useUser } from '@/providers/user-provider'
 import { createClient } from '@aicaller/supabase/client'
+import { PageHeader } from '@/components/ui/page-header'
 
-/**
- * Settings Page — Workspace & Account High-Fidelity Refinement
- */
 export default function SettingsPage() {
   const { profile, workspace, email } = useUser()
   const supabase = createClient()
@@ -47,11 +34,10 @@ export default function SettingsPage() {
   const [workspaceName, setWorkspaceName] = useState('')
   const [timezone, setTimezone] = useState('UTC')
   const [isUpdating, setIsUpdating] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     if (workspace?.name) setWorkspaceName(workspace.name)
-    // if (workspace?.timezone) setTimezone(workspace.timezone)
   }, [workspace])
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -61,15 +47,12 @@ export default function SettingsPage() {
 
     try {
       if (!workspace) throw new Error('No workspace found')
-      const { error } = await supabase
-        .from('workspaces')
-        .update({ name: workspaceName }) // timezone: timezone
-        .eq('id', workspace.id)
+      const { error } = await supabase.from('workspaces').update({ name: workspaceName }).eq('id', workspace.id)
 
       if (error) throw error
-      setMessage({ type: 'success', text: 'Workspace configuration preserved.' })
+      setMessage({ type: 'success', text: 'Workspace settings saved.' })
       setTimeout(() => setMessage(null), 3000)
-    } catch (err) {
+    } catch {
       setMessage({ type: 'error', text: 'Failed to update workspace.' })
     } finally {
       setIsUpdating(false)
@@ -81,156 +64,170 @@ export default function SettingsPage() {
     : 'U'
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden relative">
-      
-      {/* 1. Page Header */}
-      <header className="h-16 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md flex items-center justify-between shrink-0 sticky top-0 z-50">
-         <div className="flex items-center gap-4">
-            <h1 className="text-[15px] font-bold tracking-tight text-foreground uppercase">Settings</h1>
-            <div className="h-4 w-[1px] bg-border/40 mx-1" />
-            <span className="text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-widest">Workspace Governance</span>
-         </div>
-      </header>
+    <div className="flex-1 flex flex-col min-w-0 bg-background overflow-hidden">
+      <PageHeader title="Settings" description="Workspace, account, and security preferences" />
 
       <ScrollArea className="flex-1">
-         <div className="max-w-4xl mx-auto px-10 py-12 pb-40 space-y-12">
-            
-            <Tabs defaultValue="workspace" className="space-y-10">
-               <TabsList className="h-12 bg-muted/20 border border-border/40 rounded-xl p-1 gap-1">
-                  <TabsTrigger value="workspace" className="rounded-lg px-6 font-bold text-[11px] uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all gap-2">
-                     <Building2 className="h-3.5 w-3.5" />
-                     Workspace
-                  </TabsTrigger>
-                  <TabsTrigger value="profile" className="rounded-lg px-6 font-bold text-[11px] uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all gap-2">
-                     <User className="h-3.5 w-3.5" />
-                     My Account
-                  </TabsTrigger>
-                  <TabsTrigger value="security" className="rounded-lg px-6 font-bold text-[11px] uppercase tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all gap-2">
-                     <Shield className="h-3.5 w-3.5" />
-                     Security
-                  </TabsTrigger>
-               </TabsList>
+        <div className="mx-auto w-full max-w-5xl p-5 sm:p-6 lg:p-8">
+          <Tabs defaultValue="workspace" className="space-y-6">
+            <TabsList className="grid h-10 w-full max-w-xl grid-cols-3 rounded-lg border border-border/70 bg-muted/30 p-1">
+              <TabsTrigger value="workspace" className="rounded-md text-sm">
+                <Building2 className="h-3.5 w-3.5" />
+                Workspace
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="rounded-md text-sm">
+                <User className="h-3.5 w-3.5" />
+                Account
+              </TabsTrigger>
+              <TabsTrigger value="security" className="rounded-md text-sm">
+                <Shield className="h-3.5 w-3.5" />
+                Security
+              </TabsTrigger>
+            </TabsList>
 
-               <TabsContent value="workspace" className="space-y-10 outline-none">
-                  <Card className="rounded-[32px] border border-border/40 overflow-hidden bg-muted/5 shadow-sm">
-                     <div className="p-10 border-b border-border/20 bg-muted/10 font-bold text-[14px] uppercase tracking-tight text-foreground flex items-center justify-between">
-                        General Configuration
-                        <Badge variant="outline" className="h-5 text-[9px] border-border text-muted-foreground/40 font-bold uppercase tracking-widest">v1.2 Stable</Badge>
-                     </div>
-                     <form onSubmit={handleUpdate} className="p-10 space-y-10">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                           <div className="space-y-4">
-                              <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 ml-px">Workspace Name</Label>
-                              <Input 
-                                value={workspaceName}
-                                onChange={(e) => setWorkspaceName(e.target.value)}
-                                className="h-12 bg-background border-border/50 rounded-xl px-5 font-bold text-[14px]"
-                              />
-                           </div>
-                           <div className="space-y-4">
-                              <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 ml-px">Default Timezone</Label>
-                              <Select value={timezone} onValueChange={setTimezone}>
-                                 <SelectTrigger className="h-12 bg-background border-border/50 rounded-xl px-5 font-bold text-[14px]">
-                                    <SelectValue />
-                                 </SelectTrigger>
-                                 <SelectContent className="rounded-xl border-border/50">
-                                    <SelectItem value="UTC" className="font-bold">UTC (Universal Time)</SelectItem>
-                                    <SelectItem value="PST" className="font-bold">PST (Pacific Standard)</SelectItem>
-                                    <SelectItem value="IST" className="font-bold">IST (India Standard)</SelectItem>
-                                 </SelectContent>
-                              </Select>
-                           </div>
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t border-border/20">
-                           <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 ml-px">Unique Workspace ID</Label>
-                           <div className="h-12 px-5 flex items-center rounded-xl bg-muted/10 border border-border/30 font-mono text-[11px] text-muted-foreground/40 tracking-wider">
-                              {workspace?.id}
-                           </div>
-                        </div>
-
-                        <div className="flex items-center gap-6 pt-4">
-                           <Button 
-                             disabled={isUpdating}
-                             className="h-12 px-10 rounded-xl font-bold text-[11px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/10 transition-all active:scale-95"
-                           >
-                              {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
-                              Save Changes
-                           </Button>
-                           {message && (
-                              <span className={cn(
-                                "text-[11px] font-bold uppercase tracking-widest",
-                                message.type === 'success' ? "text-emerald-500" : "text-destructive"
-                              )}>
-                                 {message.text}
-                              </span>
-                           )}
-                        </div>
-                     </form>
-                  </Card>
-               </TabsContent>
-
-               <TabsContent value="profile" className="space-y-10 outline-none">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                     <Card className="md:col-span-2 rounded-[32px] border border-border/40 overflow-hidden bg-muted/5 p-10 space-y-10">
-                        <div className="space-y-4">
-                           <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 ml-px">Email Address</Label>
-                           <Input value={email || ''} readOnly className="h-12 bg-muted/10 border-border/20 text-muted-foreground/40 rounded-xl px-5 font-bold cursor-not-allowed" />
-                        </div>
-                        <div className="space-y-4">
-                           <Label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 ml-px">Display Name</Label>
-                           <Input defaultValue={profile?.full_name || ''} className="h-12 bg-background border-border/50 rounded-xl px-5 font-bold" />
-                        </div>
-                        <Button className="h-12 rounded-xl font-bold text-[11px] uppercase tracking-widest px-10 border border-border/40 bg-muted hover:bg-muted/80 text-foreground transition-all">
-                           Update Identity
-                        </Button>
-                     </Card>
-
-                     <Card className="rounded-[32px] border border-border/40 bg-muted/5 p-8 flex flex-col items-center text-center space-y-6">
-                        <div className="relative group">
-                           <Avatar className="h-28 w-28 border-4 border-background shadow-xl ring-2 ring-primary/5 group-hover:scale-105 transition-transform duration-500">
-                              <AvatarImage src={profile?.avatar_url || ''} />
-                              <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-extrabold">{initials}</AvatarFallback>
-                           </Avatar>
-                           <button className="absolute bottom-1 right-1 h-8 w-8 rounded-full bg-background border border-border/40 flex items-center justify-center text-muted-foreground hover:text-primary transition-all shadow-md">
-                              <Camera className="h-4 w-4" />
-                           </button>
-                        </div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/30 px-4">Square JPG/PNG Max 5MB</p>
-                     </Card>
+            <TabsContent value="workspace" className="outline-none">
+              <Card className="overflow-hidden rounded-xl border-border/70 bg-card shadow-sm">
+                <div className="flex items-center justify-between border-b border-border/70 p-5 sm:p-6">
+                  <div>
+                    <h2 className="text-base font-semibold text-foreground">Workspace profile</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Core workspace identity and defaults.</p>
                   </div>
-               </TabsContent>
-
-               <TabsContent value="security" className="space-y-8 outline-none">
-                  <div className="space-y-6">
-                     <div className="p-8 rounded-[32px] border border-border/40 bg-muted/5 flex items-start gap-6 group hover:bg-muted/10 transition-all">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary shrink-0 border border-primary/10">
-                           <Shield className="h-6 w-6" />
-                        </div>
-                        <div className="flex-1 space-y-2">
-                           <h4 className="text-[14px] font-bold text-foreground uppercase tracking-tight">Two-Factor Authentication</h4>
-                           <p className="text-[12px] font-medium text-muted-foreground/40 leading-relaxed uppercase tracking-widest">Mandatory for workspaces with outbound phone lines enabled.</p>
-                           <Button variant="outline" className="mt-4 h-10 border-border/60 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-background">Enable Security</Button>
-                        </div>
-                     </div>
-
-                     <div className="p-8 rounded-[32px] border border-destructive/20 bg-destructive/5 flex items-start gap-6">
-                        <div className="h-12 w-12 rounded-2xl bg-destructive/10 flex items-center justify-center text-destructive shrink-0 border border-destructive/20">
-                           <Trash2 className="h-6 w-6" />
-                        </div>
-                        <div className="flex-1 space-y-2">
-                           <h4 className="text-[14px] font-bold text-destructive uppercase tracking-tight">Danger Zone</h4>
-                           <p className="text-[12px] font-medium text-destructive/40 leading-relaxed uppercase tracking-widest">Permanently delete this workspace and all associated call logs.</p>
-                           <Button variant="ghost" className="mt-4 h-10 text-destructive hover:bg-destructive/10 rounded-lg text-[10px] font-bold uppercase tracking-widest">Delete Workspace</Button>
-                        </div>
-                     </div>
+                  <Badge variant="outline" className="hidden sm:inline-flex">Active</Badge>
+                </div>
+                <form onSubmit={handleUpdate} className="space-y-6 p-5 sm:p-6">
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Workspace name</Label>
+                      <Input value={workspaceName} onChange={(e) => setWorkspaceName(e.target.value)} className="h-10" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Default timezone</Label>
+                      <Select value={timezone} onValueChange={setTimezone}>
+                        <SelectTrigger className="h-10">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="UTC">UTC</SelectItem>
+                          <SelectItem value="PST">PST</SelectItem>
+                          <SelectItem value="IST">IST</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-               </TabsContent>
-            </Tabs>
 
-         </div>
+                  <div className="space-y-2">
+                    <Label>Workspace ID</Label>
+                    <div className="flex h-10 items-center rounded-lg border border-border/70 bg-muted/20 px-3 font-mono text-xs text-muted-foreground">
+                      {workspace?.id ?? 'Loading'}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 border-t border-border/70 pt-5 sm:flex-row sm:items-center">
+                    <Button disabled={isUpdating} className="h-10 gap-2">
+                      {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                      Save changes
+                    </Button>
+                    {message ? (
+                      <span
+                        className={cn(
+                          'inline-flex items-center gap-2 text-sm font-medium',
+                          message.type === 'success' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'
+                        )}
+                      >
+                        {message.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                        {message.text}
+                      </span>
+                    ) : null}
+                  </div>
+                </form>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="profile" className="outline-none">
+              <div className="grid gap-6 md:grid-cols-[1fr_280px]">
+                <Card className="rounded-xl border-border/70 bg-card p-5 shadow-sm sm:p-6">
+                  <div className="mb-6">
+                    <h2 className="text-base font-semibold text-foreground">Account profile</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Personal identity used across the dashboard.</p>
+                  </div>
+                  <div className="space-y-5">
+                    <div className="space-y-2">
+                      <Label>Email address</Label>
+                      <Input value={email || ''} readOnly className="h-10 cursor-not-allowed bg-muted/20 text-muted-foreground" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Display name</Label>
+                      <Input defaultValue={profile?.full_name || ''} className="h-10" />
+                    </div>
+                    <Button variant="outline" className="h-10">Update profile</Button>
+                  </div>
+                </Card>
+
+                <Card className="flex flex-col items-center rounded-xl border-border/70 bg-card p-6 text-center shadow-sm">
+                  <div className="relative">
+                    <Avatar className="h-24 w-24 border border-border">
+                      <AvatarImage src={profile?.avatar_url || ''} />
+                      <AvatarFallback className="bg-primary text-2xl font-semibold text-primary-foreground">{initials}</AvatarFallback>
+                    </Avatar>
+                    <button className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-muted-foreground shadow-sm hover:text-primary">
+                      <Camera className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="mt-4 text-sm font-medium text-foreground">{profile?.full_name || 'Profile photo'}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Square JPG or PNG, max 5MB.</p>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="security" className="outline-none">
+              <div className="space-y-4">
+                <SecurityRow
+                  icon={Shield}
+                  title="Two-factor authentication"
+                  description="Recommended for workspaces with outbound phone lines enabled."
+                  action={<Button variant="outline" size="sm">Enable</Button>}
+                />
+                <SecurityRow
+                  icon={Trash2}
+                  title="Danger zone"
+                  description="Permanently delete this workspace and all associated call data."
+                  danger
+                  action={<Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 hover:text-destructive">Delete workspace</Button>}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </ScrollArea>
+    </div>
+  )
+}
 
+function SecurityRow({
+  icon: Icon,
+  title,
+  description,
+  action,
+  danger,
+}: {
+  icon: typeof Shield
+  title: string
+  description: string
+  action: React.ReactNode
+  danger?: boolean
+}) {
+  return (
+    <div className={cn('flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between', danger ? 'border-destructive/20 bg-destructive/5' : 'border-border/70 bg-card')}>
+      <div className="flex items-start gap-4">
+        <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg', danger ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary')}>
+          <Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <h3 className={cn('text-sm font-semibold', danger ? 'text-destructive' : 'text-foreground')}>{title}</h3>
+          <p className={cn('mt-1 text-sm', danger ? 'text-destructive/70' : 'text-muted-foreground')}>{description}</p>
+        </div>
+      </div>
+      {action}
     </div>
   )
 }

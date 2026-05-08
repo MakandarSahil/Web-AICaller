@@ -26,6 +26,7 @@ import Link from 'next/link'
 import { useCreateAgent, useSetAgentKnowledgeBases } from '@/hooks/use-agents'
 import { useUser } from '@/providers/user-provider'
 import type { getKnowledgeBases } from '@aicaller/supabase/queries'
+import { PageHeader } from '@/components/ui/page-header'
 
 type KnowledgeBasesList = NonNullable<Awaited<ReturnType<typeof getKnowledgeBases>>>
 
@@ -101,86 +102,88 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
 
   return (
     <div className="flex-1 flex flex-col min-w-0 h-full overflow-y-auto bg-background">
-      <header className="page-header shrink-0 h-24 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+      <PageHeader
+        title="Create assistant"
+        description="Configure identity, model, and optional knowledge sources"
+        leading={
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 rounded-xl hover:bg-white/5 transition-all text-muted-foreground mr-2"
+            className="h-8 w-8"
             asChild
           >
             <Link href="/agents">
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-[20px] font-bold text-foreground tracking-tight">Create New Assistant</h1>
-            <p className="text-[12px] font-medium text-muted-foreground opacity-40 uppercase tracking-widest">
-              Initialization Wizard
-            </p>
-          </div>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="max-w-2xl mx-auto py-16 px-6 w-full">
-        <form onSubmit={handleSubmit} className="space-y-12">
-          <div className="space-y-8">
+      <div className="max-w-3xl mx-auto py-8 px-5 sm:px-6 lg:px-8 w-full">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="rounded-xl border border-border/70 bg-card shadow-sm">
             {/* Identity Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-xl bg-brand-500/10 flex items-center justify-center border border-brand-500/30">
+            <section className="space-y-5 border-b border-border/70 p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="h-9 w-9 rounded-lg bg-brand-500/10 flex items-center justify-center border border-brand-500/20">
                   <ShieldCheck className="h-4 w-4 text-brand-500" />
                 </div>
-                <h2 className="text-[16px] font-bold text-foreground tracking-tight">Assistant Identity</h2>
+                <div>
+                  <h2 className="text-base font-semibold text-foreground tracking-tight">Assistant identity</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Name the assistant and define how it should behave.</p>
+                </div>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-[13px] font-bold text-muted-foreground tracking-tight">Assistant Name</Label>
+                  <Label>Assistant name</Label>
                   <Input
                     required
                     placeholder="e.g., Sarah from Support"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="h-12 bg-white/2 border-border/40 rounded-2xl focus:ring-1 focus:ring-brand-500 font-bold transition-all text-[14px] text-foreground tracking-tight px-4"
+                    className="h-10"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[13px] font-bold text-muted-foreground tracking-tight">Short Persona (Optional)</Label>
+                  <Label>Short persona</Label>
                   <Input
                     placeholder="e.g., Friendly and helpful customer service rep"
                     value={formData.persona}
                     onChange={(e) => setFormData({ ...formData, persona: e.target.value })}
-                    className="h-12 bg-white/2 border-border/40 rounded-2xl focus:ring-1 focus:ring-brand-500 font-medium transition-all text-[14px] text-foreground tracking-tight px-4"
+                    className="h-10"
                   />
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Engine Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 border-t border-border/20 pt-10">
-                <div className="h-8 w-8 rounded-xl bg-brand-500/10 flex items-center justify-center border border-brand-500/30">
+            <section className="space-y-5 border-b border-border/70 p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="h-9 w-9 rounded-lg bg-brand-500/10 flex items-center justify-center border border-brand-500/20">
                   <Cpu className="h-4 w-4 text-brand-500" />
                 </div>
-                <h2 className="text-[16px] font-bold text-foreground tracking-tight">Intelligence Engine</h2>
+                <div>
+                  <h2 className="text-base font-semibold text-foreground tracking-tight">Intelligence engine</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Choose the provider and model for the assistant.</p>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[13px] font-bold text-muted-foreground tracking-tight">Base Model</Label>
+                  <Label>Base model</Label>
                   <Select value={formData.llm_model} onValueChange={(val) => setFormData({ ...formData, llm_model: val })}>
-                    <SelectTrigger className="h-12 bg-white/2 border-border/40 rounded-2xl focus:ring-1 focus:ring-brand-500 font-bold transition-all text-foreground tracking-tight px-4">
+                    <SelectTrigger className="h-10">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-card border-border/40 rounded-2xl shadow-3xl">
-                      <SelectItem value="llama-3.3-70b-versatile" className="py-2.5 rounded-xl font-bold">
+                    <SelectContent>
+                      <SelectItem value="llama-3.3-70b-versatile">
                         Llama 3.3 70B
                       </SelectItem>
-                      <SelectItem value="llama-3.1-8b-instant" className="py-2.5 rounded-xl font-bold">
+                      <SelectItem value="llama-3.1-8b-instant">
                         Llama 3.1 8B
                       </SelectItem>
-                      <SelectItem value="gpt-4o" className="py-2.5 rounded-xl font-bold">
+                      <SelectItem value="gpt-4o">
                         GPT-4o (OpenAI)
                       </SelectItem>
                     </SelectContent>
@@ -188,48 +191,51 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[13px] font-bold text-muted-foreground tracking-tight">Inference Provider</Label>
+                  <Label>Inference provider</Label>
                   <Select value={formData.llm_provider} onValueChange={(val) => setFormData({ ...formData, llm_provider: val })}>
-                    <SelectTrigger className="h-12 bg-white/2 border-border/40 rounded-2xl focus:ring-1 focus:ring-brand-500 font-bold transition-all text-foreground tracking-tight px-4">
+                    <SelectTrigger className="h-10">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-card border-border/40 rounded-2xl shadow-3xl">
-                      <SelectItem value="groq" className="py-2.5 rounded-xl font-bold">
+                    <SelectContent>
+                      <SelectItem value="groq">
                         Groq (Near-instant)
                       </SelectItem>
-                      <SelectItem value="openai" className="py-2.5 rounded-xl font-bold">
+                      <SelectItem value="openai">
                         OpenAI
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Knowledge Bases Attach */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 border-t border-border/20 pt-10">
-                <div className="h-8 w-8 rounded-xl bg-brand-500/10 flex items-center justify-center border border-brand-500/30">
+            <section className="space-y-5 p-5 sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="h-9 w-9 rounded-lg bg-brand-500/10 flex items-center justify-center border border-brand-500/20">
                   <Database className="h-4 w-4 text-brand-500" />
                 </div>
-                <h2 className="text-[16px] font-bold text-foreground tracking-tight">Knowledge Bases</h2>
+                <div>
+                  <h2 className="text-base font-semibold text-foreground tracking-tight">Knowledge bases</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Attach existing knowledge sources now or add them later.</p>
+                </div>
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row">
                   <div className="flex-1">
                     <Select value={kbToAttach} onValueChange={setKbToAttach}>
-                      <SelectTrigger className="h-12 bg-white/2 border-border/40 rounded-2xl focus:ring-1 focus:ring-brand-500 font-bold transition-all text-foreground tracking-tight px-4">
+                      <SelectTrigger className="h-10">
                         <SelectValue placeholder="Attach a knowledge base (optional)" />
                       </SelectTrigger>
-                      <SelectContent className="bg-card border-border/40 rounded-2xl shadow-3xl">
+                      <SelectContent>
                         {selectableKBs.length === 0 ? (
-                          <SelectItem value="__no_kbs__" disabled className="py-2.5 rounded-xl font-bold opacity-40 italic">
+                          <SelectItem value="__no_kbs__" disabled>
                             No KBs available
                           </SelectItem>
                         ) : (
                           selectableKBs.map((kb) => (
-                            <SelectItem key={kb.id} value={kb.id} className="py-2.5 rounded-xl font-bold">
+                            <SelectItem key={kb.id} value={kb.id}>
                               {kb.name}
                             </SelectItem>
                           ))
@@ -241,7 +247,7 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
                     type="button"
                     onClick={handleAttachKb}
                     disabled={!kbToAttach || settingKb}
-                    className="h-12 px-6 rounded-xl font-bold text-[12px] uppercase tracking-widest gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/10 transition-all active:scale-95 disabled:opacity-50 shrink-0"
+                    className="h-10 gap-2 shrink-0"
                   >
                     <Plus className="h-3.5 w-3.5" />
                     Attach
@@ -256,7 +262,7 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
                         <Badge
                           key={kbId}
                           variant="secondary"
-                          className="h-8 px-3 bg-background border-border/40 text-[11px] font-bold uppercase tracking-widest flex items-center gap-2"
+                          className="h-8 px-3 bg-muted/40 border-border/40 text-sm font-medium flex items-center gap-2"
                         >
                           <span className="max-w-[180px] truncate">{kb?.name ?? kbId}</span>
                           <button
@@ -272,19 +278,19 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
                     })}
                   </div>
                 ) : (
-                  <p className="text-[11px] font-medium text-muted-foreground/40 uppercase tracking-widest">
-                    No Knowledge Bases attached (you can add later).
+                  <p className="text-sm text-muted-foreground">
+                    No knowledge bases attached. You can add them later.
                   </p>
                 )}
               </div>
-            </div>
+            </section>
           </div>
 
-          <div className="pt-10 flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <Button
               type="submit"
               disabled={creatingAgent || settingKb || !formData.name}
-              className="h-14 bg-brand-500 hover:bg-brand-600 text-white font-bold text-[14px] rounded-2xl transition-all shadow-2xl shadow-brand-500/20 active:scale-95 gap-2 w-full disabled:opacity-50"
+              className="h-11 gap-2 w-full"
             >
               {creatingAgent ? (
                 <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -296,13 +302,13 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
               )}
             </Button>
             {submitError ? (
-              <p className="text-[11px] font-bold text-destructive/80 uppercase tracking-widest">
+              <p className="text-sm font-medium text-destructive">
                 {submitError}
               </p>
             ) : null}
-            <p className="text-center text-[11px] font-bold text-muted-foreground opacity-30 uppercase tracking-widest flex items-center justify-center gap-2">
+            <p className="text-center text-sm text-muted-foreground flex items-center justify-center gap-2">
               <Sparkles className="h-3 w-3" />
-              Free to initialize • Pay per minute
+              Free to initialize. Pay per minute.
             </p>
           </div>
         </form>
@@ -310,4 +316,3 @@ export default function AgentCreateClient({ initialKnowledgeBases }: AgentCreate
     </div>
   )
 }
-

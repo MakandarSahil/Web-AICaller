@@ -3,10 +3,14 @@ import type { ReactNode } from 'react'
 import { QueryProvider } from '@/providers/query-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import './globals.css'
-import { Geist } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Toaster } from 'sonner'
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
+const geist = localFont({
+  src: './fonts/GeistVF.woff',
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 export const dynamic = 'force-dynamic'
 

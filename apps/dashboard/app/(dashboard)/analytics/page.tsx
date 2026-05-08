@@ -1,9 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Card, CardContent } from '@aicaller/ui'
 import { BarChart3, Clock3, MessageSquareText, Sparkles } from 'lucide-react'
+import { Badge, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@aicaller/ui'
 import { useWorkspaceConversationAnalytics } from '@/hooks/use-analytics'
+import { MetricCard } from '@/components/ui/metric-card'
+import { PageHeader } from '@/components/ui/page-header'
 
 export default function AnalyticsPage() {
   const { data = [] } = useWorkspaceConversationAnalytics(30)
@@ -12,53 +14,78 @@ export default function AnalyticsPage() {
   const resolvedCalls = data.filter((row) => row.outcome === 'resolved').length
   const bookedCalls = data.filter((row) => row.outcome === 'booked').length
   const toolCalls = data.filter((row) => Boolean(row.conversations?.had_tool_call)).length
-
-  const cards = [
-    { label: 'Calls', value: totalCalls, icon: BarChart3 },
-    { label: 'Resolved', value: resolvedCalls, icon: Sparkles },
-    { label: 'Booked', value: bookedCalls, icon: Clock3 },
-    { label: 'Tool Calls', value: toolCalls, icon: MessageSquareText },
-  ]
+  const resolutionRate = totalCalls > 0 ? Math.round((resolvedCalls / totalCalls) * 100) : 0
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-background h-screen overflow-hidden">
-      <header className="h-16 px-10 border-b border-border/40 bg-background/95 backdrop-blur-md flex items-center justify-between shrink-0 sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <h1 className="text-[15px] font-bold tracking-tight text-foreground uppercase">Analytics</h1>
-          <div className="h-4 w-px bg-border/40" />
-          <span className="text-[10px] font-bold text-muted-foreground opacity-40 uppercase tracking-widest">V2 kickoff</span>
-        </div>
-      </header>
+    <div className="flex h-full min-w-0 flex-1 flex-col bg-background">
+      <PageHeader
+        title="Analytics"
+        description="Conversation outcomes across the last 30 days"
+        eyebrow="30 days"
+        actions={
+          <Badge variant="outline" className="hidden border-border/70 bg-muted/40 text-muted-foreground sm:inline-flex">
+            Reporting v2
+          </Badge>
+        }
+      />
 
-      <div className="flex-1 overflow-y-auto px-10 py-8 space-y-6">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {cards.map((card) => {
-            const Icon = card.icon
-            return (
-              <Card key={card.label} className="rounded-2xl border-border/40 bg-background shadow-sm">
-                <CardContent className="p-5 flex items-center justify-between">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">{card.label}</p>
-                    <p className="text-2xl font-black tracking-tight text-foreground">{card.value}</p>
-                  </div>
-                  <div className="h-11 w-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+      <div className="flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-6 p-5 sm:p-6 lg:p-8">
+          <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <MetricCard
+              label="Calls"
+              value={totalCalls}
+              icon={BarChart3}
+              description="Tracked conversations"
+              tone="info"
+            />
+            <MetricCard
+              label="Resolved"
+              value={resolvedCalls}
+              icon={Sparkles}
+              description="Successful outcomes"
+              trend={`${resolutionRate}%`}
+              tone="success"
+            />
+            <MetricCard
+              label="Booked"
+              value={bookedCalls}
+              icon={Clock3}
+              description="Meetings or callbacks"
+              tone="warning"
+            />
+            <MetricCard
+              label="Tool calls"
+              value={toolCalls}
+              icon={MessageSquareText}
+              description="Automation used"
+            />
+          </section>
 
-        <Card className="rounded-[28px] border-border/40 bg-background shadow-sm">
-          <CardContent className="p-8 space-y-3">
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">Next</h2>
-            <p className="text-sm text-muted-foreground/80 max-w-2xl">
-              This page is now wired to the new analytics query path. Next step is to replace these kickoff KPIs with chart data from conversation_analytics and turn_signals.
-            </p>
-          </CardContent>
-        </Card>
+          <Card className="rounded-xl border-border/70 bg-card shadow-sm">
+            <CardHeader className="border-b border-border/70 p-5 sm:p-6">
+              <CardTitle className="text-base font-semibold">Conversation performance</CardTitle>
+              <CardDescription>
+                The query path is connected. Add chart series here when turn-level analytics are ready.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 p-5 sm:grid-cols-3 sm:p-6">
+              <Insight label="Resolution rate" value={`${resolutionRate}%`} />
+              <Insight label="Booking rate" value={totalCalls > 0 ? `${Math.round((bookedCalls / totalCalls) * 100)}%` : '0%'} />
+              <Insight label="Automation rate" value={totalCalls > 0 ? `${Math.round((toolCalls / totalCalls) * 100)}%` : '0%'} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
+    </div>
+  )
+}
+
+function Insight({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-border/70 bg-muted/20 p-4">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="mt-2 text-xl font-semibold tracking-tight text-foreground">{value}</p>
     </div>
   )
 }

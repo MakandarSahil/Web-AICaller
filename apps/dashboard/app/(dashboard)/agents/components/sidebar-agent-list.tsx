@@ -48,7 +48,7 @@ export function SidebarAgentList({ initialData, hideHeader = false }: SidebarAge
       //       className={cn(
       //         'w-full justify-start h-9 px-3 rounded-xl text-[12px] font-bold uppercase tracking-widest transition-all',
       //         pathname === '/agents'
-      //           ? 'bg-muted dark:bg-white/5 text-foreground border-border/50 shadow-sm'
+      //           ? 'bg-muted dark:bg-muted/30 text-foreground border-border/50 shadow-sm'
       //           : 'text-muted-foreground/60 hover:text-foreground'
       //       )}
       //     >
@@ -62,7 +62,7 @@ export function SidebarAgentList({ initialData, hideHeader = false }: SidebarAge
       createButton={
         <Button
           asChild
-          className="w-full h-10 gap-2.5 font-bold text-[11px] uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-primary/10 active:scale-[0.98] group"
+          className="w-full h-10 gap-2.5 font-bold text-[11px] uppercase tracking-widest rounded-xl transition-all shadow-sm shadow-primary/10 active:scale-[0.98] group"
         >
           <Link href="/agents/new">
             <Plus className="h-3.5 w-3.5 transition-transform group-hover:rotate-90 duration-300" />
@@ -81,7 +81,7 @@ export function SidebarAgentList({ initialData, hideHeader = false }: SidebarAge
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-20 rounded-2xl bg-muted/30 border border-border/40 animate-pulse"
+              className="h-20 rounded-xl bg-muted/30 border border-border/40 animate-pulse"
             />
           ))}
         </>
@@ -101,7 +101,7 @@ export function SidebarAgentList({ initialData, hideHeader = false }: SidebarAge
               key={agent.id}
               href={`/agents/${agent.id}`}
               className={cn(
-                'group relative flex flex-col gap-1.5 p-4 rounded-2xl transition-all duration-300 ease-in-out border border-transparent',
+                'group relative flex flex-col gap-1.5 p-4 rounded-xl transition-all duration-300 ease-in-out border border-transparent',
                 isActive
                   ? 'bg-muted/40 dark:bg-muted/10 border-border/40 shadow-sm'
                   : 'hover:bg-muted/20 hover:border-border/20'
