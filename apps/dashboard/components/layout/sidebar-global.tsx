@@ -21,7 +21,7 @@ interface SidebarGlobalProps {
 /**
  * Global Sidebar (Professional / Retell AI Density)
  * 
- * 1. Normalized font weights: font-semibold -> font-bold/semibold.
+ * 1. Normalized font weights: font-black -> font-bold/semibold.
  * 2. Background: #0e121b
  * 3. Softened group labels and active states.
  */

@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from 'react'
 import {
-  Badge,
   Button,
   Input,
   ScrollArea,
@@ -376,7 +375,7 @@ export function ConversationHistoryView({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center">
+                    <td colSpan={table.getVisibleLeafColumns().length} className="px-6 py-8 text-center">
                       <EmptyState
                         icon={mode === 'voice' ? Phone : MessageSquare}
                         title={`No ${mode === 'voice' ? 'calls' : 'chats'} found`}

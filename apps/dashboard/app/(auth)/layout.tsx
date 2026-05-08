@@ -51,7 +51,7 @@ function BrandPanel() {
           <span className="text-xl font-bold tracking-tight text-white">
             call<span className="font-semibold">Mind</span>
           </span>
-          <span className="rounded-md bg-muted/200 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+          <span className="rounded-md bg-muted/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
             AI
           </span>
         </Link>
@@ -125,7 +125,7 @@ function BrandPanel() {
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div className="mt-3 flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/200 text-xs font-bold text-white">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted/20 text-xs font-bold text-white">
                     {t.name.charAt(0)}
                   </div>
                   <div>
