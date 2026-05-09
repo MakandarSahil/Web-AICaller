@@ -89,6 +89,7 @@ export default function PhoneNumbersClient({
   
   // Delete confirmation state
   const [numberToDelete, setNumberToDelete] = useState<{id: string, number: string} | null>(null)
+  const [providerToDelete, setProviderToDelete] = useState<{id: string, name: string} | null>(null)
   
   // Country codes for phone number input
   const countryCodes = [
@@ -448,7 +449,7 @@ export default function PhoneNumbersClient({
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                              onClick={() => disconnectProvider(provider.id)}
+                              onClick={() => setProviderToDelete({id: provider.id, name: provider.display_name})}
                               disabled={disconnecting}
                             >
                               <Trash2 className="h-4 w-4" />
@@ -721,18 +722,20 @@ export default function PhoneNumbersClient({
               <Trash2 className="h-5 w-5" />
               Delete Phone Number
             </DialogTitle>
-            <DialogDescription className="pt-2">
-              Are you sure you want to delete <strong className="font-mono text-foreground">{numberToDelete?.number}</strong>?
-              <br /><br />
-              This will:
-              <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
-                <li>Stop routing calls to this number</li>
-                <li>Remove the number from your workspace</li>
-                <li>Delete associated configuration</li>
-              </ul>
-              <p className="mt-3 text-sm text-destructive/80">
-                This action cannot be undone.
-              </p>
+            <DialogDescription asChild>
+              <div className="pt-2 text-sm text-muted-foreground">
+                <p>Are you sure you want to delete <strong className="font-mono text-foreground">{numberToDelete?.number}</strong>?</p>
+                <br />
+                <p>This will:</p>
+                <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
+                  <li>Stop routing calls to this number</li>
+                  <li>Remove the number from your workspace</li>
+                  <li>Delete associated configuration</li>
+                </ul>
+                <p className="mt-3 text-sm text-destructive/80">
+                  This action cannot be undone.
+                </p>
+              </div>
             </DialogDescription>
           </DialogHeader>
           
@@ -768,6 +771,72 @@ export default function PhoneNumbersClient({
                 </>
               ) : (
                 'Delete Number'
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Disconnect Provider Confirmation Dialog */}
+      <Dialog 
+        open={!!providerToDelete} 
+        onOpenChange={(open) => !open && setProviderToDelete(null)}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Disconnect Provider
+            </DialogTitle>
+            <DialogDescription asChild>
+              <div className="pt-2 text-sm text-muted-foreground">
+                <p>Are you sure you want to disconnect <strong className="font-semibold text-foreground">{providerToDelete?.name}</strong>?</p>
+                <br />
+                <p>This will:</p>
+                <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
+                  <li>Remove the provider connection from your workspace</li>
+                  <li>Delete stored credentials</li>
+                  <li>Any phone numbers using this provider will stop working</li>
+                </ul>
+                <p className="mt-3 text-sm text-destructive/80">
+                  This action cannot be undone.
+                </p>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="flex justify-end gap-3 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setProviderToDelete(null)}
+              disabled={disconnecting}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={() => {
+                if (providerToDelete) {
+                  disconnectProvider(providerToDelete.id, {
+                    onSuccess: () => {
+                      toast.success('Provider disconnected successfully')
+                      setProviderToDelete(null)
+                    },
+                    onError: () => {
+                      toast.error('Failed to disconnect provider')
+                    }
+                  })
+                }
+              }}
+              disabled={disconnecting}
+            >
+              {disconnecting ? (
+                <>
+                  <Activity className="mr-2 h-4 w-4 animate-spin" />
+                  Disconnecting...
+                </>
+              ) : (
+                'Disconnect Provider'
               )}
             </Button>
           </div>

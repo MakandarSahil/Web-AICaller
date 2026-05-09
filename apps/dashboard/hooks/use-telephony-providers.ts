@@ -18,8 +18,6 @@ export type ConnectProviderData = {
   auth_token: string
 }
 
-export type { ConnectProviderError }
-
 async function getAuthHeaders() {
   const { createClient } = await import('@aicaller/supabase/client')
   const supabase = createClient()
