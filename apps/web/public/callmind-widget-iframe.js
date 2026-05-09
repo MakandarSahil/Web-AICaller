@@ -53,7 +53,12 @@
   }
   
   // Build iframe URL with parameters
-  const params = new URLSearchParams({
+  const scriptBaseUrl = currentScript.src
+    ? new URL(currentScript.src, window.location.href)
+    : new URL(window.location.href);
+  const iframeUrl = new URL(CONFIG.iframeSrc, scriptBaseUrl);
+  const iframeOrigin = iframeUrl.origin;
+  const iframeParams = {
     agentId: CONFIG.agentId,
     apiKey: CONFIG.apiKey,
     apiUrl: CONFIG.apiUrl,
@@ -63,11 +68,14 @@
     greeting: CONFIG.greeting,
     title: CONFIG.title,
     placeholder: CONFIG.placeholder,
-  });
+  };
   
   // Create iframe
   const iframe = document.createElement('iframe');
-  iframe.src = `${CONFIG.iframeSrc}?${params.toString()}`;
+  Object.entries(iframeParams).forEach(([key, value]) => {
+    iframeUrl.searchParams.set(key, value);
+  });
+  iframe.src = iframeUrl.toString();
   iframe.style.cssText = `
     position: fixed;
     ${CONFIG.position === 'bottom-left' ? 'left: 0;' : 'right: 0;'}
@@ -91,6 +99,10 @@
   
   // Listen for messages from iframe
   window.addEventListener('message', (e) => {
+    if (e.origin !== iframeOrigin || e.source !== iframe.contentWindow) {
+      return;
+    }
+
     if (e.data && e.data.type === 'callmind-ready') {
       console.log('[CallMind Iframe Widget] Ready');
     }
