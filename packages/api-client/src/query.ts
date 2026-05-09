@@ -10,6 +10,7 @@ type ApiKeyListItem = {
   is_active: boolean
   created_at: string
   last_used_at: string | null
+  allowed_domains: string[] | null
 }
 
 type CreateApiKeyResponse = {
@@ -18,6 +19,10 @@ type CreateApiKeyResponse = {
   key: string
   key_prefix: string
   created_at: string
+}
+
+type UpdateApiKeyRequest = {
+  allowed_domains?: string[] | null
 }
 
 type RevokeApiKeyResponse = {
@@ -62,6 +67,7 @@ export async function queryAgent(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-Source': 'dashboard_test', // Mark as dashboard test - won't be persisted
       ...headers,
     },
     body: JSON.stringify({
@@ -143,6 +149,7 @@ export async function listApiKeys(): Promise<ApiKeyListItem[]> {
         is_active: true,
         created_at: new Date().toISOString(),
         last_used_at: null,
+        allowed_domains: null,
       },
     ]
   }
@@ -197,4 +204,31 @@ export async function revokeApiKey(id: string): Promise<RevokeApiKeyResponse> {
 
   await throwIfNotOk(response)
   return response.json() as Promise<RevokeApiKeyResponse>
+}
+
+export async function updateApiKey(id: string, data: UpdateApiKeyRequest): Promise<ApiKeyListItem> {
+  if (isDummyApiKeysEnabled()) {
+    return {
+      id,
+      name: 'Updated Key',
+      key_prefix: 'cm_live_test',
+      is_active: true,
+      created_at: new Date().toISOString(),
+      last_used_at: null,
+      allowed_domains: data.allowed_domains || null,
+    }
+  }
+
+  const headers = await getDashboardAuthHeaders()
+  const response = await fetch(`${getFastApiBaseUrl()}/api-keys/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+    body: JSON.stringify(data),
+  })
+
+  await throwIfNotOk(response)
+  return response.json() as Promise<ApiKeyListItem>
 }

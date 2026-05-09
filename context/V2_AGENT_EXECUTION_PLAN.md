@@ -45,26 +45,26 @@ Schema:
 - Validate frontend with `pnpm --filter dashboard typecheck` and `pnpm --filter dashboard build`.
 - Validate backend with `pytest` from `backend-AICaller` when backend code changes.
 
-## Phase 0: Schema And Type Safety
+## Phase 0: Schema And Type Safety (APPLIED)
 
-Goal: make V4 safe to apply and keep frontend/backend types aligned.
+Goal: confirm V4 schema changes are applied and move work to backend wiring.
 
-Tasks:
-- Fix `Web-AIcaller/packages/supabase/001_schema_v_4.sql` ordering:
-  - Create `workspace_telephony_providers` before adding `phone_numbers.telephony_provider_id`.
-  - Remove duplicate or misleading comments around the forward FK.
-- Mirror the same schema fix in `backend-AICaller/app/supabase/001_schema_v_4.sql` if that file is still used for backend deployment.
-- Regenerate or verify `Web-AIcaller/packages/supabase/src/types/database.types.ts` includes all V4 fields.
-- Add typed query helpers if missing for:
-  - `workspace_telephony_providers`
-  - `agent_tools`
-  - `tool_executions`
-  - `turn_signals`
-  - `kb_document_chunks`
+Notes:
+- The v4 migrations in both `Web-AIcaller/packages/supabase/001_schema_v_4.sql` and
+  `backend-AICaller/app/supabase/001_schema_v_4.sql` have been executed in
+  Supabase. DB-related tasks from Phase 0 can be considered complete.
+
+Remaining action items (backend-focused):
+- Regenerate TypeScript DB types in `Web-AIcaller/packages/supabase/src/types` so frontend query helpers include V4 tables.
+- Wire backend code to use the new schema fields/tables:
+  - Honor `phone_numbers.telephony_provider_id` and resolve `workspace_telephony_providers` when validating webhooks.
+  - Use `workspace_telephony_providers.vault_secret_id` to fetch provider credentials via Vault when handling BYO Twilio flows.
+  - Ensure RLS policies and Vault access are documented and testable from the FastAPI service role.
 
 Acceptance:
-- Fresh database can apply v4 migration without relation-order errors.
-- TypeScript query modules use generated `Tables<>` types where practical.
+- DB migration applied and verified in Supabase (no action required here).
+- Frontend types regenerated and query helpers updated to include new tables.
+- Backend routes and call handling code use the new telephony provider and Vault fields correctly.
 
 ## Phase 1: Real API Keys Dashboard
 
