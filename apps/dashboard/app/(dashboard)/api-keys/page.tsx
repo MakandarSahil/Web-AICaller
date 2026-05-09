@@ -23,15 +23,16 @@ import {
   Label,
   ScrollArea,
   Skeleton,
+  Switch,
   Tabs,
   TabsContent,
   Textarea,
 } from '@aicaller/ui'
-import { Activity, Check, Copy, Key, Lock, Plus, ShieldAlert, Trash2, Zap, AlertCircle, Code, Terminal, Globe, BookOpen, Play, Send, Loader2 } from 'lucide-react'
+import { Activity, Check, Copy, Key, Lock, Plus, ShieldAlert, Trash2, Zap, AlertCircle, Code, Terminal, Globe, BookOpen, Play, Send, Loader2, LayoutTemplate, Eye, Settings, Globe2 } from 'lucide-react'
 import { cn } from '@aicaller/ui/lib/utils'
 import { PageHeader } from '@/components/ui/page-header'
 import { StatusBadge } from '@/components/ui/status-badge'
-import { useApiKeys, useCreateApiKey, useRevokeApiKey } from '@/hooks/use-api-keys'
+import { useApiKeys, useCreateApiKey, useRevokeApiKey, useUpdateApiKey } from '@/hooks/use-api-keys'
 import { useAgents } from '@/hooks/use-agents'
 import { formatDistanceToNow } from '@/lib/date'
 import { getFastApiBaseUrl } from '@aicaller/api-client'
@@ -112,13 +113,18 @@ export default function ApiKeysPage() {
   const { data: agents, isLoading: isLoadingAgents } = useAgents()
   const createKeyMutation = useCreateApiKey()
   const revokeKeyMutation = useRevokeApiKey()
+  const updateKeyMutation = useUpdateApiKey()
 
-  const [activeTab, setActiveTab] = useState<'keys' | 'usage'>('keys')
+  const [activeTab, setActiveTab] = useState<'keys' | 'usage' | 'widget'>('keys')
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [newKey, setNewKey] = useState<string | null>(null)
   const [keyName, setKeyName] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [keyToRevoke, setKeyToRevoke] = useState<string | null>(null)
+  
+  // Domain restriction state
+  const [keyToEditDomains, setKeyToEditDomains] = useState<string | null>(null)
+  const [domainsInput, setDomainsInput] = useState('')
   
   // API Usage tab state
   const [selectedApiKey, setSelectedApiKey] = useState<string | null>(null)
@@ -128,10 +134,22 @@ export default function ApiKeysPage() {
   const [demoResponse, setDemoResponse] = useState('')
   const [isDemoLoading, setIsDemoLoading] = useState(false)
   const [testApiKey, setTestApiKey] = useState('')
+  
+  // Widget configuration
+  const [widgetConfig, setWidgetConfig] = useState({
+    theme: 'light',
+    position: 'bottom-right',
+    primaryColor: '#3b82f6',
+    greeting: 'Hello! How can I help you today?',
+    title: 'Chat with us',
+    placeholder: 'Type a message...',
+    autoOpen: false,
+  })
 
   const tabs = [
     { id: 'keys', label: 'My Keys', icon: Key },
     { id: 'usage', label: 'API Usage & Demo', icon: Code },
+    { id: 'widget', label: 'Website Widget', icon: LayoutTemplate },
   ]
 
   const handleCopy = (text: string, id: string) => {
@@ -153,6 +171,32 @@ export default function ApiKeysPage() {
     try {
       await revokeKeyMutation.mutateAsync(id)
       setKeyToRevoke(null)
+    } catch {}
+  }
+
+  const handleOpenDomainEdit = (key: typeof activeKeys[0]) => {
+    setKeyToEditDomains(key.id)
+    setDomainsInput(key.allowed_domains?.join(', ') ?? '')
+  }
+
+  const handleSaveDomains = async () => {
+    if (!keyToEditDomains) return
+    
+    // Parse domains: split by comma, trim, filter empty, remove duplicates
+    const domains = domainsInput
+      .split(',')
+      .map(d => d.trim().toLowerCase())
+      .filter(d => d.length > 0)
+    
+    const uniqueDomains = [...new Set(domains)]
+    
+    try {
+      await updateKeyMutation.mutateAsync({
+        id: keyToEditDomains,
+        data: { allowed_domains: uniqueDomains.length > 0 ? uniqueDomains : null }
+      })
+      setKeyToEditDomains(null)
+      setDomainsInput('')
     } catch {}
   }
 
@@ -414,6 +458,7 @@ export default function ApiKeysPage() {
                             <th className="pb-3 pl-0 pr-4">Name</th>
                             <th className="pb-3 px-4">Key prefix</th>
                             <th className="pb-3 px-4">Status</th>
+                            <th className="pb-3 px-4">Allowed Domains</th>
                             <th className="pb-3 px-4">Created</th>
                             <th className="pb-3 px-4">Last used</th>
                             <th className="pb-3 pl-4 pr-0 text-right">Actions</th>
@@ -426,6 +471,7 @@ export default function ApiKeysPage() {
                                 <td className="py-4"><Skeleton className="h-4 w-32" /></td>
                                 <td className="py-4"><Skeleton className="h-4 w-28" /></td>
                                 <td className="py-4"><Skeleton className="h-5 w-16" /></td>
+                                <td className="py-4"><Skeleton className="h-4 w-32" /></td>
                                 <td className="py-4"><Skeleton className="h-4 w-24" /></td>
                                 <td className="py-4"><Skeleton className="h-4 w-20" /></td>
                                 <td className="py-4 text-right"><Skeleton className="h-8 w-8 rounded-md ml-auto" /></td>
@@ -433,7 +479,7 @@ export default function ApiKeysPage() {
                             ))
                           ) : activeKeys.length === 0 ? (
                             <tr>
-                              <td colSpan={6} className="py-12 text-center">
+                              <td colSpan={7} className="py-12 text-center">
                                 <div className="flex flex-col items-center gap-3">
                                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                                     <Key className="h-6 w-6 text-muted-foreground" />
@@ -491,6 +537,20 @@ export default function ApiKeysPage() {
                                     Active
                                   </Badge>
                                 </td>
+                                <td className="px-4 py-4">
+                                  {key.allowed_domains && key.allowed_domains.length > 0 ? (
+                                    <div className="flex items-center gap-1.5">
+                                      <Globe2 className="h-3.5 w-3.5 text-muted-foreground" />
+                                      <span className="text-sm text-muted-foreground truncate max-w-[150px]" title={key.allowed_domains.join(', ')}>
+                                        {key.allowed_domains.length === 1 
+                                          ? key.allowed_domains[0] 
+                                          : `${key.allowed_domains.length} domains`}
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <span className="text-sm text-muted-foreground/50 italic">Any domain</span>
+                                  )}
+                                </td>
                                 <td className="px-4 py-4 text-sm text-muted-foreground">
                                   {new Date(key.created_at).toLocaleDateString()}
                                 </td>
@@ -498,14 +558,25 @@ export default function ApiKeysPage() {
                                   {key.last_used_at ? formatDistanceToNow(key.last_used_at) : 'Never'}
                                 </td>
                                 <td className="py-4 pl-4 pr-0 text-right">
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                                    onClick={() => setKeyToRevoke(key.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                                  <div className="flex items-center justify-end gap-1">
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-muted-foreground/70 hover:text-foreground"
+                                      onClick={() => handleOpenDomainEdit(key)}
+                                      title="Edit domain restrictions"
+                                    >
+                                      <Settings className="h-4 w-4" />
+                                    </Button>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="icon" 
+                                      className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+                                      onClick={() => setKeyToRevoke(key.id)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
                                 </td>
                               </tr>
                             ))
@@ -829,12 +900,334 @@ export default function ApiKeysPage() {
                       <Globe className="h-4 w-4" />
                       <AlertTitle className="font-semibold">Website Widget</AlertTitle>
                       <AlertDescription className="text-sm">
-                        Want to add a chat widget to your website? The API key above works with our 
-                        <Link href="/agents" className="font-medium underline ml-1">website widget integration</Link>.
+                        Want to add a chat widget to your website? Check the 
+                        <button onClick={() => setActiveTab('widget')} className="font-medium underline ml-1">Website Widget</button> tab.
                       </AlertDescription>
                     </Alert>
                   </CardContent>
                 </Card>
+              </div>
+            )}
+
+            {/* WIDGET TAB */}
+            {activeTab === 'widget' && (
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Widget Configuration */}
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <LayoutTemplate className="h-5 w-5" />
+                        Widget Configuration
+                      </CardTitle>
+                      <CardDescription>
+                        Customize the appearance and behavior of your chat widget.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {/* API Key Selector */}
+                      <div className="space-y-2">
+                        <Label>API Key</Label>
+                        {activeKeys.length === 0 ? (
+                          <Alert className="border-amber-500/20 bg-amber-500/10">
+                            <AlertCircle className="h-4 w-4 text-amber-700" />
+                            <AlertDescription className="text-amber-700">
+                              No active API keys. <button onClick={() => setActiveTab('keys')} className="font-medium underline">Create one first</button>.
+                            </AlertDescription>
+                          </Alert>
+                        ) : (
+                          <select
+                            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={selectedApiKey || ''}
+                            onChange={(e) => setSelectedApiKey(e.target.value || null)}
+                          >
+                            <option value="">Select an API key</option>
+                            {activeKeys.map((key) => (
+                              <option key={key.id} value={key.id}>
+                                {key.name} ({key.key_prefix}...)
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+
+                      {/* Agent Selector */}
+                      <div className="space-y-2">
+                        <Label>Agent</Label>
+                        <select
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          value={selectedAgent || ''}
+                          onChange={(e) => setSelectedAgent(e.target.value || null)}
+                        >
+                          <option value="">Select an agent</option>
+                          {agents?.map((agent) => (
+                            <option key={agent.id} value={agent.id}>
+                              {agent.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Theme */}
+                      <div className="space-y-2">
+                        <Label>Theme</Label>
+                        <div className="flex gap-2">
+                          {(['light', 'dark'] as const).map((theme) => (
+                            <button
+                              key={theme}
+                              onClick={() => setWidgetConfig({...widgetConfig, theme})}
+                              className={cn(
+                                "flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all border",
+                                widgetConfig.theme === theme
+                                  ? "border-primary bg-primary/5 text-primary"
+                                  : "border-border bg-background text-muted-foreground hover:text-foreground"
+                              )}
+                            >
+                              {theme.charAt(0).toUpperCase() + theme.slice(1)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Position */}
+                      <div className="space-y-2">
+                        <Label>Position</Label>
+                        <select
+                          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          value={widgetConfig.position}
+                          onChange={(e) => setWidgetConfig({...widgetConfig, position: e.target.value})}
+                        >
+                          <option value="bottom-right">Bottom Right</option>
+                          <option value="bottom-left">Bottom Left</option>
+                        </select>
+                      </div>
+
+                      {/* Primary Color */}
+                      <div className="space-y-2">
+                        <Label>Primary Color</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="color"
+                            value={widgetConfig.primaryColor}
+                            onChange={(e) => setWidgetConfig({...widgetConfig, primaryColor: e.target.value})}
+                            className="w-12 h-10 p-1"
+                          />
+                          <Input
+                            value={widgetConfig.primaryColor}
+                            onChange={(e) => setWidgetConfig({...widgetConfig, primaryColor: e.target.value})}
+                            className="flex-1 font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <div className="space-y-2">
+                        <Label>Widget Title</Label>
+                        <Input
+                          value={widgetConfig.title}
+                          onChange={(e) => setWidgetConfig({...widgetConfig, title: e.target.value})}
+                          placeholder="Chat with us"
+                        />
+                      </div>
+
+                      {/* Greeting */}
+                      <div className="space-y-2">
+                        <Label>Greeting Message</Label>
+                        <Textarea
+                          value={widgetConfig.greeting}
+                          onChange={(e) => setWidgetConfig({...widgetConfig, greeting: e.target.value})}
+                          placeholder="Hello! How can I help you today?"
+                          rows={2}
+                        />
+                      </div>
+
+                      {/* Placeholder */}
+                      <div className="space-y-2">
+                        <Label>Input Placeholder</Label>
+                        <Input
+                          value={widgetConfig.placeholder}
+                          onChange={(e) => setWidgetConfig({...widgetConfig, placeholder: e.target.value})}
+                          placeholder="Type a message..."
+                        />
+                      </div>
+
+                      {/* Auto Open */}
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="cursor-pointer">Auto-open on page load</Label>
+                          <p className="text-xs text-muted-foreground">Widget will open automatically after 1 second</p>
+                        </div>
+                        <Switch
+                          checked={widgetConfig.autoOpen}
+                          onCheckedChange={(checked) => setWidgetConfig({...widgetConfig, autoOpen: checked})}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Installation Code */}
+                <div className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Code className="h-5 w-5" />
+                        Installation Code
+                      </CardTitle>
+                      <CardDescription>
+                        Add this script tag to your website's HTML.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {selectedKeyData && selectedAgentData ? (
+                        <>
+                          <div className="relative">
+                            <pre className="rounded-lg bg-slate-950 p-4 overflow-x-auto">
+                              <code className="text-xs font-mono text-slate-50 whitespace-pre-wrap">
+                                {`<script
+  src="${typeof window !== 'undefined' ? window.location.origin : ''}/callmind-widget.js"
+  data-agent-id="${selectedAgentData.id}"
+  data-api-key="${selectedKeyData.key_prefix}..."
+  data-api-url="${getFastApiBaseUrl()}"
+  data-theme="${widgetConfig.theme}"
+  data-position="${widgetConfig.position}"
+  data-primary-color="${widgetConfig.primaryColor}"
+  data-title="${widgetConfig.title}"
+  data-greeting="${widgetConfig.greeting}"
+  data-placeholder="${widgetConfig.placeholder}"
+  data-auto-open="${widgetConfig.autoOpen}"
+></script>`}
+                              </code>
+                            </pre>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="absolute top-2 right-2 h-7 w-7 text-slate-400 hover:text-slate-100"
+                              onClick={() => {
+                                const code = `<script
+  src="${typeof window !== 'undefined' ? window.location.origin : ''}/callmind-widget.js"
+  data-agent-id="${selectedAgentData.id}"
+  data-api-key="${selectedKeyData.key_prefix}..."
+  data-api-url="${getFastApiBaseUrl()}"
+  data-theme="${widgetConfig.theme}"
+  data-position="${widgetConfig.position}"
+  data-primary-color="${widgetConfig.primaryColor}"
+  data-title="${widgetConfig.title}"
+  data-greeting="${widgetConfig.greeting}"
+  data-placeholder="${widgetConfig.placeholder}"
+  data-auto-open="${widgetConfig.autoOpen}"
+></script>`;
+                                handleCopy(code, 'widget-snippet');
+                              }}
+                            >
+                              {copiedId === 'widget-snippet' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                            </Button>
+                          </div>
+
+                          <Alert className="border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                            <Check className="h-4 w-4" />
+                            <AlertTitle className="font-semibold">Ready to install</AlertTitle>
+                            <AlertDescription className="text-sm">
+                              Copy the code above and paste it before the closing &lt;/body&gt; tag on your website.
+                            </AlertDescription>
+                          </Alert>
+
+                          {selectedKeyData?.allowed_domains && selectedKeyData.allowed_domains.length > 0 && (
+                            <Alert className="border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300">
+                              <Globe2 className="h-4 w-4" />
+                              <AlertTitle className="font-semibold">Domain Restricted</AlertTitle>
+                              <AlertDescription className="text-sm">
+                                This API key is restricted to: {selectedKeyData.allowed_domains.join(', ')}. 
+                                The widget will only work on these domains.
+                              </AlertDescription>
+                            </Alert>
+                          )}
+
+                          <div className="rounded-lg border border-border/70 bg-muted/30 p-4 space-y-3">
+                            <h4 className="text-sm font-semibold">Live Preview</h4>
+                            <p className="text-sm text-muted-foreground">
+                              The widget will appear on your website like this:
+                            </p>
+                            <div className="relative h-48 rounded-lg border border-border/70 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 overflow-hidden">
+                              {/* Mock website background */}
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                  <div className="w-32 h-4 bg-slate-300 dark:bg-slate-700 rounded mb-2 mx-auto"></div>
+                                  <div className="w-48 h-3 bg-slate-200 dark:bg-slate-800 rounded mb-1 mx-auto"></div>
+                                  <div className="w-40 h-3 bg-slate-200 dark:bg-slate-800 rounded mx-auto"></div>
+                                </div>
+                              </div>
+                              
+                              {/* Mock widget button */}
+                              <div 
+                                className="absolute w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg"
+                                style={{ 
+                                  backgroundColor: widgetConfig.primaryColor,
+                                  [widgetConfig.position === 'bottom-right' ? 'right' : 'left']: '16px',
+                                  bottom: '16px'
+                                }}
+                              >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <Alert className="border-amber-500/20 bg-amber-500/10">
+                          <AlertCircle className="h-4 w-4 text-amber-700" />
+                          <AlertDescription className="text-amber-700">
+                            Select an API key and agent to generate the installation code.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  {/* Features */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Widget Features</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Real-time streaming responses</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Conversation history persistence</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Mobile-responsive design</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Customizable colors and theme</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Typing indicators</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Secure API key handling</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Domain restriction support</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-emerald-500" />
+                          <span>Visitor ID tracking</span>
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             )}
 
@@ -869,6 +1262,79 @@ export default function ApiKeysPage() {
                 'Revoke key'
               )}
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Domain restriction dialog */}
+      <Dialog open={!!keyToEditDomains} onOpenChange={(open) => !open && setKeyToEditDomains(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Globe2 className="h-5 w-5" />
+              Domain Restrictions
+            </DialogTitle>
+            <DialogDescription>
+              Restrict this API key to only work on specific domains. Leave empty to allow any domain.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="allowed-domains">Allowed Domains</Label>
+              <Textarea
+                id="allowed-domains"
+                value={domainsInput}
+                onChange={(e) => setDomainsInput(e.target.value)}
+                placeholder="example.com, *.example.com, app.example.com"
+                rows={4}
+              />
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground">
+                  Enter domains separated by commas. Use * for wildcards (e.g., *.example.com).
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Examples: <code className="bg-muted px-1 rounded">example.com</code>, <code className="bg-muted px-1 rounded">*.example.com</code>, <code className="bg-muted px-1 rounded">app.example.com</code>
+                </p>
+              </div>
+            </div>
+
+            {updateKeyMutation.isError && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  Failed to update domain restrictions. Please try again.
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex justify-end gap-3 pt-2">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setKeyToEditDomains(null)
+                  setDomainsInput('')
+                  updateKeyMutation.reset()
+                }}
+                disabled={updateKeyMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveDomains}
+                disabled={updateKeyMutation.isPending}
+              >
+                {updateKeyMutation.isPending ? (
+                  <>
+                    <Activity className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save restrictions'
+                )}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

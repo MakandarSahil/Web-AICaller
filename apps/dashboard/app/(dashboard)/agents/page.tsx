@@ -26,6 +26,7 @@ export default async function AgentsIndexPage() {
   // On Desktop: If we have agents, go straight to the first one
   if (!isMobile && agents && agents.length > 0 && agents[0]?.id) {
     redirect(`/agents/${agents[0].id}`)
+    return null
   }
 
   // On Mobile: If we have agents, show the list view in the main area

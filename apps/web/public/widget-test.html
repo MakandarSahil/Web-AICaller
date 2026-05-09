@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallMind Widget Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #666;
+        }
+
+        .widget-info {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .widget-info h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .widget-info code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Widget Test Page</h1>
+            <p>This is a demo page showing the CallMind chat widget in action. The widget should appear in the bottom corner of your screen.</p>
+            <a href="#" class="cta-button">Try the Widget →</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>🚀 Easy Integration</h3>
+                <p>Just add one line of code to your website and the widget appears automatically.</p>
+            </div>
+            <div class="feature-card">
+                <h3>💬 Real-time Chat</h3>
+                <p>Connect with AI agents that can answer questions and help your customers 24/7.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎨 Customizable</h3>
+                <p>Match your brand with custom colors, themes, and greeting messages.</p>
+            </div>
+        </div>
+
+        <div class="widget-info">
+            <h2>How to Test</h2>
+            <p>1. Look for the chat button in the bottom-right corner</p>
+            <p>2. Click it to open the chat window</p>
+            <p>3. Type a message and see the AI respond in real-time</p>
+            <p>4. The widget will remember your conversation as you navigate</p>
+            <br>
+            <p><strong>Note:</strong> This test page uses demo configuration. To use your own agent, update the <code>data-agent-id</code> and <code>data-api-key</code> attributes.</p>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 CallMind - AI Voice & Chat Agents</p>
+        </div>
+    </div>
+
+    <!-- CallMind Widget -->
+    <script 
+        src="/callmind-widget.js"
+        data-agent-id="YOUR_AGENT_ID_HERE"
+        data-api-key="YOUR_API_KEY_HERE"
+        data-api-url="http://localhost:8000"
+        data-theme="light"
+        data-position="bottom-right"
+        data-primary-color="#3b82f6"
+        data-title="Chat with Us"
+        data-greeting="Hello! How can I help you today? 👋"
+        data-placeholder="Type your message..."
+    ></script>
+</body>
+</html>

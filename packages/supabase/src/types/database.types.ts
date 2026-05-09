@@ -214,6 +214,7 @@ export type Database = {
       }
       api_keys: {
         Row: {
+          allowed_domains: string[] | null
           created_at: string
           created_by: string | null
           id: string
@@ -225,6 +226,7 @@ export type Database = {
           workspace_id: string
         }
         Insert: {
+          allowed_domains?: string[] | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -236,6 +238,7 @@ export type Database = {
           workspace_id: string
         }
         Update: {
+          allowed_domains?: string[] | null
           created_at?: string
           created_by?: string | null
           id?: string

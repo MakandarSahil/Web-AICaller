@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { listApiKeys, createApiKey, revokeApiKey } from '@aicaller/api-client'
+import { listApiKeys, createApiKey, revokeApiKey, updateApiKey } from '@aicaller/api-client'
 import { apiKeyKeys } from '@/lib/query-keys'
 
 export type ApiKeyListItem = {
@@ -9,6 +9,7 @@ export type ApiKeyListItem = {
   is_active: boolean
   created_at: string
   last_used_at: string | null
+  allowed_domains: string[] | null
 }
 
 export type CreateApiKeyResponse = {
@@ -67,6 +68,28 @@ export function useRevokeApiKey() {
     mutationFn: async (id: string) => {
       const data = await revokeApiKey(id)
       return data as RevokeApiKeyResponse
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: apiKeyKeys.all })
+    },
+  })
+}
+
+export type UpdateApiKeyData = {
+  allowed_domains?: string[] | null
+}
+
+/**
+ * Update an API key configuration.
+ * Invalidates the API keys list on success.
+ */
+export function useUpdateApiKey() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: UpdateApiKeyData }) => {
+      const result = await updateApiKey(id, data)
+      return result as ApiKeyListItem
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: apiKeyKeys.all })
