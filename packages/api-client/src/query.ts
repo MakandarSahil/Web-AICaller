@@ -62,6 +62,7 @@ export async function queryAgent(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'X-Source': 'dashboard_test', // Mark as dashboard test - won't be persisted
       ...headers,
     },
     body: JSON.stringify({
