@@ -34,13 +34,13 @@ export const navigationGroups: DashboardNavGroup[] = [
     items: [
       { href: '/agents', label: 'Agents', icon: Bot },
       { href: '/knowledge-bases', label: 'Knowledge Base', icon: Book },
-      { href: '/api-keys', label: 'API Keys (Coming Soon)', icon: Zap },
+      { href: '/api-keys', label: 'API Keys', icon: Zap },
     ],
   },
   {
     label: 'DEPLOY',
     items: [
-      { href: '/phone-numbers', label: 'Phone Numbers (Coming Soon)', icon: Phone },
+      { href: '/phone-numbers', label: 'Phone Numbers', icon: Phone },
     ],
   },
   {
@@ -48,7 +48,7 @@ export const navigationGroups: DashboardNavGroup[] = [
     items: [
       { href: '/call-history', label: 'Call History', icon: History },
       { href: '/chat-history', label: 'Chat History', icon: MessageSquare },
-      { href: '/analytics', label: 'Analytics (Coming Soon)', icon: BarChart3 },
+      { href: '/analytics', label: 'Analytics', icon: BarChart3 },
     ],
   },
 ]
